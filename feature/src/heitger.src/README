@@ -1,0 +1,172 @@
+/***********************************************************************
+ *
+ * Author:    Olof Henricsson 
+ *
+ * Address:   Institute of Geodesy and Photogrammetry
+ *            Swiss Federal Institute of Technology
+ *	      CH-8093, Zurich, Switzerland
+ *            Tel. +41 1 633 3054
+ *            Email: ohenri@geod.ethz.ch
+ * 
+ * Created:   96-06-07
+ *
+ * Content:   programs for SE operator, Key-point detection and thresholding,
+ *            as well as all include-, make-, and source-files.
+ *
+ * Notice:    The code is provided with all the usual disclaimers.
+ *
+ **********************************************************************/
+
+This program package is provided for non-profitable use only. If
+you use this package, please send a note so that I can keep track 
+of who is using it. To give maximum flexibility, the program package 
+is made available in three stand-alone modules: SE, Keypoints, and 
+Edgethresh. 
+
+The program SE was initially developped by Friedrich Heitger, however, 
+some important improvements have been made by myself. The SE program 
+realizes the Suppression and Enhancement (S&E) operator, which is
+thoroughly described in [1]. The S&E operator is build upon energy filters
+described in [2,3]. An additional paper explaining the key-point scheme 
+can be found in [4]. The SE program (optionally) also computes the 
+keypoint map as described in [2,3]. Given the keypoint map, key-points 
+are extracted with the program Keypoints. This program essentially makes 
+local maxima and thresholding operations. If you want more information 
+about the energy filters, SE operator, and the key-point sheme (including
+parameters) send an e-mail to friedrich.heitger@csemne.ch.
+
+The (edge/line) filter output of the SE program is unthresholded. To 
+perform thresholding run the program Edgethresh. The program primarily
+makes an automatic thresholding according to the estimated image noise
+as is proposed in [5]. A second option with fixed relative threshold also 
+exists. 
+
+A summary of the use of the filters, key-points and noise estimation 
+(and more) can be found in [6].
+
+[1] Heitger F., "Feature Detection using Suppression and Enhancement",
+    Technical Report  nr. 163, Image Science Lab., ETH Zurich, 
+    Switzerland, 1995.
+
+[2] Heitger F., Rosenthaler L.,von der Heydt R., Peterhans E., and
+    Kubler O., "Simulation of neural contour mechanisms: From simple 
+    to end-stopped cells", Vision Research, no. 32, pages 963-981, 1992.
+
+[3] Rosenthaler L., Heitger F., Kubler O., and von der Heydt R., 
+    "Detection of General Edges and Keypoints", In Computer Vision --
+    ECCV'92, G. Sandini Editor, Springer Verlag, pages 78-86, 1992.
+
+[4] Robbins B. and Owens R., "The 2D Local Energy Model", Technical Report
+    TR-94/5, Robotics and Vision Research Group at The University of 
+    Western Australia, 1994.
+
+[5] Voorhees H. and Poggio T., "Detecting Blobs as Textons in Natural 
+    Images", DARPA Image Understanding Workshop, pages 892-899, 1987.
+
+[6] Henricsson, O., "Analysis of Image Structures using Color Attributes 
+    and Similarity Relations", PhD-Thesis ETH no. 11663, SWISS FEDERAL 
+    INSTITUTE OF TECHNOLOGY, Zurich, May 1996.
+
+The Postscript files for references [1] and [3] can be obtained from 
+http://www.vision.ee.ethz.ch/~ohenri/ under the subtitle "some other useful 
+references". The Postscript version of [5] will be available in July 1996.
+
+INSTRUCTIONS:
+
+First you have to make the libraries (liblowlevel.a and libtools.a).
+
+> cd liblowlevel
+> make G=-xO4
+> cd ../libtools
+> make G=-xO4
+> ..
+
+To compile the stand-alone programs write:
+
+> make G=-xO4
+
+To see what options are available type:
+
+> SE
+> Keypoints
+> Edgethresh
+
+----------------------------------------------------------------
+IMPORTANT: 
+
+The transfer of FLOAT data between the different programs 
+is done with a simple file format, which gets the extension .dat
+
+The first line contains the word BINARY
+The second line contains the image dimensions (int) NX NY
+The rest is a binary dump of the data with the size NX*NY*sizeof(float)
+
+The data which is NOT float but UNSIGNED CHAR is transferred between 
+the programs as standard SUN rasterfiles. Whenever the program or an 
+option needs a 'filename' it implicitly means a filename for a SUN 
+rasterfile. The SUN raster-file may be 8 bit with or without colormap 
+or a 24 bit sun rasterfile.
+
+In all programs, there exist options to produce other output that 
+can be more conveniently viewed or read. 
+----------------------------------------------------------------
+
+An example with the SUN raster file hochhaus.ras
+
+> SE -i house.ras -o test -keypoints -quality -sigma 2.25 -raster
+
+will produce the following output
+
+test-nms.ras          (the edge/line pixels encoded with magnitude)
+test-maxmap.ras       (magnitude for all pixels)
+test-mod_maxmap.ras   (energy of gabor filters)
+test-locori.ras       (local orientation [0-180])
+test-kptmap.ras       (2-D local energy, i.e. the keypoint map)
+test-quality.ras      (general edge quality)
+test-type.ras         (edge or line label for each pixel)
+test-nms.dat      
+test-maxmap.dat
+test-mod_maxmap.dat
+test-locori.dat
+test-kptmap.dat
+test-quality.dat
+
+After SE filtering you can extract key-points by writing 
+
+> Keypoints -i test -overlay circle -back house.ras -thresh 30
+
+will produce the following output:
+
+test-kptmap-kpts.ras
+test-kptmap-kpts-ovl.ras
+
+The output of the SE program is unthresholded. To produce 
+a thresholded version run the program Edgethresh. You can either 
+make a fixed or automatic thresholding. 
+
+automatic:
+
+> Edgethresh -i test -sign 99.9 -overlay house.ras
+
+will produce the following output:
+
+test-nms-edgemap.ras
+test-nms-edgemap-ovl.ras
+
+the same with a fixed threshold (15%):
+
+> Edgethresh -i test -overlay house.ras -fixed 15
+
+will produce an edgemap with 15% relative threshold.
+
+---------------------------------------------------------------
+
+I know there are many options and possibilities for this kind 
+of programs. If you don't understand what is one or what can be
+done please write me an email:  ohenri@geod.ethz.ch
+
+Also write me if something doesn't work. I would be offended 
+if something doesn't work and you don't tell me about it ...
+
+/Olof
+

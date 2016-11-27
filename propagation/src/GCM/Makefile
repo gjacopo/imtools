@@ -1,0 +1,21 @@
+# Set variables and paths
+# CONFIG  = Configuration (0=Solaris, 1=Linux)
+# DEBUG   = Disable/Enable CImglib warnings messages.
+CONFIG    = 1
+LAPACK    = 1
+DEBUG     = 0
+CC        = g++ -Os -Wall -ansi -ffast-math
+CFLAGS    = -Dcimg_config=$(CONFIG) -Dcimg_debug=$(DEBUG) -Dcimg_lapack=$(LAPACK)
+LDFLAGS   = -lm -lpthread -llapack -lblas
+OBJ       = gcm
+
+# Compilation rules
+.cpp:
+	$(CC) -o $* $< $(CFLAGS) $(LDFLAGS)
+all : ${OBJ}
+linux:
+	make CONFIG=1 all
+solaris:
+	make CONFIG=0 all
+clean:
+	rm -f core *~ ${OBJ}
