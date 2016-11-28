@@ -10,7 +10,7 @@ Various basic low-level image processing tools used in the experiments/analyses 
 
 *version*:      0.9
 
-*since*:        2002
+*since*:        2007
 
 *license*:      [EUPL](https://joinup.ec.europa.eu/sites/default/files/eupl1.1.-licence-en_0.pdf)
 
