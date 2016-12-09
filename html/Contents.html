@@ -57,8 +57,7 @@ span.syscmd { color:#B28C00 }
 
   </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% grazzja - Utility function</span>
 <span class="comment">%</span>
-<span class="comment">% credit: J.Grazzini &amp; L.Prasad  (ISR-2/LANL)</span>
-<span class="comment">% copyright: &copy;Los Alamos National Security, LLC All rights reserved</span>
+<span class="comment">% credit: J.Grazzini</span>
 <span class="comment">%</span>
 <span class="comment">% cluster/  Clustering and classification:</span>
 <span class="comment">%   fuzzbound      - Computes the fuzzy boundaries on a fuzzy categorical map.</span>
@@ -286,34 +285,6 @@ span.syscmd { color:#B28C00 }
 <span class="comment">%   clamp          - Clamp a value, cell of values or array.</span>
 <span class="comment">%   nb_dims        - Debugged version of NDIMS.</span>
 <span class="comment">%</span>
-<span class="comment">% triangulation/  Triangulation segmentation and superpixel decomposition:</span>
-<span class="comment">%   im2poly        - Decompose an image into significant polygons using the</span>
-<span class="comment">%                    original VISTA segmentation based on constrained</span>
-<span class="comment">%                    triangulation of the input image from edges.</span>
-<span class="comment">%   bound2vert     - Compute the so-called Attributed Contour Traces.</span>
-<span class="comment">%   chainconnect_base - Produce contour chains of contiguous edges from a</span>
-<span class="comment">%                    edge map.</span>
-<span class="comment">%   chaincontour_base - Wrapping function for the original VISTA function</span>
-<span class="comment">%                    contourchains.</span>
-<span class="comment">%   chainlink_base - Links chains of edges using Kovesi's utility functions.</span>
-<span class="comment">%   chaintrim_base - Trim the set of 2D points used for the constrained</span>
-<span class="comment">%                    Delaunay triangulation.</span>
-<span class="comment">%   vert2dtri      - Produce a constrained or unconstrained, Euclidean or non-</span>
-<span class="comment">%                    Euclidean Delaunay triangulation from a set of vertices.</span>
-<span class="comment">%   dtri2triedge   -</span>
-<span class="comment">%   dtriedgesample - Sampling of the underlying grid given a triangulation.</span>
-<span class="comment">%   dtriedgecircle_base -</span>
-<span class="comment">%   dtriedgecolor  -</span>
-<span class="comment">%   dtriedgecue - Simplifies the triangulation using spatial and spectral cues.</span>
-<span class="comment">%   dtriedgecuespatial_base -</span>
-<span class="comment">%   dtriedgechord_base -</span>
-<span class="comment">%   dtriedgegestalt_base -</span>
-<span class="comment">%   dtriedgecuespectral_base -</span>
-<span class="comment">%   dtriedgecuetexture_base -</span>
-<span class="comment">%   dtriedge2poly -</span>
-<span class="comment">%   dtriedgepolydisplay - Function for displaying triangulations, trixels,</span>
-<span class="comment">%                    edges or polygons.</span>
-<span class="comment">%</span>
 <span class="comment">% texture/  Texture analysis and representations:</span>
 <span class="comment">%   localglcm2d    - Compute local textural features using the 2D histograms</span>
 <span class="comment">%                    of joint distribution of greylevel pairs.</span>
@@ -357,8 +328,7 @@ span.syscmd { color:#B28C00 }
 ##### SOURCE BEGIN #####
 % grazzja - Utility function
 %
-% credit: J.Grazzini & L.Prasad  (ISR-2/LANL)
-% copyright: ©Los Alamos National Security, LLC All rights reserved
+% credit: J.Grazzini 
 %
 % cluster/  Clustering and classification:		
 %   fuzzbound      - Computes the fuzzy boundaries on a fuzzy categorical map.
@@ -585,34 +555,6 @@ span.syscmd { color:#B28C00 }
 %   rescale        - Rescale data in [a,b].
 %   clamp          - Clamp a value, cell of values or array.
 %   nb_dims        - Debugged version of NDIMS.
-%
-% triangulation/  Triangulation segmentation and superpixel decomposition:
-%   im2poly        - Decompose an image into significant polygons using the
-%                    original VISTA segmentation based on constrained
-%                    triangulation of the input image from edges. 
-%   bound2vert     - Compute the so-called Attributed Contour Traces.
-%   chainconnect_base - Produce contour chains of contiguous edges from a  
-%                    edge map. 
-%   chaincontour_base - Wrapping function for the original VISTA function
-%                    contourchains.
-%   chainlink_base - Links chains of edges using Kovesi's utility functions.
-%   chaintrim_base - Trim the set of 2D points used for the constrained 
-%                    Delaunay triangulation. 
-%   vert2dtri      - Produce a constrained or unconstrained, Euclidean or non-
-%                    Euclidean Delaunay triangulation from a set of vertices.
-%   dtri2triedge   - 
-%   dtriedgesample - Sampling of the underlying grid given a triangulation. 
-%   dtriedgecircle_base - 
-%   dtriedgecolor  - 
-%   dtriedgecue - Simplifies the triangulation using spatial and spectral cues.
-%   dtriedgecuespatial_base - 
-%   dtriedgechord_base - 
-%   dtriedgegestalt_base - 
-%   dtriedgecuespectral_base - 
-%   dtriedgecuetexture_base - 
-%   dtriedge2poly - 
-%   dtriedgepolydisplay - Function for displaying triangulations, trixels, 
-%                    edges or polygons.
 %
 % texture/  Texture analysis and representations:		
 %   localglcm2d    - Compute local textural features using the 2D histograms
