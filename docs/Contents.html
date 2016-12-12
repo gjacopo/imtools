@@ -1,600 +1,1 @@
-
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   <!--
-This HTML was auto-generated from MATLAB code.
-To make changes, update the MATLAB code and republish this document.
-      --><title>Contents</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-05-31"><meta name="DC.source" content="Contents.m"><style type="text/css">
-html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
-
-html { min-height:100%; margin-bottom:1px; }
-html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
-html body td { vertical-align:top; text-align:left; }
-
-h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
-h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
-h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
-
-a { color:#005fce; text-decoration:none; }
-a:hover { color:#005fce; text-decoration:underline; }
-a:visited { color:#004aa0; text-decoration:none; }
-
-p { padding:0px; margin:0px 0px 20px; }
-img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
-
-ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
-ul li { padding:0px; margin:0px 0px 7px 0px; }
-ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
-ul li ol li { list-style:decimal; }
-ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
-ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
-ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
-ol li ol li { list-style-type:lower-alpha; }
-ol li ul { padding-top:7px; }
-ol li ul li { list-style:square; }
-
-.content { font-size:1.2em; line-height:140%; padding: 20px; }
-
-pre, tt, code { font-size:12px; }
-pre { margin:0px 0px 20px; }
-pre.error { color:red; }
-pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
-pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
-
-@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
-
-span.keyword { color:#0000FF }
-span.comment { color:#228B22 }
-span.string { color:#A020F0 }
-span.untermstring { color:#B20000 }
-span.syscmd { color:#B28C00 }
-
-.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
-.footer p { margin:0px; }
-
-  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% grazzja - Utility function</span>
-<span class="comment">%</span>
-<span class="comment">% credit: J.Grazzini</span>
-<span class="comment">%</span>
-<span class="comment">% cluster/  Clustering and classification:</span>
-<span class="comment">%   fuzzbound      - Computes the fuzzy boundaries on a fuzzy categorical map.</span>
-<span class="comment">%</span>
-<span class="comment">% derive/  Differentiation functions:</span>
-<span class="comment">%   gstsmooth      - Compute the Gradient Structure Tensor of a (possibly</span>
-<span class="comment">%                    multichannel) image.</span>
-<span class="comment">%   grdsmooth      - Compute the directional derivatives of an image.</span>
-<span class="comment">%   hessmooth      - Compute the Hessian Tensor of a (possibly multichannel)</span>
-<span class="comment">%                    image.</span>
-<span class="comment">%   gstdecomp      - Perform the eigen decomposition or the reconstruction</span>
-<span class="comment">%                    of a tensor field.</span>
-<span class="comment">%   gstfeature     - Derive features like norm, orientation, coherence, or</span>
-<span class="comment">%                    inertia from tensor representation</span>
-<span class="comment">%   grd2gst        - Compute the entries of the gradient structure tensor of</span>
-<span class="comment">%                    an image from its directional derivatives.</span>
-<span class="comment">%   grd2hess       - Compute the entries of the Hessian of an image from its</span>
-<span class="comment">%                    directional derivatives.</span>
-<span class="comment">%   grdmask        - Compute the directional derivatives of an image through</span>
-<span class="comment">%                    classical gradient operators using local difference masks.</span>
-<span class="comment">%</span>
-<span class="comment">% feature/  Feature extraction:</span>
-<span class="comment">%   anisoedge      - Anisotropic diffusion edge detector.</span>
-<span class="comment">%   cannyedge      - Wrapping function calling either edge, cannyedges or</span>
-<span class="comment">%                    cannyedgemap.</span>
-<span class="comment">%   cannyedgefuse  - Two-scale Canny edge detection by fusion of the binary</span>
-<span class="comment">%                    Canny edge maps at two different scales.</span>
-<span class="comment">%   cannyedgemap   - Edge map calculation.</span>
-<span class="comment">%   cannyedgeprod  - Two-scale Canny edge detection obtained by multiplication</span>
-<span class="comment">%                    of Canny edge responses at two different scales.</span>
-<span class="comment">%   compassedge    - Wrapping function for the Generalized Compass Operator.</span>
-<span class="comment">%   congruencyedge - Wrapping function for Kovesi'sedge and corner detector</span>
-<span class="comment">%                    based on phase congrunecy.</span>
-<span class="comment">%   corner         - Wrapping function for various corner detection methods.</span>
-<span class="comment">%   curvecorner    - Corner detection in edge map based on curvature.</span>
-<span class="comment">%   edgecorner     - Wrapping function for various edge/corner detection</span>
-<span class="comment">%                    techniques.</span>
-<span class="comment">%   elderzuckeredge - Elder &amp; Zucker's multi-scale edge detector.</span>
-<span class="comment">%   fastcorner     - Wrapping function for the FAST corner detector.</span>
-<span class="comment">%   fastcpda       - Fast corner detector based on the chord-to-point distance</span>
-<span class="comment">%                    accumulation technique.</span>
-<span class="comment">%   harriscorner   - Harris' corner/keypoints detector.</span>
-<span class="comment">%   inforgbedge    - Provide edge magnitude and orientation of colour images</span>
-<span class="comment">%                    based on its derivatives</span>
-<span class="comment">%   koethedge      - Koethe's edge/corner detector based on the gradient</span>
-<span class="comment">%                    structure tensor.</span>
-<span class="comment">%   multiedge      - Compute a multiscale edge map using a 2D Sobel-like</span>
-<span class="comment">%                    wavelet.</span>
-<span class="comment">%   petrouedge     - Petrou &amp; Kitller's edge detector.</span>
-<span class="comment">%   rothwelledge   - Rothwell's subpixel edge detector.</span>
-<span class="comment">%   sdgdedge       - Edge detection filter based on the 2nd derivative and/or</span>
-<span class="comment">%                    Laplacian in the gradient direction.</span>
-<span class="comment">%   susancorner    - SUSAN Edge/corner detection or image smoothing.</span>
-<span class="comment">%</span>
-<span class="comment">% filter/  Filtering functions:</span>
-<span class="comment">%   adaptivefilt   - Perform adaptive filtering.</span>
-<span class="comment">%   anisor         - Compute orientation information from the anisotropic</span>
-<span class="comment">%                    continous scale model.</span>
-<span class="comment">%   anisorfilt     - Morphological anisotropic diffusion using the orientation</span>
-<span class="comment">%                    information from the anisotropic continous scale model.</span>
-<span class="comment">%   bilateral_base - Perform bilateral filtering on monochrome images.</span>
-<span class="comment">%   bilateralstack_base - Fast version of the bilateral filter using stacks.</span>
-<span class="comment">%   blurmap        - Adaptive local isotropic Gaussian bluring of an image.</span>
-<span class="comment">%   convolution    - Compute convolution with centered filter.</span>
-<span class="comment">%   findlocalextrema - Extracts the extrema of any multispectral image in</span>
-<span class="comment">%                    local square neigbourhoods.</span>
-<span class="comment">%   findlocalmax   - Determine the local maxima of a given matrix image.</span>
-<span class="comment">%   fuzzimpulse    - Perform fuzzy impulse noise reduction in images.</span>
-<span class="comment">%   geodesicfilt   - Sigma-filter based on local geodesic similarity measures</span>
-<span class="comment">%                    for edge-preserving smoothing of multispectral images.</span>
-<span class="comment">%   mdlfilt        - Local adaptive filtering based on Minimal Description</span>
-<span class="comment">%                    Length principle.</span>
-<span class="comment">%   smoothfilt     - Perform either classical isotropic (Gaussian) smoothing</span>
-<span class="comment">%                    or anisotropic non-linear  smoothing.</span>
-<span class="comment">%   tensanifilt    - Perform Gaussian adaptive filtering of an image using</span>
-<span class="comment">%                    an anisotropic tensor field.</span>
-<span class="comment">%   tenscaledirfilt - Perform Gaussian adaptive directional filtering along</span>
-<span class="comment">%                    tensor field using a local adaptive scale.</span>
-<span class="comment">%   wmedfilt2      - Perform weighted median filtering of a (possibly</span>
-<span class="comment">%                    multispectral) image.</span>
-<span class="comment">%   wordfilt2      - Perform weighted order-statistic filtering of a</span>
-<span class="comment">%                    (possibly multispectral) image.</span>
-<span class="comment">%</span>
-<span class="comment">% fractal/  Fractal analysis:</span>
-<span class="comment">%   fractalwave     -</span>
-<span class="comment">%   fractalwavestat -</span>
-<span class="comment">%   singfractalrecons_base -</span>
-<span class="comment">%   waveprofile_base -</span>
-<span class="comment">%</span>
-<span class="comment">% graph/  Graph and network analysis and representation:</span>
-<span class="comment">%   bfs_base       - Compute breadth first search distances, times, and tree</span>
-<span class="comment">%                    of a graph and extracts valid paths.</span>
-<span class="comment">%   dfs_base       - Perform a depth-first search (DFS) of a graph.</span>
-<span class="comment">%   scomponents_base - Compute the strongly connected components of a graph</span>
-<span class="comment">%                    and extracts valid paths.</span>
-<span class="comment">%   dijkstra       - Implementation of Dijkstra algorithm, allowing for single</span>
-<span class="comment">%                    and multiple sources distance calculation.</span>
-<span class="comment">%   dijk_base      - Implementation of Dijkstra algorithm.</span>
-<span class="comment">%   dijkadvanced_base - Calculate minimum costs and paths using Dijkstra's</span>
-<span class="comment">%                    algorithm.</span>
-<span class="comment">%   graphmap       - Converts binary map to connected graph and reciprocally.</span>
-<span class="comment">%   graph2map_base - Converts a spatial unweighted graph into a 2D logical</span>
-<span class="comment">%                    map.</span>
-<span class="comment">%   map2graph_base - Converts a 2D logical map into a weighted graph.</span>
-<span class="comment">%   graphweight_base - Convert an unweighted spatial graph into a weighted</span>
-<span class="comment">%                    graph.</span>
-<span class="comment">%   graphrepresent - Raster representation (and display) of a weighted graph.</span>
-<span class="comment">%   ixneighbours   - Return the indices of neighbour cells in a matrix.</span>
-<span class="comment">%</span>
-<span class="comment">% pdem/  Pseudo-DEM generation functions:</span>
-<span class="comment">%</span>
-<span class="comment">% pyramid/  Hierarchical pyramid analysis and decomposition:</span>
-<span class="comment">%   pyrdown        - Top-down pyramidal hierarchical decomposition.</span>
-<span class="comment">%   pyrup          - Bottom-up pyramidal hierarchical decomposition.</span>
-<span class="comment">%   reduce2d       - Wrapping function for the reduce2D operator of the BIG</span>
-<span class="comment">%                    Spline Pyramids Software.</span>
-<span class="comment">%   expand2d       - Wrapping function for the expand2d operator of the BIG</span>
-<span class="comment">%                    Spline Pyramids Software.</span>
-<span class="comment">%</span>
-<span class="comment">% sharpen/  Sharpening and enhancing functions:</span>
-<span class="comment">%</span>
-<span class="comment">% geometry/  Basic geometrical tools:</span>
-<span class="comment">%   bresenhamline  - 2D Bresenham line algorithm.</span>
-<span class="comment">%   downscalexy    - Downsample monotically an input image.</span>
-<span class="comment">%   upscalexy      - Upsample monotically an input image.</span>
-<span class="comment">%   gridblk        - Compute the centers' coordinates and the size of the</span>
-<span class="comment">%                    square blocks dividing an image in regular tiles.</span>
-<span class="comment">%   sampletriangle - Sample lattice points inside triangles.</span>
-<span class="comment">%   sampledisk     - Sample lattice points inside disks.</span>
-<span class="comment">%   drawleakcircle - Create and/or draw a discrete disk with holes.</span>
-<span class="comment">%   drawcircle     - Create and/or draw a simple circle.</span>
-<span class="comment">%   drawgestalt    - Create and/or draw simple figures of Gestalt contours.</span>
-<span class="comment">%</span>
-<span class="comment">% kernel/  Kernel operators:</span>
-<span class="comment">%   gausskernel    - Compute a 1D or 2D Gaussian filter.</span>
-<span class="comment">%   dirgausskernel - Compute an oriented Gaussian kernel.</span>
-<span class="comment">%   hourglasskernel - Compute an oriented non-linear spatial hourglass filter.</span>
-<span class="comment">%   euclidkernel   - Create a kernel spatially weighted with the euclidean</span>
-<span class="comment">%                    distance.</span>
-<span class="comment">%   local3x3kernel - Compute local kernels defined by zones and levels.</span>
-<span class="comment">%   neiposkernel   - Create the kernel containing the indices and subscript</span>
-<span class="comment">%                    positions of the grid pixels of a given square window.</span>
-<span class="comment">%</span>
-<span class="comment">% morphology/  Mathematical morphology:</span>
-<span class="comment">%   asf            - Apply the Alternate Sequential Filtering and the ASF by</span>
-<span class="comment">%                    reconstruction of an image.</span>
-<span class="comment">%   morphprofile   - Compute the morphological profile, the derivative</span>
-<span class="comment">%                    morphological profile by opening and closing and the</span>
-<span class="comment">%                    morphological multiscale characteristics.</span>
-<span class="comment">%   granulometry   - Compute a granulometry through a series of morphological</span>
-<span class="comment">%                    operations.</span>
-<span class="comment">%   fractalmorph   -</span>
-<span class="comment">%   imreconstructby - Perform opening- an closing-by-reconstruction.</span>
-<span class="comment">%   imrclose       - Wrapping function for closing by reconstruction.</span>
-<span class="comment">%   imropen        - Wrapping function for opening by reconstruction.</span>
-<span class="comment">%   imeragrad      - Compute the operation consisting of a morphological</span>
-<span class="comment">%                    gradient followed by an erosion.</span>
-<span class="comment">%   fastcrossdilation -</span>
-<span class="comment">%   imlabel        - Label connected components in 2-D arrays.</span>
-<span class="comment">%   bwisolated     - Extract isolated pixels from a logical image.</span>
-<span class="comment">%   bwthinupsample - Perform the upsampled morphological thinning of a binary</span>
-<span class="comment">%                    image.</span>
-<span class="comment">%   enhanceline    -</span>
-<span class="comment">%   flatstrel      - Wrapping function for STREL used for creating 2D flat</span>
-<span class="comment">%                    structuring elements.</span>
-<span class="comment">%</span>
-<span class="comment">% propagation/  Propagation and Fast Marching methods:</span>
-<span class="comment">%   fmm            - Launch the Fast Marching algorithm in 2D.</span>
-<span class="comment">%   fmmisopropagation_base - Apply classical and multistencil Fast Marching</span>
-<span class="comment">%                    method in 2D.</span>
-<span class="comment">%   fmmanisopropagation_base - Perform anisotropic Fast Marching.</span>
-<span class="comment">%   fmmpath_base   - Extract a discrete geodesic path using gradient descent</span>
-<span class="comment">%                    or Runge-Kutta method.</span>
-<span class="comment">%   dijkstrapropagation_base - Shortest distance from multiple source points</span>
-<span class="comment">%                    on graph.</span>
-<span class="comment">%   im2front       - Perform a multiple front propagation from a set of seed</span>
-<span class="comment">%                    points using a metric derived from the input image.</span>
-<span class="comment">%   im2potential_base - Design a metric to be used as a potential function in</span>
-<span class="comment">%                    front propagation.</span>
-<span class="comment">%   potential2front_base - Propagate a (isotropic or anisotropic) front from</span>
-<span class="comment">%                    a set of seed poinrs</span>
-<span class="comment">%   saddlefront_base - Compute saddle points of an map of influence zones.</span>
-<span class="comment">%</span>
-<span class="comment">% segmentation/  Segmentation functions:</span>
-<span class="comment">%   geodesicwshed  - Perform geodesic based watershed segmentation of an image.</span>
-<span class="comment">%   slicsuperpix   - Compute superpixels based on the Simple Linear Iterative</span>
-<span class="comment">%                    Clustering segmentation technique.</span>
-<span class="comment">%   geosuperpix    - Compute geodesic superpixels similarly to the Simple Linear</span>
-<span class="comment">%                    Iterative Clustering segmentation technique.</span>
-<span class="comment">%   lifetimeseg    - Pixelwise life time index computed over a stack of labelled</span>
-<span class="comment">%                    images.</span>
-<span class="comment">%   regionadjacency - Compute a sparse adjacency matrix for a labelled</span>
-<span class="comment">%                    image of segmentation.</span>
-<span class="comment">%   regionclean    - Clean up an image segmentation by deleting regions which</span>
-<span class="comment">%                    do not obey certain shape/area criteria.</span>
-<span class="comment">%</span>
-<span class="comment">% statistics/  Basic statistical tools and operators:</span>
-<span class="comment">%   conv2fft       - FFT based two dimensional convolution.</span>
-<span class="comment">%   convfft        - FFT based convolution and polynomial multiplication.</span>
-<span class="comment">%   findzeroextrema1d - Wrapping function for popular Matlab functions</span>
-<span class="comment">%                    calculating extremas and/or zero-crossings of 1D signals.</span>
-<span class="comment">%   grididw_base   - Perform Inverse Distance Weighting or Simple Moving</span>
-<span class="comment">%                    Average of sampled data.</span>
-<span class="comment">%   grididwreduced_base - Perform reduced Inverse Distance Weighting.</span>
-<span class="comment">%   histoequalization - Perform histogram equalization,.</span>
-<span class="comment">%   integralimage_base - Compute the integral image of an image.</span>
-<span class="comment">%   histointegral1d_base - Compute the integral histograms in cartesian space</span>
-<span class="comment">%                    of an image.</span>
-<span class="comment">%   histointegral2d_base - Compute the 2d integral histograms of the joint</span>
-<span class="comment">%                    distribution of a couple of images.</span>
-<span class="comment">%   histointegraljoint_base - Compute the joint integral histograms.</span>
-<span class="comment">%   rankintegral_base -</span>
-<span class="comment">%   histoslidefunction - Function for computing local statistical features</span>
-<span class="comment">%                    based on local histograms computed over sliding windows.</span>
-<span class="comment">%   localsum - Compute local sum of an image in a square window.</span>
-<span class="comment">%   mutualsingfractal_base - Quantify the degree of mutual closeness of two</span>
-<span class="comment">%                    singularity spectra.</span>
-<span class="comment">%   accumarrayset  - Group elements from a data vector set as they share a</span>
-<span class="comment">%                    same index; fast version of ACCUMARRAY(..., @(x){x}).</span>
-<span class="comment">%   uniquenosort   - Find unique elements of vector likewise UNIQUE, but,</span>
-<span class="comment">%                    contrary to it, without sorting the results.</span>
-<span class="comment">%   allcombs       - Returns all 'crossed' combinations of elements in input</span>
-<span class="comment">%                    vectors.</span>
-<span class="comment">%   rescale        - Rescale data in [a,b].</span>
-<span class="comment">%   clamp          - Clamp a value, cell of values or array.</span>
-<span class="comment">%   nb_dims        - Debugged version of NDIMS.</span>
-<span class="comment">%</span>
-<span class="comment">% texture/  Texture analysis and representations:</span>
-<span class="comment">%   localglcm2d    - Compute local textural features using the 2D histograms</span>
-<span class="comment">%                    of joint distribution of greylevel pairs.</span>
-<span class="comment">%   localglov2d    - Compute local textural features using the 1D histograms</span>
-<span class="comment">%                    of univariate distribution of greylevels.</span>
-<span class="comment">%   localglsdv2d    - Compute local textural features using the 1D histograms</span>
-<span class="comment">%                    of univariate distribution of greylevel differences.</span>
-<span class="comment">%   integralglcm2d_base -</span>
-<span class="comment">%   integralglov2d_base -</span>
-<span class="comment">%   histfeatures   - Calculate all textural features from (co)occurrences</span>
-<span class="comment">%                    matrices.</span>
-<span class="comment">%   histcontrast   - Calculate the contrast feature .</span>
-<span class="comment">%   histcorrelation - Calculate the correlation feature.</span>
-<span class="comment">%   histdissimilarity - Calculate the dissimilarity feature.</span>
-<span class="comment">%   histenergy     - Calculate the ENERGY (2nd angular moment) feature.</span>
-<span class="comment">%   histentropy10  - Calculate the entropy feature.</span>
-<span class="comment">%   histentropy2   - Calculate the entropy feature in bits.</span>
-<span class="comment">%   histhomogeneity - Calculate the homogeneity feature.</span>
-<span class="comment">%   histidifference - Calculate the inverse difference feature.</span>
-<span class="comment">%   histdissimilarity - Calculate the maximum feature.</span>
-<span class="comment">%   histmean       - Calculate the mean feature.</span>
-<span class="comment">%   histvariance   - Calculate the variance feature.</span>
-<span class="comment">%</span>
-<span class="comment">% misc/  Miscellaneous functions:</span>
-<span class="comment">%   askifcontinue  - Utilitiy function to pause a program and asking if</span>
-<span class="comment">%                    pursueing it or not.</span>
-<span class="comment">%   catstruct      - Concatenate structures.</span>
-<span class="comment">%   mergestruct    - Merge structures with unique fields.</span>
-<span class="comment">%   str2vsubstr    - Vertically concatenate the substrings of a collection</span>
-<span class="comment">%                    of patterns strings found in the input string.</span>
-<span class="comment">%   structa2astruct - Utility function converting a structure of arrays an</span>
-<span class="comment">%                    array of structures for utility.</span>
-<span class="comment">%   comparecols    - Compare the columns of a matrix in increasing order.</span>
-<span class="comment">%   createparser   - Create an instance of the inputParser class, with some</span>
-<span class="comment">%                    additional fields.</span>
-<span class="comment">%   getvarparser   - Returns the structure containing the full list of parameters</span>
-<span class="comment">%                    from the input Parser structure.</span>
-<span class="comment">%   freadenvi      - Read an image of ENVI standard type to a MATLAB array.</span>
-</pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.14<br></p></div><!--
-##### SOURCE BEGIN #####
-% grazzja - Utility function
-%
-% credit: J.Grazzini 
-%
-% cluster/  Clustering and classification:		
-%   fuzzbound      - Computes the fuzzy boundaries on a fuzzy categorical map.
-%
-% derive/  Differentiation functions:		
-%   gstsmooth      - Compute the Gradient Structure Tensor of a (possibly 
-%                    multichannel) image.
-%   grdsmooth      - Compute the directional derivatives of an image.
-%   hessmooth      - Compute the Hessian Tensor of a (possibly multichannel)
-%                    image.
-%   gstdecomp      - Perform the eigen decomposition or the reconstruction
-%                    of a tensor field. 
-%   gstfeature     - Derive features like norm, orientation, coherence, or 
-%                    inertia from tensor representation
-%   grd2gst        - Compute the entries of the gradient structure tensor of
-%                    an image from its directional derivatives.
-%   grd2hess       - Compute the entries of the Hessian of an image from its
-%                    directional derivatives.
-%   grdmask        - Compute the directional derivatives of an image through
-%                    classical gradient operators using local difference masks.
-%
-% feature/  Feature extraction:		
-%   anisoedge      - Anisotropic diffusion edge detector.
-%   cannyedge      - Wrapping function calling either edge, cannyedges or
-%                    cannyedgemap.
-%   cannyedgefuse  - Two-scale Canny edge detection by fusion of the binary
-%                    Canny edge maps at two different scales.
-%   cannyedgemap   - Edge map calculation. 
-%   cannyedgeprod  - Two-scale Canny edge detection obtained by multiplication
-%                    of Canny edge responses at two different scales.
-%   compassedge    - Wrapping function for the Generalized Compass Operator.
-%   congruencyedge - Wrapping function for Kovesi'sedge and corner detector
-%                    based on phase congrunecy. 
-%   corner         - Wrapping function for various corner detection methods.
-%   curvecorner    - Corner detection in edge map based on curvature. 
-%   edgecorner     - Wrapping function for various edge/corner detection
-%                    techniques.
-%   elderzuckeredge - Elder & Zucker's multi-scale edge detector.
-%   fastcorner     - Wrapping function for the FAST corner detector.
-%   fastcpda       - Fast corner detector based on the chord-to-point distance
-%                    accumulation technique.
-%   harriscorner   - Harris' corner/keypoints detector.
-%   inforgbedge    - Provide edge magnitude and orientation of colour images
-%                    based on its derivatives
-%   koethedge      - Koethe's edge/corner detector based on the gradient
-%                    structure tensor.
-%   multiedge      - Compute a multiscale edge map using a 2D Sobel-like
-%                    wavelet.
-%   petrouedge     - Petrou & Kitller's edge detector.
-%   rothwelledge   - Rothwell's subpixel edge detector.
-%   sdgdedge       - Edge detection filter based on the 2nd derivative and/or
-%                    Laplacian in the gradient direction.  
-%   susancorner    - SUSAN Edge/corner detection or image smoothing.
-%
-% filter/  Filtering functions:
-%   adaptivefilt   - Perform adaptive filtering.
-%   anisor         - Compute orientation information from the anisotropic
-%                    continous scale model.
-%   anisorfilt     - Morphological anisotropic diffusion using the orientation
-%                    information from the anisotropic continous scale model.
-%   bilateral_base - Perform bilateral filtering on monochrome images. 
-%   bilateralstack_base - Fast version of the bilateral filter using stacks.
-%   blurmap        - Adaptive local isotropic Gaussian bluring of an image.
-%   convolution    - Compute convolution with centered filter.
-%   findlocalextrema - Extracts the extrema of any multispectral image in
-%                    local square neigbourhoods.
-%   findlocalmax   - Determine the local maxima of a given matrix image.
-%   fuzzimpulse    - Perform fuzzy impulse noise reduction in images.
-%   geodesicfilt   - Sigma-filter based on local geodesic similarity measures 
-%                    for edge-preserving smoothing of multispectral images.
-%   mdlfilt        - Local adaptive filtering based on Minimal Description
-%                    Length principle.
-%   smoothfilt     - Perform either classical isotropic (Gaussian) smoothing
-%                    or anisotropic non-linear  smoothing.
-%   tensanifilt    - Perform Gaussian adaptive filtering of an image using
-%                    an anisotropic tensor field.
-%   tenscaledirfilt - Perform Gaussian adaptive directional filtering along
-%                    tensor field using a local adaptive scale.
-%   wmedfilt2      - Perform weighted median filtering of a (possibly
-%                    multispectral) image.
-%   wordfilt2      - Perform weighted order-statistic filtering of a
-%                    (possibly multispectral) image.
-% 
-% fractal/  Fractal analysis:
-%   fractalwave     - 
-%   fractalwavestat - 
-%   singfractalrecons_base - 
-%   waveprofile_base - 
-%
-% graph/  Graph and network analysis and representation:
-%   bfs_base       - Compute breadth first search distances, times, and tree
-%                    of a graph and extracts valid paths.
-%   dfs_base       - Perform a depth-first search (DFS) of a graph.
-%   scomponents_base - Compute the strongly connected components of a graph
-%                    and extracts valid paths.
-%   dijkstra       - Implementation of Dijkstra algorithm, allowing for single
-%                    and multiple sources distance calculation. 
-%   dijk_base      - Implementation of Dijkstra algorithm.
-%   dijkadvanced_base - Calculate minimum costs and paths using Dijkstra's 
-%                    algorithm.
-%   graphmap       - Converts binary map to connected graph and reciprocally.
-%   graph2map_base - Converts a spatial unweighted graph into a 2D logical
-%                    map.
-%   map2graph_base - Converts a 2D logical map into a weighted graph. 
-%   graphweight_base - Convert an unweighted spatial graph into a weighted
-%                    graph.
-%   graphrepresent - Raster representation (and display) of a weighted graph. 
-%   ixneighbours   - Return the indices of neighbour cells in a matrix. 
-%
-% pdem/  Pseudo-DEM generation functions:		
-%
-% pyramid/  Hierarchical pyramid analysis and decomposition:		
-%   pyrdown        - Top-down pyramidal hierarchical decomposition.
-%   pyrup          - Bottom-up pyramidal hierarchical decomposition.  
-%   reduce2d       - Wrapping function for the reduce2D operator of the BIG
-%                    Spline Pyramids Software.
-%   expand2d       - Wrapping function for the expand2d operator of the BIG
-%                    Spline Pyramids Software.
-%
-% sharpen/  Sharpening and enhancing functions:		 
-%
-% geometry/  Basic geometrical tools: 	
-%   bresenhamline  - 2D Bresenham line algorithm. 
-%   downscalexy    - Downsample monotically an input image. 
-%   upscalexy      - Upsample monotically an input image.
-%   gridblk        - Compute the centers' coordinates and the size of the
-%                    square blocks dividing an image in regular tiles.
-%   sampletriangle - Sample lattice points inside triangles.
-%   sampledisk     - Sample lattice points inside disks.
-%   drawleakcircle - Create and/or draw a discrete disk with holes. 
-%   drawcircle     - Create and/or draw a simple circle.
-%   drawgestalt    - Create and/or draw simple figures of Gestalt contours.
-%
-% kernel/  Kernel operators:		
-%   gausskernel    - Compute a 1D or 2D Gaussian filter.
-%   dirgausskernel - Compute an oriented Gaussian kernel.
-%   hourglasskernel - Compute an oriented non-linear spatial hourglass filter.
-%   euclidkernel   - Create a kernel spatially weighted with the euclidean
-%                    distance.
-%   local3x3kernel - Compute local kernels defined by zones and levels.
-%   neiposkernel   - Create the kernel containing the indices and subscript
-%                    positions of the grid pixels of a given square window.
-%
-% morphology/  Mathematical morphology:	
-%   asf            - Apply the Alternate Sequential Filtering and the ASF by
-%                    reconstruction of an image.
-%   morphprofile   - Compute the morphological profile, the derivative 
-%                    morphological profile by opening and closing and the
-%                    morphological multiscale characteristics.
-%   granulometry   - Compute a granulometry through a series of morphological
-%                    operations.  
-%   fractalmorph   - 
-%   imreconstructby - Perform opening- an closing-by-reconstruction.
-%   imrclose       - Wrapping function for closing by reconstruction.
-%   imropen        - Wrapping function for opening by reconstruction.
-%   imeragrad      - Compute the operation consisting of a morphological
-%                    gradient followed by an erosion.
-%   fastcrossdilation - 
-%   imlabel        - Label connected components in 2-D arrays.  
-%   bwisolated     - Extract isolated pixels from a logical image.
-%   bwthinupsample - Perform the upsampled morphological thinning of a binary 
-%                    image.
-%   enhanceline    - 
-%   flatstrel      - Wrapping function for STREL used for creating 2D flat
-%                    structuring elements.
-%
-% propagation/  Propagation and Fast Marching methods:	
-%   fmm            - Launch the Fast Marching algorithm in 2D.
-%   fmmisopropagation_base - Apply classical and multistencil Fast Marching
-%                    method in 2D.
-%   fmmanisopropagation_base - Perform anisotropic Fast Marching.
-%   fmmpath_base   - Extract a discrete geodesic path using gradient descent
-%                    or Runge-Kutta method.
-%   dijkstrapropagation_base - Shortest distance from multiple source points
-%                    on graph.
-%   im2front       - Perform a multiple front propagation from a set of seed
-%                    points using a metric derived from the input image.
-%   im2potential_base - Design a metric to be used as a potential function in
-%                    front propagation.
-%   potential2front_base - Propagate a (isotropic or anisotropic) front from
-%                    a set of seed poinrs
-%   saddlefront_base - Compute saddle points of an map of influence zones.
-%
-% segmentation/  Segmentation functions:	
-%   geodesicwshed  - Perform geodesic based watershed segmentation of an image.
-%   slicsuperpix   - Compute superpixels based on the Simple Linear Iterative
-%                    Clustering segmentation technique.
-%   geosuperpix    - Compute geodesic superpixels similarly to the Simple Linear
-%                    Iterative Clustering segmentation technique.
-%   lifetimeseg    - Pixelwise life time index computed over a stack of labelled
-%                    images.
-%   regionadjacency - Compute a sparse adjacency matrix for a labelled
-%                    image of segmentation.
-%   regionclean    - Clean up an image segmentation by deleting regions which
-%                    do not obey certain shape/area criteria.
-%
-% statistics/  Basic statistical tools and operators:	
-%   conv2fft       - FFT based two dimensional convolution.
-%   convfft        - FFT based convolution and polynomial multiplication.
-%   findzeroextrema1d - Wrapping function for popular Matlab functions 
-%                    calculating extremas and/or zero-crossings of 1D signals. 
-%   grididw_base   - Perform Inverse Distance Weighting or Simple Moving
-%                    Average of sampled data.
-%   grididwreduced_base - Perform reduced Inverse Distance Weighting.
-%   histoequalization - Perform histogram equalization,.
-%   integralimage_base - Compute the integral image of an image.
-%   histointegral1d_base - Compute the integral histograms in cartesian space
-%                    of an image.
-%   histointegral2d_base - Compute the 2d integral histograms of the joint 
-%                    distribution of a couple of images.
-%   histointegraljoint_base - Compute the joint integral histograms.
-%   rankintegral_base - 
-%   histoslidefunction - Function for computing local statistical features
-%                    based on local histograms computed over sliding windows.
-%   localsum - Compute local sum of an image in a square window.
-%   mutualsingfractal_base - Quantify the degree of mutual closeness of two
-%                    singularity spectra.
-%   accumarrayset  - Group elements from a data vector set as they share a
-%                    same index; fast version of ACCUMARRAY(..., @(x){x}).
-%   uniquenosort   - Find unique elements of vector likewise UNIQUE, but,
-%                    contrary to it, without sorting the results.
-%   allcombs       - Returns all 'crossed' combinations of elements in input
-%                    vectors.
-%   rescale        - Rescale data in [a,b].
-%   clamp          - Clamp a value, cell of values or array.
-%   nb_dims        - Debugged version of NDIMS.
-%
-% texture/  Texture analysis and representations:		
-%   localglcm2d    - Compute local textural features using the 2D histograms
-%                    of joint distribution of greylevel pairs. 
-%   localglov2d    - Compute local textural features using the 1D histograms
-%                    of univariate distribution of greylevels.
-%   localglsdv2d    - Compute local textural features using the 1D histograms
-%                    of univariate distribution of greylevel differences.
-%   integralglcm2d_base - 
-%   integralglov2d_base - 
-%   histfeatures   - Calculate all textural features from (co)occurrences
-%                    matrices.
-%   histcontrast   - Calculate the contrast feature .
-%   histcorrelation - Calculate the correlation feature.
-%   histdissimilarity - Calculate the dissimilarity feature.
-%   histenergy     - Calculate the ENERGY (2nd angular moment) feature.
-%   histentropy10  - Calculate the entropy feature.
-%   histentropy2   - Calculate the entropy feature in bits.
-%   histhomogeneity - Calculate the homogeneity feature.
-%   histidifference - Calculate the inverse difference feature.
-%   histdissimilarity - Calculate the maximum feature.
-%   histmean       - Calculate the mean feature.
-%   histvariance   - Calculate the variance feature.
-%
-% misc/  Miscellaneous functions:		
-%   askifcontinue  - Utilitiy function to pause a program and asking if
-%                    pursueing it or not.
-%   catstruct      - Concatenate structures.
-%   mergestruct    - Merge structures with unique fields.
-%   str2vsubstr    - Vertically concatenate the substrings of a collection 
-%                    of patterns strings found in the input string.
-%   structa2astruct - Utility function converting a structure of arrays an 
-%                    array of structures for utility.
-%   comparecols    - Compare the columns of a matrix in increasing order.
-%   createparser   - Create an instance of the inputParser class, with some
-%                    additional fields.
-%   getvarparser   - Returns the structure containing the full list of parameters
-%                    from the input Parser structure.
-%   freadenvi      - Read an image of ENVI standard type to a MATLAB array.
-
-
-##### SOURCE END #####
---></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>  <head>    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">    <title>Contents</title>    <meta name="generator" content="MATLAB 7.14">    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">    <meta name="DC.date" content="2012-05-31">    <meta name="DC.source" content="Contents.m">    <style type="text/css">html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}html { min-height:100%; margin-bottom:1px; }html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }html body td { vertical-align:top; text-align:left; }h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }a { color:#005fce; text-decoration:none; }a:hover { color:#005fce; text-decoration:underline; }a:visited { color:#004aa0; text-decoration:none; }p { padding:0px; margin:0px 0px 20px; }img { padding:0px; margin:0px 0px 20px; border:none; }p img, pre img, tt img, li img { margin-bottom:0px; } ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }ul li { padding:0px; margin:0px 0px 7px 0px; }ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }ul li ol li { list-style:decimal; }ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }ol li ol li { list-style-type:lower-alpha; }ol li ul { padding-top:7px; }ol li ul li { list-style:square; }.content { font-size:1.2em; line-height:140%; padding: 20px; }pre, tt, code { font-size:12px; }pre { margin:0px 0px 20px; }pre.error { color:red; }pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }span.keyword { color:#0000FF }span.comment { color:#228B22 }span.string { color:#A020F0 }span.untermstring { color:#B20000 }span.syscmd { color:#B28C00 }.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }.footer p { margin:0px; }  </style>  </head>  <body>    <div class="content">      <pre class="codeinput"><span class="comment">% Utility functions</span><span class="comment">%</span><span class="comment">% credit: J.Grazzini</span><span class="comment">%</span><span class="comment">% cluster/  Clustering and classification:</span><span class="comment">%   fuzzbound      - Computes the fuzzy boundaries on a fuzzy categorical map.</span><span class="comment">%</span><span class="comment">% derive/  Differentiation functions:</span><span class="comment">%   gstsmooth      - Compute the Gradient Structure Tensor of a (possibly</span><span class="comment">%                    multichannel) image.</span><span class="comment">%   grdsmooth      - Compute the directional derivatives of an image.</span><span class="comment">%   hessmooth      - Compute the Hessian Tensor of a (possibly multichannel)</span><span class="comment">%                    image.</span><span class="comment">%   gstdecomp      - Perform the eigen decomposition or the reconstruction</span><span class="comment">%                    of a tensor field.</span><span class="comment">%   gstfeature     - Derive features like norm, orientation, coherence, or</span><span class="comment">%                    inertia from tensor representation</span><span class="comment">%   grd2gst        - Compute the entries of the gradient structure tensor of</span><span class="comment">%                    an image from its directional derivatives.</span><span class="comment">%   grd2hess       - Compute the entries of the Hessian of an image from its</span><span class="comment">%                    directional derivatives.</span><span class="comment">%   grdmask        - Compute the directional derivatives of an image through</span><span class="comment">%                    classical gradient operators using local difference masks.</span><span class="comment">%</span><span class="comment">% feature/  Feature extraction:</span><span class="comment">%   anisoedge      - Anisotropic diffusion edge detector.</span><span class="comment">%   cannyedge      - Wrapping function calling either edge, cannyedges or</span><span class="comment">%                    cannyedgemap.</span><span class="comment">%   cannyedgefuse  - Two-scale Canny edge detection by fusion of the binary</span><span class="comment">%                    Canny edge maps at two different scales.</span><span class="comment">%   cannyedgemap   - Edge map calculation.</span><span class="comment">%   cannyedgeprod  - Two-scale Canny edge detection obtained by multiplication</span><span class="comment">%                    of Canny edge responses at two different scales.</span><span class="comment">%   compassedge    - Wrapping function for the Generalized Compass Operator.</span><span class="comment">%   congruencyedge - Wrapping function for Kovesi'sedge and corner detector</span><span class="comment">%                    based on phase congrunecy.</span><span class="comment">%   corner         - Wrapping function for various corner detection methods.</span><span class="comment">%   curvecorner    - Corner detection in edge map based on curvature.</span><span class="comment">%   edgecorner     - Wrapping function for various edge/corner detection</span><span class="comment">%                    techniques.</span><span class="comment">%   elderzuckeredge - Elder &amp; Zucker's multi-scale edge detector.</span><span class="comment">%   fastcorner     - Wrapping function for the FAST corner detector.</span><span class="comment">%   fastcpda       - Fast corner detector based on the chord-to-point distance</span><span class="comment">%                    accumulation technique.</span><span class="comment">%   harriscorner   - Harris' corner/keypoints detector.</span><span class="comment">%   inforgbedge    - Provide edge magnitude and orientation of colour images</span><span class="comment">%                    based on its derivatives</span><span class="comment">%   koethedge      - Koethe's edge/corner detector based on the gradient</span><span class="comment">%                    structure tensor.</span><span class="comment">%   multiedge      - Compute a multiscale edge map using a 2D Sobel-like</span><span class="comment">%                    wavelet.</span><span class="comment">%   petrouedge     - Petrou &amp; Kitller's edge detector.</span><span class="comment">%   rothwelledge   - Rothwell's subpixel edge detector.</span><span class="comment">%   sdgdedge       - Edge detection filter based on the 2nd derivative and/or</span><span class="comment">%                    Laplacian in the gradient direction.</span><span class="comment">%   susancorner    - SUSAN Edge/corner detection or image smoothing.</span><span class="comment">%</span><span class="comment">% filter/  Filtering functions:</span><span class="comment">%   adaptivefilt   - Perform adaptive filtering.</span><span class="comment">%   anisor         - Compute orientation information from the anisotropic</span><span class="comment">%                    continous scale model.</span><span class="comment">%   anisorfilt     - Morphological anisotropic diffusion using the orientation</span><span class="comment">%                    information from the anisotropic continous scale model.</span><span class="comment">%   bilateral_base - Perform bilateral filtering on monochrome images.</span><span class="comment">%   bilateralstack_base - Fast version of the bilateral filter using stacks.</span><span class="comment">%   blurmap        - Adaptive local isotropic Gaussian bluring of an image.</span><span class="comment">%   convolution    - Compute convolution with centered filter.</span><span class="comment">%   findlocalextrema - Extracts the extrema of any multispectral image in</span><span class="comment">%                    local square neigbourhoods.</span><span class="comment">%   findlocalmax   - Determine the local maxima of a given matrix image.</span><span class="comment">%   fuzzimpulse    - Perform fuzzy impulse noise reduction in images.</span><span class="comment">%   geodesicfilt   - Sigma-filter based on local geodesic similarity measures</span><span class="comment">%                    for edge-preserving smoothing of multispectral images.</span><span class="comment">%   mdlfilt        - Local adaptive filtering based on Minimal Description</span><span class="comment">%                    Length principle.</span><span class="comment">%   smoothfilt     - Perform either classical isotropic (Gaussian) smoothing</span><span class="comment">%                    or anisotropic non-linear  smoothing.</span><span class="comment">%   tensanifilt    - Perform Gaussian adaptive filtering of an image using</span><span class="comment">%                    an anisotropic tensor field.</span><span class="comment">%   tenscaledirfilt - Perform Gaussian adaptive directional filtering along</span><span class="comment">%                    tensor field using a local adaptive scale.</span><span class="comment">%   wmedfilt2      - Perform weighted median filtering of a (possibly</span><span class="comment">%                    multispectral) image.</span><span class="comment">%   wordfilt2      - Perform weighted order-statistic filtering of a</span><span class="comment">%                    (possibly multispectral) image.</span><span class="comment">%</span><span class="comment">% fractal/  Fractal analysis:</span><span class="comment">%   fractalwave     -</span><span class="comment">%   fractalwavestat -</span><span class="comment">%   singfractalrecons_base -</span><span class="comment">%   waveprofile_base -</span><span class="comment">%</span><span class="comment">% graph/  Graph and network analysis and representation:</span><span class="comment">%   bfs_base       - Compute breadth first search distances, times, and tree</span><span class="comment">%                    of a graph and extracts valid paths.</span><span class="comment">%   dfs_base       - Perform a depth-first search (DFS) of a graph.</span><span class="comment">%   scomponents_base - Compute the strongly connected components of a graph</span><span class="comment">%                    and extracts valid paths.</span><span class="comment">%   dijkstra       - Implementation of Dijkstra algorithm, allowing for single</span><span class="comment">%                    and multiple sources distance calculation.</span><span class="comment">%   dijk_base      - Implementation of Dijkstra algorithm.</span><span class="comment">%   dijkadvanced_base - Calculate minimum costs and paths using Dijkstra's</span><span class="comment">%                    algorithm.</span><span class="comment">%   graphmap       - Converts binary map to connected graph and reciprocally.</span><span class="comment">%   graph2map_base - Converts a spatial unweighted graph into a 2D logical</span><span class="comment">%                    map.</span><span class="comment">%   map2graph_base - Converts a 2D logical map into a weighted graph.</span><span class="comment">%   graphweight_base - Convert an unweighted spatial graph into a weighted</span><span class="comment">%                    graph.</span><span class="comment">%   graphrepresent - Raster representation (and display) of a weighted graph.</span><span class="comment">%   ixneighbours   - Return the indices of neighbour cells in a matrix.</span><span class="comment">%</span><span class="comment">% pdem/  Pseudo-DEM generation functions:</span><span class="comment">%</span><span class="comment">% pyramid/  Hierarchical pyramid analysis and decomposition:</span><span class="comment">%   pyrdown        - Top-down pyramidal hierarchical decomposition.</span><span class="comment">%   pyrup          - Bottom-up pyramidal hierarchical decomposition.</span><span class="comment">%   reduce2d       - Wrapping function for the reduce2D operator of the BIG</span><span class="comment">%                    Spline Pyramids Software.</span><span class="comment">%   expand2d       - Wrapping function for the expand2d operator of the BIG</span><span class="comment">%                    Spline Pyramids Software.</span><span class="comment">%</span><span class="comment">% sharpen/  Sharpening and enhancing functions:</span><span class="comment">%</span><span class="comment">% geometry/  Basic geometrical tools:</span><span class="comment">%   bresenhamline  - 2D Bresenham line algorithm.</span><span class="comment">%   downscalexy    - Downsample monotically an input image.</span><span class="comment">%   upscalexy      - Upsample monotically an input image.</span><span class="comment">%   gridblk        - Compute the centers' coordinates and the size of the</span><span class="comment">%                    square blocks dividing an image in regular tiles.</span><span class="comment">%   sampletriangle - Sample lattice points inside triangles.</span><span class="comment">%   sampledisk     - Sample lattice points inside disks.</span><span class="comment">%   drawleakcircle - Create and/or draw a discrete disk with holes.</span><span class="comment">%   drawcircle     - Create and/or draw a simple circle.</span><span class="comment">%   drawgestalt    - Create and/or draw simple figures of Gestalt contours.</span><span class="comment">%</span><span class="comment">% kernel/  Kernel operators:</span><span class="comment">%   gausskernel    - Compute a 1D or 2D Gaussian filter.</span><span class="comment">%   dirgausskernel - Compute an oriented Gaussian kernel.</span><span class="comment">%   hourglasskernel - Compute an oriented non-linear spatial hourglass filter.</span><span class="comment">%   euclidkernel   - Create a kernel spatially weighted with the euclidean</span><span class="comment">%                    distance.</span><span class="comment">%   local3x3kernel - Compute local kernels defined by zones and levels.</span><span class="comment">%   neiposkernel   - Create the kernel containing the indices and subscript</span><span class="comment">%                    positions of the grid pixels of a given square window.</span><span class="comment">%</span><span class="comment">% morphology/  Mathematical morphology:</span><span class="comment">%   asf            - Apply the Alternate Sequential Filtering and the ASF by</span><span class="comment">%                    reconstruction of an image.</span><span class="comment">%   morphprofile   - Compute the morphological profile, the derivative</span><span class="comment">%                    morphological profile by opening and closing and the</span><span class="comment">%                    morphological multiscale characteristics.</span><span class="comment">%   granulometry   - Compute a granulometry through a series of morphological</span><span class="comment">%                    operations.</span><span class="comment">%   fractalmorph   -</span><span class="comment">%   imreconstructby - Perform opening- an closing-by-reconstruction.</span><span class="comment">%   imrclose       - Wrapping function for closing by reconstruction.</span><span class="comment">%   imropen        - Wrapping function for opening by reconstruction.</span><span class="comment">%   imeragrad      - Compute the operation consisting of a morphological</span><span class="comment">%                    gradient followed by an erosion.</span><span class="comment">%   fastcrossdilation -</span><span class="comment">%   imlabel        - Label connected components in 2-D arrays.</span><span class="comment">%   bwisolated     - Extract isolated pixels from a logical image.</span><span class="comment">%   bwthinupsample - Perform the upsampled morphological thinning of a binary</span><span class="comment">%                    image.</span><span class="comment">%   enhanceline    -</span><span class="comment">%   flatstrel      - Wrapping function for STREL used for creating 2D flat</span><span class="comment">%                    structuring elements.</span><span class="comment">%</span><span class="comment">% propagation/  Propagation and Fast Marching methods:</span><span class="comment">%   fmm            - Launch the Fast Marching algorithm in 2D.</span><span class="comment">%   fmmisopropagation_base - Apply classical and multistencil Fast Marching</span><span class="comment">%                    method in 2D.</span><span class="comment">%   fmmanisopropagation_base - Perform anisotropic Fast Marching.</span><span class="comment">%   fmmpath_base   - Extract a discrete geodesic path using gradient descent</span><span class="comment">%                    or Runge-Kutta method.</span><span class="comment">%   dijkstrapropagation_base - Shortest distance from multiple source points</span><span class="comment">%                    on graph.</span><span class="comment">%   im2front       - Perform a multiple front propagation from a set of seed</span><span class="comment">%                    points using a metric derived from the input image.</span><span class="comment">%   im2potential_base - Design a metric to be used as a potential function in</span><span class="comment">%                    front propagation.</span><span class="comment">%   potential2front_base - Propagate a (isotropic or anisotropic) front from</span><span class="comment">%                    a set of seed poinrs</span><span class="comment">%   saddlefront_base - Compute saddle points of an map of influence zones.</span><span class="comment">%</span><span class="comment">% segmentation/  Segmentation functions:</span><span class="comment">%   geodesicwshed  - Perform geodesic based watershed segmentation of an image.</span><span class="comment">%   slicsuperpix   - Compute superpixels based on the Simple Linear Iterative</span><span class="comment">%                    Clustering segmentation technique.</span><span class="comment">%   geosuperpix    - Compute geodesic superpixels similarly to the Simple Linear</span><span class="comment">%                    Iterative Clustering segmentation technique.</span><span class="comment">%   lifetimeseg    - Pixelwise life time index computed over a stack of labelled</span><span class="comment">%                    images.</span><span class="comment">%   regionadjacency - Compute a sparse adjacency matrix for a labelled</span><span class="comment">%                    image of segmentation.</span><span class="comment">%   regionclean    - Clean up an image segmentation by deleting regions which</span><span class="comment">%                    do not obey certain shape/area criteria.</span><span class="comment">%</span><span class="comment">% statistics/  Basic statistical tools and operators:</span><span class="comment">%   conv2fft       - FFT based two dimensional convolution.</span><span class="comment">%   convfft        - FFT based convolution and polynomial multiplication.</span><span class="comment">%   findzeroextrema1d - Wrapping function for popular Matlab functions</span><span class="comment">%                    calculating extremas and/or zero-crossings of 1D signals.</span><span class="comment">%   grididw_base   - Perform Inverse Distance Weighting or Simple Moving</span><span class="comment">%                    Average of sampled data.</span><span class="comment">%   grididwreduced_base - Perform reduced Inverse Distance Weighting.</span><span class="comment">%   histoequalization - Perform histogram equalization,.</span><span class="comment">%   integralimage_base - Compute the integral image of an image.</span><span class="comment">%   histointegral1d_base - Compute the integral histograms in cartesian space</span><span class="comment">%                    of an image.</span><span class="comment">%   histointegral2d_base - Compute the 2d integral histograms of the joint</span><span class="comment">%                    distribution of a couple of images.</span><span class="comment">%   histointegraljoint_base - Compute the joint integral histograms.</span><span class="comment">%   rankintegral_base -</span><span class="comment">%   histoslidefunction - Function for computing local statistical features</span><span class="comment">%                    based on local histograms computed over sliding windows.</span><span class="comment">%   localsum - Compute local sum of an image in a square window.</span><span class="comment">%   mutualsingfractal_base - Quantify the degree of mutual closeness of two</span><span class="comment">%                    singularity spectra.</span><span class="comment">%   accumarrayset  - Group elements from a data vector set as they share a</span><span class="comment">%                    same index; fast version of ACCUMARRAY(..., @(x){x}).</span><span class="comment">%   uniquenosort   - Find unique elements of vector likewise UNIQUE, but,</span><span class="comment">%                    contrary to it, without sorting the results.</span><span class="comment">%   allcombs       - Returns all 'crossed' combinations of elements in input</span><span class="comment">%                    vectors.</span><span class="comment">%   rescale        - Rescale data in [a,b].</span><span class="comment">%   clamp          - Clamp a value, cell of values or array.</span><span class="comment">%   nb_dims        - Debugged version of NDIMS.</span><span class="comment">%</span><span class="comment">% texture/  Texture analysis and representations:</span><span class="comment">%   localglcm2d    - Compute local textural features using the 2D histograms</span><span class="comment">%                    of joint distribution of greylevel pairs.</span><span class="comment">%   localglov2d    - Compute local textural features using the 1D histograms</span><span class="comment">%                    of univariate distribution of greylevels.</span><span class="comment">%   localglsdv2d    - Compute local textural features using the 1D histograms</span><span class="comment">%                    of univariate distribution of greylevel differences.</span><span class="comment">%   integralglcm2d_base -</span><span class="comment">%   integralglov2d_base -</span><span class="comment">%   histfeatures   - Calculate all textural features from (co)occurrences</span><span class="comment">%                    matrices.</span><span class="comment">%   histcontrast   - Calculate the contrast feature .</span><span class="comment">%   histcorrelation - Calculate the correlation feature.</span><span class="comment">%   histdissimilarity - Calculate the dissimilarity feature.</span><span class="comment">%   histenergy     - Calculate the ENERGY (2nd angular moment) feature.</span><span class="comment">%   histentropy10  - Calculate the entropy feature.</span><span class="comment">%   histentropy2   - Calculate the entropy feature in bits.</span><span class="comment">%   histhomogeneity - Calculate the homogeneity feature.</span><span class="comment">%   histidifference - Calculate the inverse difference feature.</span><span class="comment">%   histdissimilarity - Calculate the maximum feature.</span><span class="comment">%   histmean       - Calculate the mean feature.</span><span class="comment">%   histvariance   - Calculate the variance feature.</span><span class="comment">%</span><span class="comment">% misc/  Miscellaneous functions:</span><span class="comment">%   askifcontinue  - Utilitiy function to pause a program and asking if</span><span class="comment">%                    pursueing it or not.</span><span class="comment">%   catstruct      - Concatenate structures.</span><span class="comment">%   mergestruct    - Merge structures with unique fields.</span><span class="comment">%   str2vsubstr    - Vertically concatenate the substrings of a collection</span><span class="comment">%                    of patterns strings found in the input string.</span><span class="comment">%   structa2astruct - Utility function converting a structure of arrays an</span><span class="comment">%                    array of structures for utility.</span><span class="comment">%   comparecols    - Compare the columns of a matrix in increasing order.</span><span class="comment">%   createparser   - Create an instance of the inputParser class, with some</span><span class="comment">%                    additional fields.</span><span class="comment">%   getvarparser   - Returns the structure containing the full list of parameters</span><span class="comment">%                    from the input Parser structure.</span><span class="comment">%   freadenvi      - Read an image of ENVI standard type to a MATLAB array.</span></pre> </div>    <!--##### SOURCE BEGIN #####% grazzja - Utility function%% credit: J.Grazzini %% cluster/  Clustering and classification:		%   fuzzbound      - Computes the fuzzy boundaries on a fuzzy categorical map.%% derive/  Differentiation functions:		%   gstsmooth      - Compute the Gradient Structure Tensor of a (possibly %                    multichannel) image.%   grdsmooth      - Compute the directional derivatives of an image.%   hessmooth      - Compute the Hessian Tensor of a (possibly multichannel)%                    image.%   gstdecomp      - Perform the eigen decomposition or the reconstruction%                    of a tensor field. %   gstfeature     - Derive features like norm, orientation, coherence, or %                    inertia from tensor representation%   grd2gst        - Compute the entries of the gradient structure tensor of%                    an image from its directional derivatives.%   grd2hess       - Compute the entries of the Hessian of an image from its%                    directional derivatives.%   grdmask        - Compute the directional derivatives of an image through%                    classical gradient operators using local difference masks.%% feature/  Feature extraction:		%   anisoedge      - Anisotropic diffusion edge detector.%   cannyedge      - Wrapping function calling either edge, cannyedges or%                    cannyedgemap.%   cannyedgefuse  - Two-scale Canny edge detection by fusion of the binary%                    Canny edge maps at two different scales.%   cannyedgemap   - Edge map calculation. %   cannyedgeprod  - Two-scale Canny edge detection obtained by multiplication%                    of Canny edge responses at two different scales.%   compassedge    - Wrapping function for the Generalized Compass Operator.%   congruencyedge - Wrapping function for Kovesi'sedge and corner detector%                    based on phase congrunecy. %   corner         - Wrapping function for various corner detection methods.%   curvecorner    - Corner detection in edge map based on curvature. %   edgecorner     - Wrapping function for various edge/corner detection%                    techniques.%   elderzuckeredge - Elder & Zucker's multi-scale edge detector.%   fastcorner     - Wrapping function for the FAST corner detector.%   fastcpda       - Fast corner detector based on the chord-to-point distance%                    accumulation technique.%   harriscorner   - Harris' corner/keypoints detector.%   inforgbedge    - Provide edge magnitude and orientation of colour images%                    based on its derivatives%   koethedge      - Koethe's edge/corner detector based on the gradient%                    structure tensor.%   multiedge      - Compute a multiscale edge map using a 2D Sobel-like%                    wavelet.%   petrouedge     - Petrou & Kitller's edge detector.%   rothwelledge   - Rothwell's subpixel edge detector.%   sdgdedge       - Edge detection filter based on the 2nd derivative and/or%                    Laplacian in the gradient direction.  %   susancorner    - SUSAN Edge/corner detection or image smoothing.%% filter/  Filtering functions:%   adaptivefilt   - Perform adaptive filtering.%   anisor         - Compute orientation information from the anisotropic%                    continous scale model.%   anisorfilt     - Morphological anisotropic diffusion using the orientation%                    information from the anisotropic continous scale model.%   bilateral_base - Perform bilateral filtering on monochrome images. %   bilateralstack_base - Fast version of the bilateral filter using stacks.%   blurmap        - Adaptive local isotropic Gaussian bluring of an image.%   convolution    - Compute convolution with centered filter.%   findlocalextrema - Extracts the extrema of any multispectral image in%                    local square neigbourhoods.%   findlocalmax   - Determine the local maxima of a given matrix image.%   fuzzimpulse    - Perform fuzzy impulse noise reduction in images.%   geodesicfilt   - Sigma-filter based on local geodesic similarity measures %                    for edge-preserving smoothing of multispectral images.%   mdlfilt        - Local adaptive filtering based on Minimal Description%                    Length principle.%   smoothfilt     - Perform either classical isotropic (Gaussian) smoothing%                    or anisotropic non-linear  smoothing.%   tensanifilt    - Perform Gaussian adaptive filtering of an image using%                    an anisotropic tensor field.%   tenscaledirfilt - Perform Gaussian adaptive directional filtering along%                    tensor field using a local adaptive scale.%   wmedfilt2      - Perform weighted median filtering of a (possibly%                    multispectral) image.%   wordfilt2      - Perform weighted order-statistic filtering of a%                    (possibly multispectral) image.% % fractal/  Fractal analysis:%   fractalwave     - %   fractalwavestat - %   singfractalrecons_base - %   waveprofile_base - %% graph/  Graph and network analysis and representation:%   bfs_base       - Compute breadth first search distances, times, and tree%                    of a graph and extracts valid paths.%   dfs_base       - Perform a depth-first search (DFS) of a graph.%   scomponents_base - Compute the strongly connected components of a graph%                    and extracts valid paths.%   dijkstra       - Implementation of Dijkstra algorithm, allowing for single%                    and multiple sources distance calculation. %   dijk_base      - Implementation of Dijkstra algorithm.%   dijkadvanced_base - Calculate minimum costs and paths using Dijkstra's %                    algorithm.%   graphmap       - Converts binary map to connected graph and reciprocally.%   graph2map_base - Converts a spatial unweighted graph into a 2D logical%                    map.%   map2graph_base - Converts a 2D logical map into a weighted graph. %   graphweight_base - Convert an unweighted spatial graph into a weighted%                    graph.%   graphrepresent - Raster representation (and display) of a weighted graph. %   ixneighbours   - Return the indices of neighbour cells in a matrix. %% pdem/  Pseudo-DEM generation functions:		%% pyramid/  Hierarchical pyramid analysis and decomposition:		%   pyrdown        - Top-down pyramidal hierarchical decomposition.%   pyrup          - Bottom-up pyramidal hierarchical decomposition.  %   reduce2d       - Wrapping function for the reduce2D operator of the BIG%                    Spline Pyramids Software.%   expand2d       - Wrapping function for the expand2d operator of the BIG%                    Spline Pyramids Software.%% sharpen/  Sharpening and enhancing functions:		 %% geometry/  Basic geometrical tools: 	%   bresenhamline  - 2D Bresenham line algorithm. %   downscalexy    - Downsample monotically an input image. %   upscalexy      - Upsample monotically an input image.%   gridblk        - Compute the centers' coordinates and the size of the%                    square blocks dividing an image in regular tiles.%   sampletriangle - Sample lattice points inside triangles.%   sampledisk     - Sample lattice points inside disks.%   drawleakcircle - Create and/or draw a discrete disk with holes. %   drawcircle     - Create and/or draw a simple circle.%   drawgestalt    - Create and/or draw simple figures of Gestalt contours.%% kernel/  Kernel operators:		%   gausskernel    - Compute a 1D or 2D Gaussian filter.%   dirgausskernel - Compute an oriented Gaussian kernel.%   hourglasskernel - Compute an oriented non-linear spatial hourglass filter.%   euclidkernel   - Create a kernel spatially weighted with the euclidean%                    distance.%   local3x3kernel - Compute local kernels defined by zones and levels.%   neiposkernel   - Create the kernel containing the indices and subscript%                    positions of the grid pixels of a given square window.%% morphology/  Mathematical morphology:	%   asf            - Apply the Alternate Sequential Filtering and the ASF by%                    reconstruction of an image.%   morphprofile   - Compute the morphological profile, the derivative %                    morphological profile by opening and closing and the%                    morphological multiscale characteristics.%   granulometry   - Compute a granulometry through a series of morphological%                    operations.  %   fractalmorph   - %   imreconstructby - Perform opening- an closing-by-reconstruction.%   imrclose       - Wrapping function for closing by reconstruction.%   imropen        - Wrapping function for opening by reconstruction.%   imeragrad      - Compute the operation consisting of a morphological%                    gradient followed by an erosion.%   fastcrossdilation - %   imlabel        - Label connected components in 2-D arrays.  %   bwisolated     - Extract isolated pixels from a logical image.%   bwthinupsample - Perform the upsampled morphological thinning of a binary %                    image.%   enhanceline    - %   flatstrel      - Wrapping function for STREL used for creating 2D flat%                    structuring elements.%% propagation/  Propagation and Fast Marching methods:	%   fmm            - Launch the Fast Marching algorithm in 2D.%   fmmisopropagation_base - Apply classical and multistencil Fast Marching%                    method in 2D.%   fmmanisopropagation_base - Perform anisotropic Fast Marching.%   fmmpath_base   - Extract a discrete geodesic path using gradient descent%                    or Runge-Kutta method.%   dijkstrapropagation_base - Shortest distance from multiple source points%                    on graph.%   im2front       - Perform a multiple front propagation from a set of seed%                    points using a metric derived from the input image.%   im2potential_base - Design a metric to be used as a potential function in%                    front propagation.%   potential2front_base - Propagate a (isotropic or anisotropic) front from%                    a set of seed poinrs%   saddlefront_base - Compute saddle points of an map of influence zones.%% segmentation/  Segmentation functions:	%   geodesicwshed  - Perform geodesic based watershed segmentation of an image.%   slicsuperpix   - Compute superpixels based on the Simple Linear Iterative%                    Clustering segmentation technique.%   geosuperpix    - Compute geodesic superpixels similarly to the Simple Linear%                    Iterative Clustering segmentation technique.%   lifetimeseg    - Pixelwise life time index computed over a stack of labelled%                    images.%   regionadjacency - Compute a sparse adjacency matrix for a labelled%                    image of segmentation.%   regionclean    - Clean up an image segmentation by deleting regions which%                    do not obey certain shape/area criteria.%% statistics/  Basic statistical tools and operators:	%   conv2fft       - FFT based two dimensional convolution.%   convfft        - FFT based convolution and polynomial multiplication.%   findzeroextrema1d - Wrapping function for popular Matlab functions %                    calculating extremas and/or zero-crossings of 1D signals. %   grididw_base   - Perform Inverse Distance Weighting or Simple Moving%                    Average of sampled data.%   grididwreduced_base - Perform reduced Inverse Distance Weighting.%   histoequalization - Perform histogram equalization,.%   integralimage_base - Compute the integral image of an image.%   histointegral1d_base - Compute the integral histograms in cartesian space%                    of an image.%   histointegral2d_base - Compute the 2d integral histograms of the joint %                    distribution of a couple of images.%   histointegraljoint_base - Compute the joint integral histograms.%   rankintegral_base - %   histoslidefunction - Function for computing local statistical features%                    based on local histograms computed over sliding windows.%   localsum - Compute local sum of an image in a square window.%   mutualsingfractal_base - Quantify the degree of mutual closeness of two%                    singularity spectra.%   accumarrayset  - Group elements from a data vector set as they share a%                    same index; fast version of ACCUMARRAY(..., @(x){x}).%   uniquenosort   - Find unique elements of vector likewise UNIQUE, but,%                    contrary to it, without sorting the results.%   allcombs       - Returns all 'crossed' combinations of elements in input%                    vectors.%   rescale        - Rescale data in [a,b].%   clamp          - Clamp a value, cell of values or array.%   nb_dims        - Debugged version of NDIMS.%% texture/  Texture analysis and representations:		%   localglcm2d    - Compute local textural features using the 2D histograms%                    of joint distribution of greylevel pairs. %   localglov2d    - Compute local textural features using the 1D histograms%                    of univariate distribution of greylevels.%   localglsdv2d    - Compute local textural features using the 1D histograms%                    of univariate distribution of greylevel differences.%   integralglcm2d_base - %   integralglov2d_base - %   histfeatures   - Calculate all textural features from (co)occurrences%                    matrices.%   histcontrast   - Calculate the contrast feature .%   histcorrelation - Calculate the correlation feature.%   histdissimilarity - Calculate the dissimilarity feature.%   histenergy     - Calculate the ENERGY (2nd angular moment) feature.%   histentropy10  - Calculate the entropy feature.%   histentropy2   - Calculate the entropy feature in bits.%   histhomogeneity - Calculate the homogeneity feature.%   histidifference - Calculate the inverse difference feature.%   histdissimilarity - Calculate the maximum feature.%   histmean       - Calculate the mean feature.%   histvariance   - Calculate the variance feature.%% misc/  Miscellaneous functions:		%   askifcontinue  - Utilitiy function to pause a program and asking if%                    pursueing it or not.%   catstruct      - Concatenate structures.%   mergestruct    - Merge structures with unique fields.%   str2vsubstr    - Vertically concatenate the substrings of a collection %                    of patterns strings found in the input string.%   structa2astruct - Utility function converting a structure of arrays an %                    array of structures for utility.%   comparecols    - Compare the columns of a matrix in increasing order.%   createparser   - Create an instance of the inputParser class, with some%                    additional fields.%   getvarparser   - Returns the structure containing the full list of parameters%                    from the input Parser structure.%   freadenvi      - Read an image of ENVI standard type to a MATLAB array.##### SOURCE END #####-->  </body></html>
