@@ -1,0 +1,302 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>WEBPUB
+      - Creation of web formatted functions' documentation.</title>
+    <meta name="generator" content="MATLAB 7.11">
+    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+    <meta name="DC.date" content="2011-07-08">
+    <meta name="DC.source" content="webpub.m">
+    <style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style>
+  </head>
+  <body>
+    <div class="content">
+      <h1>WEBPUB - Creation of web formatted functions'
+        documentation.</h1>
+      <!--introduction--><!--/introduction-->
+      <h2>Contents</h2>
+      <div>
+        <ul>
+          <li><a href="#1">Syntax</a></li>
+          <li><a href="#2">Inputs</a></li>
+          <li><a href="#3">Output</a></li>
+          <li><a href="#4">Credit</a></li>
+          <li><a href="#5">See also links</a></li>
+          <li><a href="#6">Function implementation</a></li>
+        </ul>
+      </div>
+      <h2>Syntax<a name="1"></a></h2>
+      <pre>   WEBPUB(name, update, outputDir, showCode, evalCode);</pre>
+      <h2>Inputs<a name="2"></a></h2>
+      <p>See <tt>PUBLISH</tt> options.</p>
+      <p><b><tt>name</tt></b> : a string or a cell of strings specifying
+        either:</p>
+      <div>
+        <ul>
+          <li>a directory name whose all contained files will be
+            published,</li>
+          <li>the name of a file to publish,</li>
+          <li>the names of several files to publish.</li>
+        </ul>
+      </div>
+      <p><b><tt>update</tt></b> : an (optional) logical flag forcing,
+        when <tt>true</tt> the update of the published document (html)
+        when it already exists (and have been found in the user path);
+        default: <tt>update=false</tt>.</p>
+      <p><b><tt>outputDir</tt></b> : (optional) string specifying the
+        folder where to publish the output documentation and its
+        associated image files:</p>
+      <div>
+        <ul>
+          <li><tt>''</tt> (default): output is placed in the html
+            subfolder of the function folder,</li>
+          <li>full path: output is placed in the specified folder.</li>
+        </ul>
+      </div>
+      <p><b><tt>showCode</tt></b> : (optional) logical value that
+        specifies whether the code is to be included in the published
+        documentation; default: <tt>showCode=true</tt>.</p>
+      <p><b><tt>evalCode</tt></b> : (optional) logical value specifying
+        whether to run the code that is published; default: <tt>evalCode=false</tt>.</p>
+      <h2>Output<a name="3"></a></h2>
+      <p>Create an html document in the subdirectory <i>html</i> of the
+        directory where the file(s) to be published was(were) found (<i>html</i>
+        is created if it does not already exist) and display the created
+        document.</p>
+      <h2>See also links<a name="5"></a></h2>
+      <p>Related: <a href="matlab:web%28whichpath%28%27HELP%27%29%29"><tt>HELP</tt></a>,
+        <a href="matlab:web%28whichpath%28%27DOC%27%29%29"><tt>DOC</tt></a>.
+        Called: <a href="matlab:web%28whichpath%28%27WEB%27%29%29"><tt>WEB</tt></a>,
+        <a href="matlab:web%28whichpath%28%27PUBLISH%27%29%29"><tt>PUBLISH</tt></a>.</p>
+      <h2>Function implementation<a name="6"></a></h2>
+      <pre class="codeinput"><span class="keyword">function</span> webpub(name, update, outputDir, showCode, evalCode, verbose)
+</pre>
+      <p>check/set variables</p>
+      <pre class="codeinput"><span class="keyword">if</span> nargin&lt;6,  verbose = false;
+    <span class="keyword">if</span> nargin&lt;5,  evalCode = false;
+        <span class="keyword">if</span> nargin&lt;4,  showCode = true;
+            <span class="keyword">if</span> nargin&lt;3,  outputDir = <span
+class="string">''</span>;
+                <span class="keyword">if</span> nargin&lt;2,  update = false; <span
+class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre>
+      <p>define the list of names of the file to publish</p>
+      <pre class="codeinput"><span class="keyword">if</span> ischar(name)
+    <span class="keyword">if</span> exist(name,<span class="string">'dir'</span>) <span
+class="comment">% retrieve all the M-files in the directory</span>
+        <span class="keyword">if</span> verbose,  disp(<span class="string">'M-files in the directory to be published'</span>);  <span
+class="keyword">end</span>
+        listing = dir([name <span class="string">'/*.m'</span>]);
+        filename = {listing(:).name};
+    <span class="keyword">else</span> <span class="comment">% transform the string in a cell of string</span>
+        <span class="keyword">if</span> verbose,  disp(<span class="string">'single file to be published'</span>);  <span
+class="keyword">end</span>
+        filename = {name};
+    <span class="keyword">end</span>
+
+<span class="keyword">elseif</span> iscell(name)
+    <span class="keyword">if</span> verbose,  disp(<span class="string">'list of files to be published'</span>);  <span
+class="keyword">end</span>
+    filename = name;
+
+<span class="keyword">else</span>
+    error(<span class="string">'webpub:errorinput'</span>, <span class="string">'Argument to webpub must be a string or a cell of strings'</span>);
+<span class="keyword">end</span>
+</pre>
+      <div>
+        <ul>
+          <li>create the publishing options</li>
+        </ul>
+      </div>
+      <pre class="codeinput">opt.outputDir = outputDir;
+opt.showCode = showCode;
+opt.evalCode = evalCode;
+opt.format = <span class="string">'html'</span>;
+</pre>
+      <p>loop over the file names for publishing all of them</p>
+      <pre class="codeinput">nfile = length(filename);
+<span class="keyword">if</span> verbose &amp;&amp; nfile&gt;1,  disp([num2str(nfile) <span
+class="string">' files found to be published'</span>]);  <span
+class="keyword">end</span>
+
+<span class="keyword">for</span> i=1:nfile
+</pre>
+      <div>
+        <ul>
+          <li>check that the file exists (possible in cases where no
+            directory was entered)</li>
+        </ul>
+      </div>
+      <pre class="codeinput">    <span class="keyword">if</span> ~exist(filename{i},<span
+class="string">'file'</span>)
+        error(<span class="string">'webdoc:errorinput'</span>, <span class="keyword">...</span>
+            [<span class="string">'!!!file/function '</span> filename{i} <span
+class="string">' not found!!!'</span>]);
+    <span class="keyword">end</span>
+</pre>
+      <div>
+        <ul>
+          <li>get rid of the '.m' extension (could use STRFIND
+            instead...)</li>
+        </ul>
+      </div>
+      <pre class="codeinput">    <span class="keyword">if</span> strcmpi(filename{i}(end-1:end),<span
+class="string">'.m'</span>),
+        filename{i} = filename{i}(1:end-2);
+    <span class="keyword">end</span>
+</pre>
+      <div>
+        <ul>
+          <li>edit after possible prior publishing</li>
+        </ul>
+      </div>
+      <pre class="codeinput">    <span class="keyword">if</span> ~update &amp;&amp; exist([filename{i} <span
+class="string">'.html'</span>],<span
+class="string">'file'</span>)
+        <span class="comment">% the file has been already published and it is in a known path</span>
+        tmp = [filename{i} <span class="string">'.html'</span>]; <span class="comment">% simply edit</span>
+    <span class="keyword">else</span>
+        <span class="keyword">if</span> verbose,  disp([<span class="string">'publishing file '</span> filename{i} <span
+class="string">' ...'</span>]);  <span
+class="keyword">end</span>
+        tmp = publish(filename{i},opt); <span class="comment">% publish</span>
+    <span class="keyword">end</span>
+</pre>
+      <pre class="codeinput"><span class="keyword">end</span>
+</pre>
+      <p>web display the last published file in the case a directory was
+        passed as argument</p>
+      <pre class="codeinput"><span class="keyword">if</span> verbose,  disp([<span
+class="string">'editing file '</span> tmp]);  <span
+class="keyword">end</span>
+web(tmp);
+</pre>
+      <pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of webpub</span>
+</pre>
+    </div>
+    <!--##### SOURCE BEGIN #####
+%% WEBPUB - Creation of web formatted functions' documentation.%
+%% Syntax%     WEBPUB(name, update, outputDir, showCode, evalCode);
+%%% Inputs
+% See |PUBLISH| options.%
+% *|name|* : a string or a cell of strings specifying either:%   
+% * a directory name whose all contained files will be published, % * the name of a file to publish,
+% * the names of several files to publish.%
+% *|update|* : an (optional) logical flag forcing, when |true| the update of%     the published document (html) when it already exists (and have been
+%     found in the user path); default: |update=false|.%
+% *|outputDir|* : (optional) string specifying the folder where to publish %     the output documentation and its associated image files:
+%% * |''| (default): output is placed in the html subfolder of the function 
+%          folder,% * full path: output is placed in the specified folder.
+%% *|showCode|* : (optional) logical value that specifies whether the code is
+%     to be included in the published documentation; default: |showCode=true|.%
+% *|evalCode|* : (optional) logical value specifying whether to run the code%     that is published; default: |evalCode=false|.
+%%% Output
+% Create an html document in the subdirectory _html_ of the directory where% the file(s) to be published was(were) found (_html_ is created if it does
+% not already exist) and display the created document.%
+%% Credit% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)
+%%% See also links
+% Related:% <matlab:web(whichpath('HELP')) |HELP|>,
+% <matlab:web(whichpath('DOC')) |DOC|>.% Called:
+% <matlab:web(whichpath('WEB')) |WEB|>,% <matlab:web(whichpath('PUBLISH')) |PUBLISH|>.
+%% Function implementation
+function webpub(name, update, outputDir, showCode, evalCode, verbose)%%
+% check/set variablesif nargin<6,  verbose = false;
+    if nargin<5,  evalCode = false;        if nargin<4,  showCode = true;
+            if nargin<3,  outputDir = '';                  if nargin<2,  update = false; end
+            end        end
+    endend
+%%
+% define the list of names of the file to publishif ischar(name)
+    if exist(name,'dir') % retrieve all the M-files in the directory        if verbose,  disp('M-files in the directory to be published');  end
+        listing = dir([name '/*.m']);        filename = {listing(:).name};
+    else % transform the string in a cell of string        if verbose,  disp('single file to be published');  end
+        filename = {name};    end
+    elseif iscell(name)
+    if verbose,  disp('list of files to be published');  end    filename = name;
+    else
+    error('webpub:errorinput', 'Argument to webpub must be a string or a cell of strings');end
+%%
+% * create the publishing optionsopt.outputDir = outputDir;
+opt.showCode = showCode;opt.evalCode = evalCode;
+opt.format = 'html';%%
+% loop over the file names for publishing all of themnfile = length(filename);
+if verbose && nfile>1,  disp([num2str(nfile) ' files found to be published']);  endfor i=1:nfile
+    %%    % * check that the file exists (possible in cases where no directory was entered)
+    if ~exist(filename{i},'file')        error('webdoc:errorinput', ...
+            ['!!!file/function ' filename{i} ' not found!!!']);    end
+        %%
+    % * get rid of the '.m' extension (could use STRFIND instead...)    if strcmpi(filename{i}(end-1:end),'.m'),
+        filename{i} = filename{i}(1:end-2);    end
+        %%
+    % * edit after possible prior publishing    if ~update && exist([filename{i} '.html'],'file')
+        % the file has been already published and it is in a known path        tmp = [filename{i} '.html']; % simply edit
+    else        if verbose,  disp(['publishing file ' filename{i} ' ...']);  end
+        tmp = publish(filename{i},opt); % publish    end
+end%%
+% web display the last published file in the case a directory was passed as% argument
+if verbose,  disp(['editing file ' tmp]);  endweb(tmp);
+end % end of webpub
+##### SOURCE END #####
+--></body>
+</html>

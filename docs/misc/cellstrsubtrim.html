@@ -1,0 +1,325 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>CELLSTRSUBTRIM - Trim a set of strings from its matching
+      substrings.</title>
+    <meta name="generator" content="MATLAB 7.11">
+    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+    <meta name="DC.date" content="2011-05-22">
+    <meta name="DC.source" content="cellstrsubtrim.m">
+    <style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style>
+  </head>
+  <body>
+    <div class="content">
+      <h1>CELLSTRSUBTRIM - Trim a set of strings from its matching
+        substrings.</h1>
+      <!--introduction--><!--/introduction-->
+      <h2>Contents</h2>
+      <div>
+        <ul>
+          <li><a href="#1">Description</a></li>
+          <li><a href="#2">Syntax</a></li>
+          <li><a href="#3">Inputs</a></li>
+          <li><a href="#4">Outputs</a></li>
+          <li><a href="#5">Example</a></li>
+          <li><a href="#6">Credit</a></li>
+          <li><a href="#7">See also</a></li>
+          <li><a href="#8">Function implementation</a></li>
+        </ul>
+      </div>
+      <h2>Description<a name="1"></a></h2>
+      <p>Discard all the strings of a set (array or cell) of strings
+        that match substrings of longer strings in the same set.</p>
+      <h2>Syntax<a name="2"></a></h2>
+      <pre>     [C, I] = CELLSTRSUBTRIM(S);
+     [C, I] = CELLSTRSUBTRIM(S, traversal, despace, sensitive);</pre>
+      <h2>Inputs<a name="3"></a></h2>
+      <p><b><tt>S</tt></b> : cell or array of strings (possibly
+        containing whitespace characters <tt>' '</tt> that can be
+        ignored, see <tt>despace</tt> below) from which redundant
+        elements matching substrings of longer strings are removed.</p>
+      <p><b><tt>traversal</tt></b> : (optional) flag setting the rule
+        for defining substrings; a string in <tt>S</tt> is considered
+        as a substring if it matches a substring of a longer string of <tt>S</tt>:</p>
+      <div>
+        <ul>
+          <li>when reading both of them <b>from left to right</b> in
+            the case <tt>traversal=1</tt>,</li>
+          <li>when reading both of them <b>from right to left</b> in
+            the case <tt>traversal=-1</tt>,</li>
+          <li><b>indepently of the order these strings are read</b> in
+            the case <tt>traversal=0</tt>;</li>
+        </ul>
+      </div>
+      <p>default: <tt>traversal=0</tt>.</p>
+      <p><b><tt>despace</tt></b> : (optional) logical flag stating if
+        whitespace characters <tt>' '</tt> should be removed from the
+        strings (where <tt>ISSPACE</tt> returns <tt>true</tt>); note
+        moreover that leading and trailing whitespace characters are
+        automatically removed (using <tt>STRTRIM</tt>); default: <tt>despace=false</tt>.</p>
+      <p><b><tt>sensitive</tt></b> : (optional) boolean flag defining is
+        the comparison is case sensitive (<tt>true</tt>, then use <tt>STRCNCMP</tt>)
+        or not (<tt>false</tt>, then use <tt>STRNCMPI</tt> instead);
+        default: <tt>sensitive=true</tt>.</p>
+      <h2>Outputs<a name="4"></a></h2>
+      <p><b><tt>C</tt></b> : output cell (or array, depending on the
+        class of the input <tt>S</tt>) of strings where the substrings
+        of <tt>S</tt> have been removed following the rule defined by <tt>traversal</tt>
+        and <tt>despace</tt>.</p>
+      <p><b><tt>I</tt></b> : indices (refered to the input <tt>S</tt>)
+        of the strings that have been discarded (ie., that do not appear
+        in the output <tt>C</tt>).</p>
+      <h2>Example<a name="5"></a></h2>
+      <pre>a=['fout  ';'piut  ';'pout  ';'meu g ';'meugh ';'tuipl ';  'foutre'];
+[c,i] = cellstrsubtrim(a)
+[c,i] = cellstrsubtrim(a,1)
+[c,i] = cellstrsubtrim(a,-1,true)
+[c,i] = cellstrsubtrim(a,0,true)
+% the following example should return identical outputs when setting
+% traversal=0 and despace=true
+a={ ['fout'] ['piut  ']' ['po ut'] ['meu g '] ['   meugh ']' ['tuipl '] ['fou  tre']}
+[c,i] = cellstrsubtrim(a,1)
+[c,i] = cellstrsubtrim(a,0,true)</pre>
+      <h2>See also<a name="7"></a></h2>
+      <p>Related: <a href="../../algebra/html/CELLNUMSUBTRIM.html"><tt>CELLNUMSUBTRIM</tt></a>.
+        Called: <a href="matlab:webpub%28whichpath%28%27TRIL%27%29%29"><tt>TRIL</tt></a>,
+        <a href="matlab:webpub%28whichpath%28%27STRNCMP%27%29%29"><tt>STRNCMP</tt></a>,
+        <a href="matlab:webpub%28whichpath%28%27STRNCMPI%27%29%29"><tt>STRNCMPI</tt></a>,
+        <a href="matlab:webpub%28whichpath%28%27STRTRIM%27%29%29"><tt>STRTRIM</tt></a>,
+        <a href="matlab:webpub%28whichpath%28%27ISSPACE%27%29%29"><tt>ISSPACE</tt></a>,
+        <a href="matlab:webpub%28whichpath%28%27CELLSTR%27%29%29"><tt>CELLSTR</tt></a>,
+        <a href="matlab:webpub%28whichpath%28%27CELL2MAT%27%29%29"><tt>CELL2MAT</tt></a>,
+        <a href="matlab:webpub%28whichpath%28%27CELLFUN%27%29%29"><tt>CELLFUN</tt></a>,
+        <a href="matlab:webpub%28whichpath%28%27RESHAPE%27%29%29"><tt>RESHAPE</tt></a>.</p>
+      <h2>Function implementation<a name="8"></a></h2>
+      <pre class="codeinput"><span class="comment">%--------------------------------------------------------------------------</span>
+<span class="keyword">function</span> [C, I] = cellstrsubtrim(C, traversal, despace, sensitive)
+</pre>
+      <p>check/set variables</p>
+      <pre class="codeinput"><span class="keyword">if</span> ~iscellstr(C)
+    <span class="keyword">if</span> ~ischar(C)
+        error(<span class="string">'cellstrsubtrim:errorinput'</span>, <span
+class="keyword">...</span>
+            <span class="string">'input variable ''C'' must be a string array or a cell of strings'</span>);
+    <span class="keyword">end</span>
+    isarray = true;
+    C = cellstr(C);
+<span class="keyword">else</span>
+    isarray = false;
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> nargin&lt;4,  sensitive = true;
+    <span class="keyword">if</span> nargin&lt;3,  despace = false;
+        <span class="keyword">if</span> nargin&lt;2,  traversal = 0;  <span
+class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> ~(islogical(despace) &amp;&amp; islogical(sensitive))
+    error(<span class="string">'cellstrsubtrim:errorinput'</span>, <span
+class="keyword">...</span>
+        <span class="string">'input variables ''sensitive'' and ''despace'' must be logical'</span>);
+<span class="keyword">elseif</span> ~isscalar(traversal) || ~ismember(traversal,[0 1 -1])
+    error(<span class="string">'cellstrsubtrim:errorinput'</span>, <span
+class="keyword">...</span>
+        <span class="string">'input variable ''traversal'' takes values in {-1,0,1}'</span>);
+<span class="keyword">end</span>
+
+nC = numel(C); nC0 = nC;
+ind = (1:nC);
+
+<span class="keyword">if</span> nC==1 <span class="comment">% if one string only, nothing to do</span>
+    <span class="keyword">if</span> isarray,  C = char(C);  <span class="keyword">end</span>
+    <span class="keyword">return</span>;
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> sensitive,  strcompare = @strncmp;
+<span class="keyword">else</span>           strcompare = @strncmpi;
+<span class="keyword">end</span>
+</pre>
+      <p>we need to ensure that the strings are 'row strings'...</p>
+      <pre class="codeinput">isrow = cellfun(@(c) size(c,2)&gt;1, C);
+C(~isrow) = cellfun(@(c) c', C(~isrow), <span class="string">'Uniform'</span>, false);
+</pre>
+      <p>clean up a bit: first deblank (remove leading and trailing
+        whitespace characters from string, not optional), then
+        possibly'despace' (trim all internal whitespaces)</p>
+      <pre class="codeinput">C = cellfun(@strtrim, C, <span class="string">'Uniform'</span>, false);
+<span class="keyword">if</span> despace,  C = cellfun(@(c) c(~isspace(c)), C, <span
+class="string">'Uniform'</span>, false);  <span
+class="keyword">end</span>
+</pre>
+      <p>in general, get rid of empty strings</p>
+      <pre class="codeinput">I = cellfun(@isempty, C);
+<span class="comment">% update</span>
+C(I) = [];  isrow(I) = [];  ind(I) = [];
+nC = numel(C);
+</pre>
+      <p>check</p>
+      <pre class="codeinput"><span class="keyword">if</span> nC==1  <span
+class="comment">% nothing more to do</span>
+    C(~isrow) = cellfun(@(c) c', C(~isrow), <span class="string">'Uniform'</span>, false);
+    <span class="keyword">if</span> isarray,  C = char(C);  <span class="keyword">end</span>
+    <span class="keyword">return</span>;
+<span class="keyword">end</span>
+</pre>
+      <p>sort the strings according to their (increasing) length</p>
+      <pre class="codeinput">[~,I] = sort(cellfun(@length,C));
+C = C(I);  ind = ind(I);  isrow = isrow(I);
+</pre>
+      <p>build the cell of inverted strings</p>
+      <pre class="codeinput"><span class="keyword">if</span> traversal&lt;=0
+    flipC = cellfun(@(c) fliplr(c), C, <span class="string">'Uniform'</span>, false);
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> traversal==1
+    I = cellfun(@(c) strcompare(c, C, length(c)), C, <span class="string">'Uniform'</span>, false);
+<span class="keyword">elseif</span> traversal==-1
+    I = cellfun(@(c,flipc) strcompare(flipc, flipC, length(c)), <span class="keyword">...</span>
+        flipC, <span class="string">'Uniform'</span>, false);
+<span class="keyword">else</span>
+    I = cellfun(@(c,flipc) <span class="keyword">...</span>
+        strcompare(c, C, length(c)) | strcompare(flipc, C, length(c)) | <span
+class="keyword">...</span>
+        strcompare(c, flipC, length(c)) | strcompare(flipc, flipC, length(c)), <span
+class="keyword">...</span>
+        C, flipC, <span class="string">'Uniform'</span>, false);
+    <span class="comment">% note that, in its first occurence, C is used as a constant (and,</span>
+    <span class="comment">% similarly, flipC), so that every single string of C (second occurrence)</span>
+    <span class="comment">% is compared with every other strings</span>
+<span class="keyword">end</span>
+I = reshape(transpose(cell2mat(I)),[nC nC]); <span class="comment">% square matrix</span>
+</pre>
+      <p>retrieve the lower triangular part of the diagonal; we do not
+        want the diagonal as it is always true (the substring is
+        compared with itself) and we do not want the upper triangular
+        part as it means that two substrings are equal (considering that
+        the strings were initially ordered according to their length)
+        and one of them only (but not both) should be discarded</p>
+      <pre class="codeinput">I = tril(I,-1) ;
+</pre>
+      <p>find the strings that are substrings of longer strings already
+        in C: they are repeated entries given by the indices of the non
+        null columns of I</p>
+      <pre class="codeinput">[~,I] = find(I); I = unique(I);
+</pre>
+      <p>clean up: get rid of those substrings and reconvert back to the
+        original format</p>
+      <pre class="codeinput">C(I) = []; isrow(I) = [];  ind(I) = [];
+C(~isrow) = cellfun(@(c) c', C(~isrow), <span class="string">'Uniform'</span>, false);
+I = setdiff((1:nC0), ind);
+</pre>
+      <p>possibly reconvert back to a matrix</p>
+      <pre class="codeinput"><span class="keyword">if</span> isarray,  C = char(C);  <span
+class="keyword">end</span>
+</pre>
+      <pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of cellstrsubtrim</span>
+</pre> </div>
+    <!--##### SOURCE BEGIN #####
+%% CELLSTRSUBTRIM - Trim a set of strings from its matching substrings. %%% Description% Discard all the strings of a set (array or cell) of strings that match
+% substrings of longer strings in the same set.%%% Syntax%       [C, I] = CELLSTRSUBTRIM(S);
+%       [C, I] = CELLSTRSUBTRIM(S, traversal, despace, sensitive);%%% Inputs% *|S|* : cell or array of strings (possibly containing whitespace characters
+%     |' '| that can be ignored, see |despace| below) from which redundant%     elements matching substrings of longer strings are removed.%% *|traversal|* : (optional) flag setting the rule for defining substrings;
+%     a string in |S| is considered as a substring if it matches a substring%     of a longer string of |S|:%  % * when reading both of them *from left to right* in the case |traversal=1|,          
+% * when reading both of them *from right to left* in the case |traversal=-1|,  % * *indepently of the order these strings are read* in the case |traversal=0|;     %          % default: |traversal=0|.    
+%% *|despace|* : (optional) logical flag stating if whitespace characters |' '|%     should be removed from the strings (where |ISSPACE| returns |true|);%     note moreover that leading and trailing whitespace characters are 
+%     automatically removed (using |STRTRIM|); default: |despace=false|.%% *|sensitive|* : (optional) boolean flag defining is the comparison is case%     sensitive (|true|, then use |STRCNCMP|) or not (|false|, then use 
+%     |STRNCMPI| instead); default: |sensitive=true|.%%% Outputs% *|C|* : output cell (or array, depending on the class of the input |S|)
+%     of strings where the substrings of |S| have been removed following the%     rule defined by |traversal| and |despace|.%     % *|I|* : indices (refered to the input |S|) of the strings that have been 
+%     discarded (ie., that do not appear in the output |C|).%     %% Example%  a=['fout  ';'piut  ';'pout  ';'meu g ';'meugh ';'tuipl ';  'foutre'];
+%  [c,i] = cellstrsubtrim(a)%  [c,i] = cellstrsubtrim(a,1)%  [c,i] = cellstrsubtrim(a,-1,true)%  [c,i] = cellstrsubtrim(a,0,true)
+%  % the following example should return identical outputs when setting %  % traversal=0 and despace=true%  a={ ['fout'] ['piut  ']' ['po ut'] ['meu g '] ['   meugh ']' ['tuipl '] ['fou  tre']}%  [c,i] = cellstrsubtrim(a,1)
+%  [c,i] = cellstrsubtrim(a,0,true)%%% Credit% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)
+%%% See also% Related:% <../../algebra/html/CELLNUMSUBTRIM.html |CELLNUMSUBTRIM|>.
+% Called:% <matlab:webpub(whichpath('TRIL')) |TRIL|>,% <matlab:webpub(whichpath('STRNCMP')) |STRNCMP|>,% <matlab:webpub(whichpath('STRNCMPI')) |STRNCMPI|>,
+% <matlab:webpub(whichpath('STRTRIM')) |STRTRIM|>,% <matlab:webpub(whichpath('ISSPACE')) |ISSPACE|>,% <matlab:webpub(whichpath('CELLSTR')) |CELLSTR|>,% <matlab:webpub(whichpath('CELL2MAT')) |CELL2MAT|>,
+% <matlab:webpub(whichpath('CELLFUN')) |CELLFUN|>,% <matlab:webpub(whichpath('RESHAPE')) |RESHAPE|>.%% Function implementation
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHfunction [C, I] = cellstrsubtrim(C, traversal, despace, sensitive)%%
+% check/set variablesif ~iscellstr(C)    if ~ischar(C)        error('cellstrsubtrim:errorinput', ...
+            'input variable ''C'' must be a string array or a cell of strings');    end    isarray = true;    C = cellstr(C);
+else     isarray = false;endif nargin<4,  sensitive = true;
+    if nargin<3,  despace = false;        if nargin<2,  traversal = 0;  end    endend
+if ~(islogical(despace) && islogical(sensitive))    error('cellstrsubtrim:errorinput', ...        'input variables ''sensitive'' and ''despace'' must be logical');
+elseif ~isscalar(traversal) || ~ismember(traversal,[0 1 -1])    error('cellstrsubtrim:errorinput', ...        'input variable ''traversal'' takes values in {-1,0,1}');end
+nC = numel(C); nC0 = nC;ind = (1:nC);if nC==1 % if one string only, nothing to do
+    if isarray,  C = char(C);  end    return;endif sensitive,  strcompare = @strncmp;
+else           strcompare = @strncmpi;end%%
+% we need to ensure that the strings are 'row strings'...isrow = cellfun(@(c) size(c,2)>1, C);C(~isrow) = cellfun(@(c) c', C(~isrow), 'Uniform', false);%%
+% clean up a bit: first deblank (remove leading and trailing whitespace% characters from string, not optional), then possibly'despace' (trim all% internal whitespaces)C = cellfun(@strtrim, C, 'Uniform', false); 
+if despace,  C = cellfun(@(c) c(~isspace(c)), C, 'Uniform', false);  end%%% in general, get rid of empty stringsI = cellfun(@isempty, C);
+% updateC(I) = [];  isrow(I) = [];  ind(I) = [];nC = numel(C);%%
+% checkif nC==1  % nothing more to do    C(~isrow) = cellfun(@(c) c', C(~isrow), 'Uniform', false);    if isarray,  C = char(C);  end
+    return;end%%
+% sort the strings according to their (increasing) length[~,I] = sort(cellfun(@length,C));  C = C(I);  ind = ind(I);  isrow = isrow(I);%%
+% build the cell of inverted stringsif traversal<=0    flipC = cellfun(@(c) fliplr(c), C, 'Uniform', false);end
+if traversal==1    I = cellfun(@(c) strcompare(c, C, length(c)), C, 'Uniform', false);elseif traversal==-1
+    I = cellfun(@(c,flipc) strcompare(flipc, flipC, length(c)), ...        flipC, 'Uniform', false);else    I = cellfun(@(c,flipc) ...
+        strcompare(c, C, length(c)) | strcompare(flipc, C, length(c)) | ...        strcompare(c, flipC, length(c)) | strcompare(flipc, flipC, length(c)), ...        C, flipC, 'Uniform', false);    % note that, in its first occurence, C is used as a constant (and,
+    % similarly, flipC), so that every single string of C (second occurrence)    % is compared with every other stringsendI = reshape(transpose(cell2mat(I)),[nC nC]); % square matrix 
+%%% retrieve the lower triangular part of the diagonal; we do not want the% diagonal as it is always true (the substring is compared with itself) and
+% we do not want the upper triangular part as it means that two substrings% are equal (considering that the strings were initially ordered according% to their length) and one of them only (but not both) should be discardedI = tril(I,-1) ;
+%%% find the strings that are substrings of longer strings already in C: they% are repeated entries given by the indices of the non null columns of I
+[~,I] = find(I); I = unique(I);%%% clean up: get rid of those substrings and reconvert back to the original% format
+C(I) = []; isrow(I) = [];  ind(I) = [];C(~isrow) = cellfun(@(c) c', C(~isrow), 'Uniform', false);I = setdiff((1:nC0), ind);%%
+% possibly reconvert back to a matrixif isarray,  C = char(C);  endend % end of cellstrsubtrim
+##### SOURCE END #####-->
+    
+  </body>
+</html>
