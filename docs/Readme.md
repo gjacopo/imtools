@@ -13,7 +13,7 @@ Various basic low-level image processing tools used in the experiments/analyses 
 *license*:      [EUPL](https://joinup.ec.europa.eu/sites/default/files/eupl1.1.-licence-en_0.pdf)
 
 **Description**
-Matlab tools for low-level image processing.
+Matlab tools for low-level image processing:
 * `cluster`:  Clustering and classification		
 * `derive`:  Differentiation functions
 * `feature`:  Feature extraction
@@ -27,7 +27,7 @@ Matlab tools for low-level image processing.
 * `morphology`:  Mathematical morphology
 * `propagation`:  Propagation and Fast Marching methods	
 * `segmentation`:  Segmentation functions
-* ` statistics`:  Basic statistical tools and operators
+* `statistics`:  Basic statistical tools and operators
 * `texture`:  Texture analysis and representations
 * ` misc`:  Miscellaneous functions
 
