@@ -17,25 +17,25 @@ Various basic low-level image processing tools used in the experiments/analyses 
 *license*:        [EUPL](https://joinup.ec.europa.eu/sites/default/files/eupl1.1.-licence-en_0.pdf)
 
 **Description**
-Matlab tools for low-level image processing.
-* `cluster`:  Clustering and classification:		
-* `derive`:  Differentiation functions:		
-* `feature`:  Feature extraction:		
-* `filter`:  Filtering functions:
-* `graph`:  Graph and network analysis and representation:
-* `pdem`:  Pseudo-DEM generation functions:		
-* `pyramid`:  Hierarchical pyramid analysis and decomposition:		
-* `sharpen`:  Sharpening and enhancing functions:		 
-* `geometry`:  Basic geometrical tools: 	
-* `kernel`:  Kernel operators:		
-* `morphology`:  Mathematical morphology:	
-* `propagation`:  Propagation and Fast Marching methods:	
-* `segmentation`:  Segmentation functions:	
-* ` statistics`:  Basic statistical tools and operators:	
-* `texture`:  Texture analysis and representations:		
-* ` misc`:  Miscellaneous functions:		
 
-See file `Contents.m` for further description.
+* `cluster`:  Clustering and classification
+* `derive`:  Differentiation functions
+* `feature`:  Feature extraction
+* `filter`:  Filtering functions
+* `graph`:  Graph and network analysis and representation
+* `pdem`:  Pseudo-DEM generation functions
+* `pyramid`:  Hierarchical pyramid analysis and decomposition		
+* `sharpen`:  Sharpening and enhancing functions		 
+* `geometry`:  Basic geometrical tools 	
+* `kernel`:  Kernel operators
+* `morphology`:  Mathematical morphology
+* `propagation`:  Propagation and Fast Marching methods
+* `segmentation`:  Segmentation functions	
+* `statistics`:  Basic statistical tools and operators
+* `texture`:  Texture analysis and representations		
+* `misc`:  Miscellaneous functions		
+
+See [`Contents.m`](Contents.m) for the whole list of functions. See [`Contents.html`](https://gjacopo.github.io/imtools/Contents.html) for a quick overview, 
 
 **Note** 
 Run `webpub` function to generate html documentation. Check script use.
