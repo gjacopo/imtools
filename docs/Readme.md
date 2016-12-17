@@ -14,7 +14,7 @@ Various basic low-level image processing tools used in the experiments/analyses 
 
 **Description**
 Matlab tools for low-level image processing:
-* `cluster`:  Clustering and classification		
+* [`cluster`](cluster/index.md):  Clustering and classification		
 * `derive`:  Differentiation functions
 * `feature`:  Feature extraction
 * `filter`:  Filtering functions
