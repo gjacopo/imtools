@@ -14,22 +14,22 @@ Various basic low-level image processing tools used in the experiments/analyses 
 
 **Description**
 Matlab tools for low-level image processing.
-* `cluster`:  Clustering and classification:		
-* `derive`:  Differentiation functions:		
-* `feature`:  Feature extraction:		
-* `filter`:  Filtering functions:
-* `graph`:  Graph and network analysis and representation:
-* `pdem`:  Pseudo-DEM generation functions:		
-* `pyramid`:  Hierarchical pyramid analysis and decomposition:		
-* `sharpen`:  Sharpening and enhancing functions:		 
-* `geometry`:  Basic geometrical tools: 	
-* `kernel`:  Kernel operators:		
-* `morphology`:  Mathematical morphology:	
-* `propagation`:  Propagation and Fast Marching methods:	
-* `segmentation`:  Segmentation functions:	
-* ` statistics`:  Basic statistical tools and operators:	
-* `texture`:  Texture analysis and representations:		
-* ` misc`:  Miscellaneous functions:		
+* `cluster`:  Clustering and classification		
+* `derive`:  Differentiation functions
+* `feature`:  Feature extraction
+* `filter`:  Filtering functions
+* `graph`:  Graph and network analysis and representation
+* `pdem`:  Pseudo-DEM generation functions
+* `pyramid`:  Hierarchical pyramid analysis and decomposition	
+* `sharpen`:  Sharpening and enhancing functions
+* `geometry`:  Basic geometrical tools
+* `kernel`:  Kernel operators
+* `morphology`:  Mathematical morphology
+* `propagation`:  Propagation and Fast Marching methods	
+* `segmentation`:  Segmentation functions
+* ` statistics`:  Basic statistical tools and operators
+* `texture`:  Texture analysis and representations
+* ` misc`:  Miscellaneous functions
 
 See file [`Contents.html`](Contents.html) for further description.
 
