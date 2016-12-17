@@ -15,21 +15,21 @@ Various basic low-level image processing tools used in the experiments/analyses 
 **Description**
 Matlab tools for low-level image processing:
 * [`cluster`](cluster/index.md):  Clustering and classification		
-* `derive`:  Differentiation functions
-* `feature`:  Feature extraction
-* `filter`:  Filtering functions
-* `graph`:  Graph and network analysis and representation
-* `pdem`:  Pseudo-DEM generation functions
-* `pyramid`:  Hierarchical pyramid analysis and decomposition	
-* `sharpen`:  Sharpening and enhancing functions
-* `geometry`:  Basic geometrical tools
-* `kernel`:  Kernel operators
-* `morphology`:  Mathematical morphology
-* `propagation`:  Propagation and Fast Marching methods	
-* `segmentation`:  Segmentation functions
-* `statistics`:  Basic statistical tools and operators
-* `texture`:  Texture analysis and representations
-* `misc`:  Miscellaneous functions
+* [`derive`](derive/index.md):  Differentiation functions
+* [`feature`](feature/index.md):  Feature extraction
+* [`filter`](filter/index.md):  Filtering functions
+* [`graph`](graph/index.md):  Graph and network analysis and representation
+* [`pdem`](pdem/index.md):  Pseudo-DEM generation functions
+* [`pyramid`](pyramid/index.md):  Hierarchical pyramid analysis and decomposition	
+* [`sharpen`](sharpen/index.md):  Sharpening and enhancing functions
+* [`geometry`](geometry/index.md):  Basic geometrical tools
+* [`kernel`](kernel/index.md):  Kernel operators
+* [`morphology`](morphology/index.md):  Mathematical morphology
+* [`propagation`](propagation/index.md):  Propagation and Fast Marching methods	
+* [`segmentation`](segmentation/index.md):  Segmentation functions
+* [`statistics`](statistics/index.md):  Basic statistical tools and operators
+* [`texture`](texture/index.md):  Texture analysis and representations
+* [`misc`](misc/index.md):  Miscellaneous functions
 
 See file [`Contents.html`](Contents.html) for complete list.
 
