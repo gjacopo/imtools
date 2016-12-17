@@ -33,11 +33,11 @@
 * [koethedge](koethedge.html) -             Koethe's edge/corner detector based on the gradient structure tensor.
 * [koethedge_base](koethedge_base.html).
 * [multiedge](multiedge.html) -             Compute a multiscale edge map using a 2D Sobel-like wavelet.
-* [multiedge_base](multiedge_base.html).
 * [petrouedge](petrouedge.html) -           Petrou & Kitller's edge detector.
 * [petrouedge_base](petrouedge_base.html).
 * [rothwelledge](rothwelledge.html) -       Rothwell's subpixel edge detector.
-* [rothwelledge_base](rothwelledge_base.html) .
+* [rothwelledge_base](rothwelledge_base.html).
+* [sakaredge](sakaredge.html) -             Sakar & Boyer's optimal zero-crossing edge operator.
 * [sdgdedge](sdgdedge.html) -               Edge detection filter based on the 2nd derivative and/or Laplacian in the gradient direction.
 * [sdgdedge_base](sdgdedge_base.html).
 * [susancorner](susancorner.html) -         SUSAN Edge/corner detection or image smoothing.
