@@ -29,7 +29,7 @@ Matlab tools for low-level image processing:
 * `segmentation`:  Segmentation functions
 * `statistics`:  Basic statistical tools and operators
 * `texture`:  Texture analysis and representations
-* ` misc`:  Miscellaneous functions
+* `misc`:  Miscellaneous functions
 
 See file [`Contents.html`](Contents.html) for complete list.
 
