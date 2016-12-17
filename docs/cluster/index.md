@@ -1,4 +1,4 @@
-## `cluster` -  Clustering and classification
+### `cluster` -  Clustering and classification
  
-- @subpage [fuzzbound_base](fuzzbound_base.html)
-- @subpage [fuzzbound](fuzzbound.html)
+* [fuzzbound](fuzzbound.html) - Compute the fuzzy boundaries on a fuzzy categorical map.
+* [fuzzbound_base](fuzzbound_base.html)
