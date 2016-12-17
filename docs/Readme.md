@@ -8,8 +8,6 @@ Tools (Matlab/C) for low-level image processing
 
 Various basic low-level image processing tools used in the experiments/analyses reported in the references listed [below](References).
 
-*version*:      0.9
-
 *since*:        2007
 
 *license*:      [EUPL](https://joinup.ec.europa.eu/sites/default/files/eupl1.1.-licence-en_0.pdf)
@@ -33,10 +31,7 @@ Matlab tools for low-level image processing.
 * `texture`:  Texture analysis and representations:		
 * ` misc`:  Miscellaneous functions:		
 
-See file `Contents.m` for further description.
-
-**Note** 
-Run `webpub` function to generate html documentation. Check script use.
+See file [`Contents.html`](Contents.html) for further description.
 
 **<a name="References"></a>References** 
 
