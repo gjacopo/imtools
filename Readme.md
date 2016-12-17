@@ -8,11 +8,13 @@ Tools (Matlab/C) for low-level image processing
 
 Various basic low-level image processing tools used in the experiments/analyses reported in the references listed [below](References).
 
-*version*:      0.9
+*documentation*:  https://gjacopo.github.io/imtools/
 
-*since*:        2007
+*version*:        0.9
 
-*license*:      [EUPL](https://joinup.ec.europa.eu/sites/default/files/eupl1.1.-licence-en_0.pdf)
+*since*:          2007
+
+*license*:        [EUPL](https://joinup.ec.europa.eu/sites/default/files/eupl1.1.-licence-en_0.pdf)
 
 **Description**
 Matlab tools for low-level image processing.
