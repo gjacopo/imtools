@@ -18,6 +18,7 @@ Various basic low-level image processing tools used in the experiments/analyses 
 
 **Description**
 
+* `algebra`:  Matrix manipulation
 * `cluster`:  Clustering and classification
 * `derive`:  Differentiation functions
 * `feature`:  Feature extraction
