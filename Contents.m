@@ -3,6 +3,26 @@
 % credit: J.Grazzini
 % license: European Union Public License
 %
+% algebra/  Matrix manipulation:
+%   accumarrayset  - Overload ACCUMARRAY to group elements from a data vector set.
+%   allcombs       - Retrieve all 'crossed' combinations of elements in various 
+%                    input vectors.
+%   allvcombs      - Retrieve all 'crossed' combinations of elements of a single
+%                    input vector.
+%   cellnumsubtrim - Trim a set of numerical sequences from its subsequences.
+%   clamp          - Clamp data.
+%   compcol        - Compare columns of a matrix.
+%   ind2rc         - Variant of IND2SUB behaving nicely with single output.
+%   mat2rc         - Convert a matrix to a row or column vector using the COLON
+%                    operator.
+%   nb_dims        - Overload NDIMS.
+%   posinsert      - Insert numeric values in a vector or matrix at given positions.
+%   rescale        - Rescale data.
+%   reverse        - Flip a vector.
+%   triunpack      - Unpack the non-redundant representation of a triangular or 
+%                    symmetric matrix..
+%   uniqueunsort   - Retrieve unsorted list of unique elements.  
+%
 % cluster/  Clustering and classification:		
 %   fuzzbound      - Computes the fuzzy boundaries on a fuzzy categorical map.
 %
