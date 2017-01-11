@@ -1,0 +1,265 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ANISORVORFILT_BASE - Base function for ANISORVORFILT. NOT FINISHED IMPLEMENTING.</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-14"><meta name="DC.source" content="anisorvorfilt_base.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+
+  </style></head><body><div class="content"><h1>ANISORVORFILT_BASE - Base function for ANISORVORFILT. NOT FINISHED IMPLEMENTING.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Syntax</a></li><li><a href="#3">References</a></li><li><a href="#4">Credit</a></li><li><a href="#5">See also</a></li><li><a href="#6">Function implementation</a></li></ul></div><h2>Description<a name="1"></a></h2><p>Morphological anisotropic filtering of connected structures using the orientation information derived from the anisotropic continous scale model of [BBW07] (numerical scheme therein) and within the Voronoi diagram of the connected structures.</p><h2>Syntax<a name="2"></a></h2><pre>   u = ANISORVORFILT_BASE(I, delta, nu, rho, sigma, der, int, samp);</pre><h2>References<a name="3"></a></h2><p>[BBW07]  M. Breu&szlig;, B. Burgeth and J. Weickert: "Anisotropic continuous-      scale morphology", Proc. IbPRIA, LNCS 4478, pp. 515-522, Springer,      2007.      <a href="http://www.springerlink.com/content/1hm264w86111m148/">http://www.springerlink.com/content/1hm264w86111m148/</a></p><p>[PP08]  G. Papari and N. Petkov: "Adaptive pseudo dilation for Gestalt      edge grouping and contour detection", IEEE Trans. on Image Processing,      17(10):1950-1962, 2008.      <a href="http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=4623243&amp;tag=1">http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=4623243&amp;tag=1</a></p><h2>Credit<a name="4"></a></h2><p><a href="mailto:grazzja@lanl.gov">J.Grazzini</a> (ISR-2/LANL)</p><h2>See also<a name="5"></a></h2><p>Related: <a href="ANISOR.html"><tt>ANISOR</tt></a>, <a href="ANISORFILT.html"><tt>ANISORFILT</tt></a>, <a href="../../derive/html/GSTSMOOTH.html"><tt>GSTSMOOTH</tt></a>, <a href="matlab:webpub(whichpath('VORONOI'))"><tt>VORONOI</tt></a>. Called: <a href="ANISOR_BASE.html"><tt>ANISOR_BASE</tt></a>, <a href="../../propagation/html/POTENTIAL2FRONT.html"><tt>POTENTIAL2FRONT</tt></a>, <a href="matlab:webpub(whichpath('BWCONNCOMP'))"><tt>BWCONNCOMP</tt></a>, <a href="matlab:webpub(whichpath('LABELMATRIX'))"><tt>LABELMATRIX</tt></a>, <a href="matlab:webpub(whichpath('IMDILATE'))"><tt>IMDILATE</tt></a>, <a href="matlab:webpub(whichpath('IMERODE'))"><tt>IMERODE</tt></a>.</p><h2>Function implementation<a name="6"></a></h2><pre class="codeinput"><span class="keyword">function</span> u = anisorvorfilt_base(I, delta, nu, rho, sigma, der, int, samp) <span class="comment">%#ok</span>
+</pre><pre class="codeinput">error(<span class="string">'anisorvorfilt_base:exit'</span>,<span class="string">'not implemented yet'</span>);
+</pre><p>setting internal variables</p><pre class="codeinput">[X,Y] = size(I);                                                       <span class="comment">%#ok</span>
+
+<span class="comment">% predefine appropriate indices</span>
+zer0 = false(X+2,Y+2);
+
+iminusj = zer0; iminusj(1:end-2,2:end-1) = true; iminusj = iminusj(:);
+iplusj = zer0; iplusj(3:end,2:end-1) = true; iplusj = iplusj(:);
+ijminus = zer0; ijminus(2:end-1,1:end-2) = true; ijminus = ijminus(:);
+ijplus = zer0; ijplus(2:end-1,3:end) = true; ijplus = ijplus(:);
+
+zer0 = zeros(X*Y,1);
+</pre><p>create labelled image</p><pre class="codeinput"><span class="keyword">if</span> islogical(I)
+    CC = bwconncomp(I);
+    L = labelmatrix(CC);
+    nCC = CC.NumObjects;
+<span class="keyword">else</span>
+    <span class="comment">% see</span>
+    <span class="comment">% http://www.mathworks.com/matlabcentral/fileexchange/26946-label-connected-components-in-2-d-array</span>
+<span class="keyword">end</span>
+</pre><p>compute the Voronoi diagram of the labelled structures</p><pre class="codeinput">W = ones(X, Y);
+
+[i,j] = ind2sub([X,Y], find(L~=0));
+[D, VV] = potential2front(W,  [i'; j']);
+V = zeros(X,Y);
+<span class="keyword">for</span> ip = 1:length(i)
+    V(VV==ip) = L(i(ip),j(ip));
+<span class="keyword">end</span>
+
+<span class="comment">% D = zeros(X, Y, nCC);</span>
+<span class="comment">% for l=1:nCC</span>
+<span class="comment">%     [i,j] = ind2sub([X,Y], find(L==l));</span>
+<span class="comment">%     D(:,:,l) = potential2front(W,  [i'; j']);</span>
+<span class="comment">% end</span>
+<span class="comment">% [dum, V] = sort(D, 3, 'ascend');</span>
+<span class="comment">% V = V(:,:,1); % Voronoi diagram of the connected components</span>
+<span class="comment">% figure, imagesc(V)</span>
+<span class="comment">% V(L~=0) = L(L~=0);</span>
+
+<span class="comment">% frontiers</span>
+se = strel(<span class="string">'square'</span>,3);
+dV = imdilate(V,se) - imerode(V,se);
+dV = dV &gt; 0;
+</pre><p>perform Rouy-Turin numerical scheme like in Eq.(11)</p><pre class="codeinput">u = zeros(size(I));
+uu = double(I);
+
+<span class="comment">%while any(~isout)</span>
+<span class="keyword">for</span> i=1:30
+    kappa = anisor_base(uu, nu, rho, sigma, der, int, samp);
+    <span class="comment">% kappa=1;</span>
+
+    <span class="comment">%    for l=1:nCC</span>
+    <span class="comment">%        if isout(l),  continue;  end</span>
+    U = padarray( uu, [1 1], <span class="string">'replicate'</span>, <span class="string">'both'</span>);
+
+    <span class="comment">% Rouy-Tourin scheme a in Eq.(11): naive implementation</span>
+    h = 1;
+    uu = uu(:) + delta * kappa(:) .* <span class="keyword">...</span>
+        sqrt((max([zer0 (U(iplusj) - uu(:))/h (U(iminusj) - uu(:))/h],[],2)).^2 + <span class="keyword">...</span>
+        (max([zer0 (U(ijplus) - uu(:))/h (U(ijminus) - uu(:))/h],[],2)).^2);
+    <span class="comment">% note: the sign of delta defines if the morphological operation is</span>
+    <span class="comment">% a dilation ('+' sign) or an erosion ('-' sign)</span>
+
+    <span class="comment">% http://cermics.enpc.fr/~forcadel/Publi/FGL.pdf</span>
+    <span class="comment">% http://etd.lsu.edu/docs/available/etd-09152008-143521/unrestricted/Tu</span>
+    <span class="comment">% gurlandiss.pdf</span>
+    <span class="comment">% http://ctr.stanford.edu/ResBriefs03/herrmann1.pdf</span>
+    <span class="comment">% http://www.mia.uni-saarland.de/Publications/pizarro-ismm09.pdf</span>
+
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of anisorvorfilt_base</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.14<br></p></div><!--
+##### SOURCE BEGIN #####
+%% ANISORVORFILT_BASE - Base function for ANISORVORFILT. NOT FINISHED IMPLEMENTING. 
+%
+%% Description
+% Morphological anisotropic filtering of connected structures using the
+% orientation information derived from the anisotropic continous scale model
+% of [BBW07] (numerical scheme therein) and within the Voronoi diagram of
+% the connected structures. 
+%
+%% Syntax
+%     u = ANISORVORFILT_BASE(I, delta, nu, rho, sigma, der, int, samp);
+%
+%% References
+% [BBW07]  M. Breuß, B. Burgeth and J. Weickert: "Anisotropic continuous-
+%      scale morphology", Proc. IbPRIA, LNCS 4478, pp. 515-522, Springer, 
+%      2007.	
+%      <http://www.springerlink.com/content/1hm264w86111m148/>
+%
+% [PP08]  G. Papari and N. Petkov: "Adaptive pseudo dilation for Gestalt 
+%      edge grouping and contour detection", IEEE Trans. on Image Processing,
+%      17(10):1950-1962, 2008.
+%      <http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=4623243&tag=1>
+%
+%% Credit
+% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)
+%
+%% See also
+% Related:
+% <ANISOR.html |ANISOR|>,
+% <ANISORFILT.html |ANISORFILT|>,
+% <../../derive/html/GSTSMOOTH.html |GSTSMOOTH|>,
+% <matlab:webpub(whichpath('VORONOI')) |VORONOI|>.
+% Called: 
+% <ANISOR_BASE.html |ANISOR_BASE|>,
+% <../../propagation/html/POTENTIAL2FRONT.html |POTENTIAL2FRONT|>,
+% <matlab:webpub(whichpath('BWCONNCOMP')) |BWCONNCOMP|>,
+% <matlab:webpub(whichpath('LABELMATRIX')) |LABELMATRIX|>,
+% <matlab:webpub(whichpath('IMDILATE')) |IMDILATE|>,
+% <matlab:webpub(whichpath('IMERODE')) |IMERODE|>.
+
+%% Function implementation
+function u = anisorvorfilt_base(I, delta, nu, rho, sigma, der, int, samp) %#ok  
+
+error('anisorvorfilt_base:exit','not implemented yet');
+
+%%
+% setting internal variables
+
+[X,Y] = size(I);                                                       %#ok                                            
+
+% predefine appropriate indices
+zer0 = false(X+2,Y+2);
+
+iminusj = zer0; iminusj(1:end-2,2:end-1) = true; iminusj = iminusj(:);
+iplusj = zer0; iplusj(3:end,2:end-1) = true; iplusj = iplusj(:);
+ijminus = zer0; ijminus(2:end-1,1:end-2) = true; ijminus = ijminus(:);
+ijplus = zer0; ijplus(2:end-1,3:end) = true; ijplus = ijplus(:);
+
+zer0 = zeros(X*Y,1);
+
+%%
+% create labelled image
+
+if islogical(I)
+    CC = bwconncomp(I);
+    L = labelmatrix(CC);
+    nCC = CC.NumObjects;
+else
+    % see
+    % http://www.mathworks.com/matlabcentral/fileexchange/26946-label-connected-components-in-2-d-array
+end
+  
+%% 
+% compute the Voronoi diagram of the labelled structures
+
+W = ones(X, Y);
+
+[i,j] = ind2sub([X,Y], find(L~=0));
+[D, VV] = potential2front(W,  [i'; j']);
+V = zeros(X,Y);
+for ip = 1:length(i)
+    V(VV==ip) = L(i(ip),j(ip));
+end
+
+% D = zeros(X, Y, nCC);
+% for l=1:nCC
+%     [i,j] = ind2sub([X,Y], find(L==l));      
+%     D(:,:,l) = potential2front(W,  [i'; j']);
+% end
+% [dum, V] = sort(D, 3, 'ascend');
+% V = V(:,:,1); % Voronoi diagram of the connected components
+% figure, imagesc(V)
+% V(L~=0) = L(L~=0);
+
+% frontiers
+se = strel('square',3);
+dV = imdilate(V,se) - imerode(V,se);
+dV = dV > 0;
+
+%%
+% perform Rouy-Turin numerical scheme like in Eq.(11)
+
+u = zeros(size(I));
+uu = double(I);
+
+%while any(~isout)
+for i=1:30
+    kappa = anisor_base(uu, nu, rho, sigma, der, int, samp);
+    % kappa=1;
+    
+    %    for l=1:nCC
+    %        if isout(l),  continue;  end
+    U = padarray( uu, [1 1], 'replicate', 'both');
+    
+    % Rouy-Tourin scheme a in Eq.(11): naive implementation
+    h = 1;
+    uu = uu(:) + delta * kappa(:) .* ...
+        sqrt((max([zer0 (U(iplusj) - uu(:))/h (U(iminusj) - uu(:))/h],[],2)).^2 + ...
+        (max([zer0 (U(ijplus) - uu(:))/h (U(ijminus) - uu(:))/h],[],2)).^2);
+    % note: the sign of delta defines if the morphological operation is
+    % a dilation ('+' sign) or an erosion ('-' sign)
+    
+    % http://cermics.enpc.fr/~forcadel/Publi/FGL.pdf
+    % http://etd.lsu.edu/docs/available/etd-09152008-143521/unrestricted/Tu
+    % gurlandiss.pdf
+    % http://ctr.stanford.edu/ResBriefs03/herrmann1.pdf
+    % http://www.mia.uni-saarland.de/Publications/pizarro-ismm09.pdf
+
+end
+
+end % end of anisorvorfilt_base
+
+##### SOURCE END #####
+--></body></html>

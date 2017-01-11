@@ -1,0 +1,285 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>pdelaplace</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-14"><meta name="DC.source" content="pdelaplace.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> U = pdelaplace(I,mask)
+
+[M N] = size(I);
+
+<span class="comment">% generate and plot the vectorizing indices</span>
+G = reshape(1:M*N, [M N]);
+G = padarray(G, [1 1], 0,<span class="string">'both'</span>);
+
+<span class="comment">% generate and display the discrete Laplacian</span>
+lapl =  buildlaplacian(G); <span class="comment">% sparse(delsq(G));</span>
+
+<span class="comment">% modifying Laplacian operator matrix for boundary Neumann conditions</span>
+b = reshape((I.*mask)', [M*N 1]);
+A = boundlaplacian(lapl, b, M, N);
+
+<span class="comment">% solve the linear system</span>
+U = reshape(A\b, N, M)';
+<span class="comment">% [L, U] = luinc(A, 1e-2);</span>
+<span class="comment">% U = bicgstab(A, b, 1e-3, 100, L, U, b);</span>
+
+<span class="keyword">end</span>
+
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="comment">% different ways of building the Laplacian matrix</span>
+<span class="keyword">function</span> lapl = buildlaplacian(m, varargin)
+
+G = []; <span class="comment">% default</span>
+<span class="keyword">if</span> nargin==1
+    <span class="keyword">if</span> nb_dims(m)~=1,     G = m;
+    <span class="keyword">else</span>                  n = m;   <span class="comment">% dimensions passing a square matrix</span>
+    <span class="keyword">end</span>
+<span class="keyword">elseif</span> nargin==2,
+    n = varargin{1};   <span class="comment">% dimensions passing a rectangular matrix</span>
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> ~isempty(G)
+    lapl = sparse(delsq(G));
+
+<span class="keyword">else</span>
+
+    <span class="comment">% create a partial Laplacian for one "row" of the grid approximation</span>
+    <span class="comment">% doesn't work for grid widths less than two)</span>
+    z = sparse(zeros(1,n));
+    z(1) = 4;    z(2) = -1;
+    tridiag = kron(speye(m), toeplitz(z));
+
+    <span class="comment">% now generate the cell prototype for the offdiagonal elements</span>
+    z = sparse(zeros(1,m));    z(2) = -1;
+    offdiag = toeplitz(z);
+
+    <span class="comment">%create the discrete Laplacian</span>
+    lapl = tridiag + kron(offdiag, speye(n));
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+
+
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="keyword">function</span> [A] = boundlaplacian(A, b, varargin)
+
+<span class="comment">% If matrix dimensions are passed in, then use them to force boundary</span>
+<span class="comment">% conditions on the outer rows and columns (ie. the surrounding rectangle)</span>
+<span class="comment">% Otherwise, boundary conditions are assumed only for non-zero entries</span>
+<span class="comment">% If passed in args do not match dimensions for b, they are ignored.</span>
+
+sz = length(b);
+m = floor(sqrt(sz));
+n = m;
+<span class="keyword">if</span> nargin &gt; 3
+  <span class="comment">% Rectangular matrix</span>
+  arg1 = varargin{1};
+  arg2 = varargin{2};
+  rows = arg1(1);
+  cols = arg2(1);
+  <span class="keyword">if</span> ((rows*cols) == sz)
+    m = rows;
+    n = cols;
+  <span class="keyword">end</span>
+
+  <span class="comment">% now reshape b into a matrix, and force the boundary columns to</span>
+  <span class="comment">% non-zero</span>
+  c = reshape(b, n ,m)';
+  c(1, 1:n) = 1;
+  c(m, 1:n) = 1;
+  c(1:m, 1) = 1;
+  c(1:m, n) = 1;
+  b = reshape(c', m*n, 1);
+<span class="keyword">end</span>
+
+<span class="comment">% Create an identity matrix with ones in the boundary rows, and</span>
+<span class="comment">% zeros elsewhere</span>
+i = find(b);
+I = speye(sz);
+<span class="keyword">if</span> length(i) &lt; 1
+  A = I;
+<span class="keyword">else</span>
+  <span class="comment">% This takes FOREVER on large matrices, even sparse ones!</span>
+  <span class="comment">%A(i,:) = I(i,:);</span>
+
+  <span class="comment">% Use a different method; extract diagonals and operate on them only</span>
+  <span class="comment">% Extend A on left and right so index errors don't occur</span>
+  A = [sparse(sz,n) A sparse(sz,n)];
+
+  [B, d] = spdiags(A);
+  B(i,:) = 0;
+  B(i,3) = 1;
+  A = spdiags(B, d, sz, (sz+2*n));
+
+  <span class="comment">% Reduce A back to original size</span>
+  A = A(:, ((n+1):(sz + n)));
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.14<br></p></div><!--
+##### SOURCE BEGIN #####
+function U = pdelaplace(I,mask)
+
+[M N] = size(I);
+
+% generate and plot the vectorizing indices
+G = reshape(1:M*N, [M N]);
+G = padarray(G, [1 1], 0,'both');
+
+% generate and display the discrete Laplacian
+lapl =  buildlaplacian(G); % sparse(delsq(G));
+
+% modifying Laplacian operator matrix for boundary Neumann conditions
+b = reshape((I.*mask)', [M*N 1]);
+A = boundlaplacian(lapl, b, M, N);
+
+% solve the linear system
+U = reshape(A\b, N, M)';
+% [L, U] = luinc(A, 1e-2);
+% U = bicgstab(A, b, 1e-3, 100, L, U, b);
+
+end
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% different ways of building the Laplacian matrix
+function lapl = buildlaplacian(m, varargin)
+
+G = []; % default
+if nargin==1 
+    if nb_dims(m)~=1,     G = m;
+    else                  n = m;   % dimensions passing a square matrix
+    end
+elseif nargin==2,
+    n = varargin{1};   % dimensions passing a rectangular matrix 
+end
+
+if ~isempty(G)
+    lapl = sparse(delsq(G));
+
+else
+    
+    % create a partial Laplacian for one "row" of the grid approximation
+    % doesn't work for grid widths less than two)
+    z = sparse(zeros(1,n));
+    z(1) = 4;    z(2) = -1;
+    tridiag = kron(speye(m), toeplitz(z));
+    
+    % now generate the cell prototype for the offdiagonal elements
+    z = sparse(zeros(1,m));    z(2) = -1;
+    offdiag = toeplitz(z);
+    
+    %create the discrete Laplacian
+    lapl = tridiag + kron(offdiag, speye(n));
+end
+end
+
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function [A] = boundlaplacian(A, b, varargin)
+
+% If matrix dimensions are passed in, then use them to force boundary
+% conditions on the outer rows and columns (ie. the surrounding rectangle)  
+% Otherwise, boundary conditions are assumed only for non-zero entries
+% If passed in args do not match dimensions for b, they are ignored.
+
+sz = length(b);
+m = floor(sqrt(sz));
+n = m;
+if nargin > 3
+  % Rectangular matrix
+  arg1 = varargin{1};
+  arg2 = varargin{2};
+  rows = arg1(1);
+  cols = arg2(1);
+  if ((rows*cols) == sz)
+    m = rows;
+    n = cols;
+  end
+
+  % now reshape b into a matrix, and force the boundary columns to
+  % non-zero
+  c = reshape(b, n ,m)';
+  c(1, 1:n) = 1;
+  c(m, 1:n) = 1;
+  c(1:m, 1) = 1;
+  c(1:m, n) = 1;
+  b = reshape(c', m*n, 1);
+end
+
+% Create an identity matrix with ones in the boundary rows, and
+% zeros elsewhere
+i = find(b);
+I = speye(sz);
+if length(i) < 1
+  A = I;
+else
+  % This takes FOREVER on large matrices, even sparse ones!
+  %A(i,:) = I(i,:);
+
+  % Use a different method; extract diagonals and operate on them only
+  % Extend A on left and right so index errors don't occur
+  A = [sparse(sz,n) A sparse(sz,n)];
+
+  [B, d] = spdiags(A);
+  B(i,:) = 0;
+  B(i,3) = 1;
+  A = spdiags(B, d, sz, (sz+2*n));
+
+  % Reduce A back to original size
+  A = A(:, ((n+1):(sz + n)));
+end
+end
+
+##### SOURCE END #####
+--></body></html>

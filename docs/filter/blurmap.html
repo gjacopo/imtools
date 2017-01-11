@@ -1,0 +1,274 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>BLURMAP - Adaptive local isotropic Gaussian bluring.</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-14"><meta name="DC.source" content="blurmap.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+
+  </style></head><body><div class="content"><h1>BLURMAP - Adaptive local isotropic Gaussian bluring.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Syntax</a></li><li><a href="#3">Inputs</a></li><li><a href="#4">Outputs</a></li><li><a href="#5">Example</a></li><li><a href="#6">Reference</a></li><li><a href="#7">Credit</a></li><li><a href="#8">See also</a></li><li><a href="#9">Function implementation</a></li></ul></div><h2>Description<a name="1"></a></h2><p>Perform an adaptive local isotropic Gaussian bluring of an image where the scale of the Gaussian (standard deviation) is given by a blur map like in [EZ98].</p><h2>Syntax<a name="2"></a></h2><pre>   Iblur = BLURMAP(I);
+   [Iblur, qmap] = BLURMAP(I, blur, qstep);</pre><h2>Inputs<a name="3"></a></h2><p><b><tt>I</tt></b> : an input image with size <tt>(X,Y,C)</tt>, where <tt>C&gt;1</tt> when <tt>I</tt> is multichannel     (in that latter case, the same bluring is applied over the different     channels separately).</p><p><b><tt>blur</tt></b> : optional image setting locally (on each pixel) the bluring     parameter to be used in the isotropic Gaussian smoothing; it must be     either:</p><div><ul><li>a scalar, then uniform isotropic bluring is performed all over the         input image,</li><li>a row (resp. colum) vector of size <tt>X</tt> (resp. size <tt>Y</tt>), then a row         (resp. column) dependent bluring with sigma parameters constant         over the columns (resp. rows) is performed, similarly to the test         image used in [EZ98]),</li><li>a matrix of same size <tt>(X,Y)</tt> as the input matrix, where each entry         indicates the standard deviation of the Gaussian filter to be         applied at each pixel;</li></ul></div><p>default: the blur values are normally distributed with mean 2 and standard     deviation 0.5; note moreover that the map is quantized to avoid a too     large number of possible sigma values.</p><p><b><tt>qstep</tt></b> : optional quantizing parameter.</p><h2>Outputs<a name="4"></a></h2><p><b><tt>Iblur</tt></b> : adaptively locally blurred image.</p><p><b><tt>qmap</tt></b> : optional output image storing the quantized local sigma values     actually used in the bluring.</p><h2>Example<a name="5"></a></h2><pre class="language-matlab">a=zeros(256,256);
+a(:,128:256)=255;
+f=linspace(0.25,10,size(a,1))';
+s=f(2)-f(1);
+b=blurmap(a,f,s); <span class="comment">% bluring similarly to [EZ98]</span>
+figure, imagesc(b), colormap <span class="string">gray</span>
+</pre><h2>Reference<a name="6"></a></h2><p>[EZ98] J.H. Elder and S.W.Zucker: "Local scale control for edge      detection and blur estimation", IEEE Trans. on Pattern Analysis and      Machine Intelligence, 20:699-716, 1998.      <a href="http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=689301&amp;tag=1">http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=689301&amp;tag=1</a></p><h2>Credit<a name="7"></a></h2><p><a href="mailto:grazzja@lanl.gov">J.Grazzini</a> (ISR-2/LANL)</p><h2>See also<a name="8"></a></h2><p>Related: <a href="CONVOLUTION.html"><tt>CONVOLUTION</tt></a>, <a href="ADAPTIVEFILT.html"><tt>ADAPTIVEFILT</tt></a>. Called: <a href="BLURMAP_BASE.html"><tt>BLURMAP_BASE</tt></a>.</p><h2>Function implementation<a name="9"></a></h2><pre class="codeinput"><span class="keyword">function</span> [Iblur,varargout] = blurmap(I, varargin)
+</pre><p>parsing parameters</p><pre class="codeinput"><span class="comment">% mandatory parameter</span>
+<span class="keyword">if</span> ~isnumeric(I)
+    error(<span class="string">'blurmap:inputerror'</span>,<span class="string">'a matrix is required in input'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">% check number of parameters</span>
+error(nargoutchk(1, 2, nargout, <span class="string">'struct'</span>))
+error(nargchk(1, 3, nargin, <span class="string">'struct'</span>))
+
+<span class="comment">% optional parameters</span>
+p = createParser(<span class="string">'BLURMAP'</span>);
+<span class="comment">% principal optional parameters</span>
+p.addOptional(<span class="string">'blur'</span>, [], @(x)isnumeric(x) &amp;&amp; ~any(x(:))&lt;0.05);
+p.addOptional(<span class="string">'qstep'</span>, .3, @(x)isscalar(x) &amp;&amp; isfloat(x) &amp;&amp; x&gt;0);
+
+<span class="comment">% parse and validate all input arguments</span>
+p.parse(varargin{:});
+p = getvarParser(p);
+</pre><p>checking and setting parameters</p><pre class="codeinput">[X,Y] = size(I(:,:,1));
+
+<span class="comment">% compute the bluring map (note that by doing it now, in the case of</span>
+<span class="comment">% multispectral image, the same bluring map will be used for buring all the</span>
+<span class="comment">% channels.</span>
+<span class="keyword">if</span> isempty(p.blur)
+    p.blur = 2 + randn(X,Y)/2;
+<span class="keyword">else</span>
+    [x,y] = size(p.blur); <span class="comment">% other dimensions are ignored</span>
+    s = min(x,y); S = max(x,y);
+    <span class="keyword">if</span> s == 1
+        <span class="keyword">if</span> (s==x &amp;&amp; S~=Y) ||(s==y &amp;&amp; S~=X)
+            error(<span class="string">'blurmap:inputerror'</span>,<span class="keyword">...</span>
+                <span class="string">'input vector must be consistent with input image'</span>);
+        <span class="keyword">else</span>
+            p.blur = repmat(p.blur,(s==x)*X+(s~=x),(s==y)*Y+(s~=y));
+        <span class="keyword">end</span>
+    <span class="keyword">elseif</span> x ~= X || y ~= Y
+        error(<span class="string">'blurmap:inputerror'</span>,<span class="string">'input matrices must have same size'</span>);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% dealing with multispectral images</span>
+<span class="comment">% if C&gt;1</span>
+<span class="comment">%     Iblur = zeros(X, Y, C);</span>
+<span class="comment">%     if nargout==2,  varargout{1} = zeros(X, Y, C);    end</span>
+<span class="comment">%     for c=1:C</span>
+<span class="comment">%         [Iblur(:,:,c) tmp] = blurmap(I(:,:,c), 'parse', p);</span>
+<span class="comment">%     end</span>
+<span class="comment">%     if nargout==2,  varargout{1}(:,:,c) = tmp;    end</span>
+<span class="comment">%     return;</span>
+<span class="comment">% end</span>
+</pre><p>main computation</p><pre class="codeinput">[Iblur,quantblur] = blurmap_base(I, p.blur, p.qstep);
+
+<span class="keyword">if</span> nargout==2
+    varargout{1} = quantblur;
+<span class="keyword">end</span>
+</pre><p>display</p><pre class="codeinput"><span class="keyword">if</span> p.disp
+    figure, imagesc(rescale(Iblur,0,1)), axis <span class="string">image</span> <span class="string">off</span>, title(<span class="string">'blurred image'</span>);
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of blurmap</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.14<br></p></div><!--
+##### SOURCE BEGIN #####
+%% BLURMAP - Adaptive local isotropic Gaussian bluring.
+%
+%% Description
+% Perform an adaptive local isotropic Gaussian bluring of an image where the
+% scale of the Gaussian (standard deviation) is given by a blur map like in
+% [EZ98].
+%
+%% Syntax
+%     Iblur = BLURMAP(I);
+%     [Iblur, qmap] = BLURMAP(I, blur, qstep);
+%
+%% Inputs
+% *|I|* : an input image with size |(X,Y,C)|, where |C>1| when |I| is multichannel
+%     (in that latter case, the same bluring is applied over the different 
+%     channels separately).
+%
+% *|blur|* : optional image setting locally (on each pixel) the bluring 
+%     parameter to be used in the isotropic Gaussian smoothing; it must be 
+%     either: 
+%
+% * a scalar, then uniform isotropic bluring is performed all over the 
+%         input image, 
+% * a row (resp. colum) vector of size |X| (resp. size |Y|), then a row
+%         (resp. column) dependent bluring with sigma parameters constant
+%         over the columns (resp. rows) is performed, similarly to the test
+%         image used in [EZ98]), 
+% * a matrix of same size |(X,Y)| as the input matrix, where each entry
+%         indicates the standard deviation of the Gaussian filter to be 
+%         applied at each pixel;
+%
+% default: the blur values are normally distributed with mean 2 and standard 
+%     deviation 0.5; note moreover that the map is quantized to avoid a too
+%     large number of possible sigma values.
+%
+% *|qstep|* : optional quantizing parameter.
+% 
+%% Outputs
+% *|Iblur|* : adaptively locally blurred image.
+%
+% *|qmap|* : optional output image storing the quantized local sigma values
+%     actually used in the bluring.
+%
+%% Example
+%   a=zeros(256,256);
+%   a(:,128:256)=255;
+%   f=linspace(0.25,10,size(a,1))';
+%   s=f(2)-f(1);
+%   b=blurmap(a,f,s); % bluring similarly to [EZ98]
+%   figure, imagesc(b), colormap gray
+% 
+%% Reference
+% [EZ98] J.H. Elder and S.W.Zucker: "Local scale control for edge
+%      detection and blur estimation", IEEE Trans. on Pattern Analysis and
+%      Machine Intelligence, 20:699-716, 1998.
+%      <http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=689301&tag=1>
+%
+%% Credit
+% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)
+%
+%% See also
+% Related:
+% <CONVOLUTION.html |CONVOLUTION|>,
+% <ADAPTIVEFILT.html |ADAPTIVEFILT|>.
+% Called: 
+% <BLURMAP_BASE.html |BLURMAP_BASE|>.
+
+%% Function implementation
+function [Iblur,varargout] = blurmap(I, varargin)
+
+%%
+% parsing parameters
+
+% mandatory parameter
+if ~isnumeric(I)
+    error('blurmap:inputerror','a matrix is required in input');
+end
+
+% check number of parameters
+error(nargoutchk(1, 2, nargout, 'struct'))
+error(nargchk(1, 3, nargin, 'struct'))
+
+% optional parameters
+p = createParser('BLURMAP');   
+% principal optional parameters
+p.addOptional('blur', [], @(x)isnumeric(x) && ~any(x(:))<0.05);
+p.addOptional('qstep', .3, @(x)isscalar(x) && isfloat(x) && x>0);
+
+% parse and validate all input arguments
+p.parse(varargin{:}); 
+p = getvarParser(p);                                                            
+
+%% 
+% checking and setting parameters
+
+[X,Y] = size(I(:,:,1));
+
+% compute the bluring map (note that by doing it now, in the case of
+% multispectral image, the same bluring map will be used for buring all the 
+% channels.
+if isempty(p.blur)
+    p.blur = 2 + randn(X,Y)/2;
+else
+    [x,y] = size(p.blur); % other dimensions are ignored
+    s = min(x,y); S = max(x,y);
+    if s == 1
+        if (s==x && S~=Y) ||(s==y && S~=X)
+            error('blurmap:inputerror',...
+                'input vector must be consistent with input image');
+        else
+            p.blur = repmat(p.blur,(s==x)*X+(s~=x),(s==y)*Y+(s~=y));
+        end
+    elseif x ~= X || y ~= Y
+        error('blurmap:inputerror','input matrices must have same size');
+    end
+end
+
+% dealing with multispectral images
+% if C>1
+%     Iblur = zeros(X, Y, C);
+%     if nargout==2,  varargout{1} = zeros(X, Y, C);    end
+%     for c=1:C
+%         [Iblur(:,:,c) tmp] = blurmap(I(:,:,c), 'parse', p);
+%     end
+%     if nargout==2,  varargout{1}(:,:,c) = tmp;    end     
+%     return;
+% end
+
+%% 
+% main computation 
+
+[Iblur,quantblur] = blurmap_base(I, p.blur, p.qstep);
+
+if nargout==2
+    varargout{1} = quantblur;
+end
+
+%%
+% display
+
+if p.disp
+    figure, imagesc(rescale(Iblur,0,1)), axis image off, title('blurred image');
+end
+
+end % end of blurmap
+
+##### SOURCE END #####
+--></body></html>

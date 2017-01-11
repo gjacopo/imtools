@@ -1,0 +1,241 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>WEIGHTFILT_BASE - Matrix functional filter.</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-14"><meta name="DC.source" content="weightfilt_base.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+
+  </style></head><body><div class="content"><h1>WEIGHTFILT_BASE - Matrix functional filter.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Syntax</a></li><li><a href="#3">Inputs</a></li><li><a href="#4">Outputs</a></li><li><a href="#5">Credit</a></li><li><a href="#6">Function implementation</a></li><li><a href="#7">Subfunctions</a></li></ul></div><h2>Description<a name="1"></a></h2><p>Filter a matrix with the functional transform of another matrix.</p><h2>Syntax<a name="2"></a></h2><pre>   k = WEIGHTFILT_BASE(Awin, Dwin, wei);</pre><h2>Inputs<a name="3"></a></h2><p><b><tt>Awin</tt></b> : input window to filter.</p><p><b><tt>Dwin</tt></b> : input window which functional transform is used to filter <tt>Awin</tt>;     it should be of same size as <tt>Awin</tt>.</p><p><b><tt>wei</tt></b> : weighting functional <tt>F(Awin,Dwin)</tt>; it is either:</p><div><ul><li>a scalar &lt;0 if the transform is a scale function with exponent <tt>wei</tt>,         applied on <tt>Dwin</tt> ie. <img src="weightfilt_base_eq62443.png" alt="$x \rightarrow 1/ (x^{-\mbox{wei}})$">,</li><li>0 if a weighted median filter is to be applied on <tt>Dwin</tt> using the         weights given by the window <tt>Dwin</tt>,</li><li>a scalar &gt;0 if a gaussian weighting with standard deviation 1 and factor         <tt>wei</tt> is applied on <tt>Dwin</tt>, ie. it takes the form         <img src="weightfilt_base_eq52875.png" alt="$x \rightarrow e^{(x \cdot \mbox{wei})}$"> .</li></ul></div><h2>Outputs<a name="4"></a></h2><p><b><tt>k</tt></b>  : scalar value obtained as an output of <tt>F(Awin,Dwin)</tt>.</p><h2>Credit<a name="5"></a></h2><p><a href="mailto:grazzja@lanl.gov">J.Grazzini</a> (ISR-2/LANL)</p><h2>Function implementation<a name="6"></a></h2><pre class="codeinput"><span class="keyword">function</span> k = weightfilt_base(Awin, Dwin, wei)
+
+<span class="comment">% if wei==0,     weighting = @wmedweight;</span>
+<span class="comment">% elseif wei&gt;0,  weighting = @gaussweight;</span>
+<span class="comment">% else           weighting = @scaleweight;</span>
+<span class="comment">% end</span>
+<span class="keyword">if</span> wei==0,
+    k = wmedweight(Awin, Dwin);
+<span class="keyword">elseif</span> wei&gt;0,
+    k = gaussweight(Awin, Dwin, wei);
+<span class="keyword">else</span>
+    k = scaleweight(Awin, Dwin, wei);
+<span class="keyword">end</span>
+
+<span class="keyword">end</span> <span class="comment">% end of weightfilt_base</span>
+</pre><h2>Subfunctions<a name="7"></a></h2><p><tt>GAUSSWEIGHT</tt> - Gaussian-based weighting function</p><pre class="codeinput"><span class="comment">%--------------------------------------------------------------------------</span>
+<span class="keyword">function</span> k = gaussweight(Awin, Dwin, a)
+Dwin = exp( - a * Dwin );
+t = sum(Dwin);
+<span class="keyword">if</span>(t&gt;0),    Dwin = Dwin/t;  <span class="keyword">end</span>
+k = sum(Awin.*Dwin);
+
+<span class="keyword">end</span> <span class="comment">% end of gaussweight</span>
+</pre><p><tt>WMEDWEIGHT</tt> - Weighted median-based weighting function. For <tt>n</tt> numbers <img src="weightfilt_base_eq07251.png" alt="$x_1, \cdots, x_n$"> with positive weights <img src="weightfilt_base_eq70523.png" alt="$w_1, \cdots, w_n$"> (sum of all weights equal to one) the weighted median is defined as the element <img src="weightfilt_base_eq50101.png" alt="$x_k$">, such that: <img src="weightfilt_base_eq82587.png" alt="$$     \frac{1}{2} \geq \sum_{x_i < x_k}  \quad \&amp; \quad     \frac{1}{2} \geq \sum_{x_i &gt; x_k} $$"></p><pre class="codeinput"><span class="comment">%--------------------------------------------------------------------------</span>
+<span class="keyword">function</span> k = wmedweight(Awin, Dwin)
+
+Dwin = Dwin / max(Dwin(:));
+
+<span class="comment">% (line by line) transformation of the input-matrices to line-vectors</span>
+d = reshape(Awin',1,[]);
+w = reshape(Dwin',1,[]);
+
+<span class="comment">% sort the vectors</span>
+A = [d' w'];
+ASort = sortrows(A,1);
+
+dSort = ASort(:,1)';
+wSort = ASort(:,2)';
+
+l = length(wSort);
+sumVec = zeros(1,l);    <span class="comment">% vector for cumulative sums of the weights</span>
+<span class="keyword">for</span> i = 1:l
+    sumVec(i) = sum(wSort(1:i));
+<span class="keyword">end</span>
+
+k = [];     j = 0;
+
+<span class="keyword">while</span> isempty(k)
+    j = j + 1;
+    <span class="keyword">if</span> sumVec(j) &gt;= 0.5
+        k = dSort(j);    <span class="comment">% value of the weighted median</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">end</span> <span class="comment">% end of wmedweight</span>
+</pre><p><tt>SCALEWEIGHT</tt> - Scale-based weighting function.</p><pre class="codeinput"><span class="comment">%--------------------------------------------------------------------------</span>
+<span class="keyword">function</span> k = scaleweight(Awin, Dwin, a)
+Dwin = rescale(Dwin,eps,1) .^ a;
+t = sum(Dwin);
+<span class="keyword">if</span>(t&gt;0),    Dwin = Dwin/t;  <span class="keyword">end</span>
+k = sum(Awin.*Dwin);
+
+<span class="keyword">end</span> <span class="comment">% end of scaleweight</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.14<br></p></div><!--
+##### SOURCE BEGIN #####
+%% WEIGHTFILT_BASE - Matrix functional filter.
+% 
+%% Description
+% Filter a matrix with the functional transform of another matrix.
+%
+%% Syntax
+%     k = WEIGHTFILT_BASE(Awin, Dwin, wei);
+%
+%% Inputs
+% *|Awin|* : input window to filter.
+%
+% *|Dwin|* : input window which functional transform is used to filter |Awin|;
+%     it should be of same size as |Awin|.
+%
+% *|wei|* : weighting functional |F(Awin,Dwin)|; it is either:
+%
+% * a scalar <0 if the transform is a scale function with exponent |wei|,
+%         applied on |Dwin| ie. $x \rightarrow 1/ (x^{-\mbox{wei}})$,
+% * 0 if a weighted median filter is to be applied on |Dwin| using the
+%         weights given by the window |Dwin|,
+% * a scalar >0 if a gaussian weighting with standard deviation 1 and factor
+%         |wei| is applied on |Dwin|, ie. it takes the form 
+%         $x \rightarrow e^{(x \cdot \mbox{wei})}$ . 
+%      
+%% Outputs
+% *|k|*  : scalar value obtained as an output of |F(Awin,Dwin)|.
+%
+%% Credit
+% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)
+
+%% Function implementation
+function k = weightfilt_base(Awin, Dwin, wei)
+
+% if wei==0,     weighting = @wmedweight;
+% elseif wei>0,  weighting = @gaussweight;     
+% else           weighting = @scaleweight;
+% end
+if wei==0, 
+    k = wmedweight(Awin, Dwin);
+elseif wei>0,  
+    k = gaussweight(Awin, Dwin, wei);     
+else
+    k = scaleweight(Awin, Dwin, wei);
+end
+
+end % end of weightfilt_base
+
+
+%% Subfunctions
+
+%%
+% |GAUSSWEIGHT| - Gaussian-based weighting function
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function k = gaussweight(Awin, Dwin, a)
+Dwin = exp( - a * Dwin );
+t = sum(Dwin);
+if(t>0),    Dwin = Dwin/t;  end
+k = sum(Awin.*Dwin);
+
+end % end of gaussweight
+
+
+%%
+% |WMEDWEIGHT| - Weighted median-based weighting function.
+% For |n| numbers $x_1, \cdots, x_n$ with positive weights $w_1, \cdots, w_n$ 
+% (sum of all weights equal to one) the weighted median is defined as the
+% element $x_k$, such that:
+% $$
+%     \frac{1}{2} \geq \sum_{x_i < x_k}  \quad \& \quad 
+%     \frac{1}{2} \geq \sum_{x_i > x_k}
+% $$
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function k = wmedweight(Awin, Dwin)                            
+
+Dwin = Dwin / max(Dwin(:));
+
+% (line by line) transformation of the input-matrices to line-vectors
+d = reshape(Awin',1,[]);   
+w = reshape(Dwin',1,[]);  
+
+% sort the vectors
+A = [d' w'];
+ASort = sortrows(A,1);
+
+dSort = ASort(:,1)';
+wSort = ASort(:,2)';
+
+l = length(wSort);
+sumVec = zeros(1,l);    % vector for cumulative sums of the weights
+for i = 1:l
+    sumVec(i) = sum(wSort(1:i));
+end
+
+k = [];     j = 0;         
+
+while isempty(k)
+    j = j + 1;
+    if sumVec(j) >= 0.5
+        k = dSort(j);    % value of the weighted median
+    end
+end
+
+end % end of wmedweight
+
+
+%%
+% |SCALEWEIGHT| - Scale-based weighting function.
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function k = scaleweight(Awin, Dwin, a)
+Dwin = rescale(Dwin,eps,1) .^ a;
+t = sum(Dwin);
+if(t>0),    Dwin = Dwin/t;  end
+k = sum(Awin.*Dwin);
+
+end % end of scaleweight
+
+##### SOURCE END #####
+--></body></html>

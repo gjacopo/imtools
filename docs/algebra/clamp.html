@@ -1,165 +1,1 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>CLAMP
-      - Clamp data.</title>
-    <meta name="generator" content="MATLAB 7.11">
-    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-    <meta name="DC.date" content="2011-07-11">
-    <meta name="DC.source" content="clamp.m">
-    <style type="text/css">
-
-body {
-  background-color: white;
-  margin:10px;
-}
-
-h1 {
-  color: #990000; 
-  font-size: x-large;
-}
-
-h2 {
-  color: #990000;
-  font-size: medium;
-}
-
-/* Make the text shrink to fit narrow windows, but not stretch too far in 
-wide windows. */ 
-p,h1,h2,div.content div {
-  max-width: 600px;
-  /* Hack for IE6 */
-  width: auto !important; width: 600px;
-}
-
-pre.codeinput {
-  background: #EEEEEE;
-  padding: 10px;
-}
-@media print {
-  pre.codeinput {word-wrap:break-word; width:100%;}
-} 
-
-span.keyword {color: #0000FF}
-span.comment {color: #228B22}
-span.string {color: #A020F0}
-span.untermstring {color: #B20000}
-span.syscmd {color: #B28C00}
-
-pre.codeoutput {
-  color: #666666;
-  padding: 10px;
-}
-
-pre.error {
-  color: red;
-}
-
-p.footer {
-  text-align: right;
-  font-size: xx-small;
-  font-weight: lighter;
-  font-style: italic;
-  color: gray;
-}
-
-  </style>
-  </head>
-  <body>
-    <div class="content">
-      <h1>CLAMP - Clamp data.</h1>
-      <!--introduction--><!--/introduction-->
-      <h2>Contents</h2>
-      <div>
-        <ul>
-          <li><a href="#1">Description</a></li>
-          <li><a href="#2">Syntax</a></li>
-          <li><a href="#3">Inputs</a></li>
-          <li><a href="#4">Outputs</a></li>
-          <li><a href="#5">Credit</a></li>
-          <li><a href="#6">See also</a></li>
-          <li><a href="#7">Function implementation</a></li>
-        </ul>
-      </div>
-      <h2>Description<a name="1"></a></h2>
-      <p>Clamp the entry(ies) of scalar, cell or array signal.</p>
-      <h2>Syntax<a name="2"></a></h2>
-      <pre>   y = CLAMP(x);
-   y = CLAMP(x, a, b);</pre>
-      <h2>Inputs<a name="3"></a></h2>
-      <p><b><tt>x</tt></b> : input scalar, matrix or cell to clamp.</p>
-      <p><b><tt>a, b</tt></b> : (optional) clamping values; <tt>a</tt>
-        and <tt>b</tt> must be scalar values or matrices of the same
-        dimension as <tt>x</tt> (or <tt>x{1}</tt> in the case <tt>x</tt>
-        is a cell); default: <tt>[a,b]=[0,1]</tt>.</p>
-      <h2>Outputs<a name="4"></a></h2>
-      <p><b><tt>y</tt></b> : clamped output of the same class as <tt>x</tt>.</p>
-      <h2>See also<a name="6"></a></h2>
-      <p>Related: <a href="RESCALE.html"><tt>RESCALE</tt></a>.</p>
-      <h2>Function implementation<a name="7"></a></h2>
-      <pre class="codeinput"><span class="keyword">function</span> y = clamp(x, a, b)
-
-<span class="keyword">if</span> nargin&lt;3,  b = 1;
-    <span class="keyword">if</span> nargin&lt;2,  a = 0;  <span class="keyword">end</span>
-<span class="keyword">end</span>
-
-<span class="keyword">if</span> iscell(x),
-    y = x;
-    <span class="keyword">for</span> i=1:length(x)
-        y{i} = clamp(x{i}, a, b);
-    <span class="keyword">end</span>
-    <span class="keyword">return</span>;
-<span class="keyword">end</span>
-
-[m,n] = size(x);
-
-<span class="keyword">if</span> ~(isequal(size(x),size(a)) || numel(a)==1) || <span
-class="keyword">...</span>
-        ~(isequal(size(x),size(b)) || numel(b)==1)
-    error(<span class="string">'clamp:inputerror'</span>, <span class="keyword">...</span>
-        <span class="string">'clamping value must be scalar or same size as input matrix'</span>);
-<span class="keyword">end</span>
-
-<span class="keyword">if</span> numel(a)==1,  a = repmat(a, [m n]);  <span
-class="keyword">end</span>
-<span class="keyword">if</span> numel(b)==1,  b = repmat(b, [m n]);  <span
-class="keyword">end</span>
-
-y = max([x(:), a(:)], [], 2);
-y = min([y, b(:)], [], 2);
-
-y = reshape(y, [m,n]);
-<span class="keyword">end</span> <span class="comment">% end of clamp</span>
-</pre>
-    </div>
-    <!--##### SOURCE BEGIN #####
-%% CLAMP - Clamp data.%
-%% Description% Clamp the entry(ies) of scalar, cell or array signal.
-%%% Syntax
-%     y = CLAMP(x);%     y = CLAMP(x, a, b);
-%%% Inputs
-% *|x|* : input scalar, matrix or cell to clamp.%
-% *|a, b|* : (optional) clamping values; |a| and |b| must be scalar values %     or matrices of the same dimension as |x| (or |x{1}| in the case |x| is 
-%     a cell); default: |[a,b]=[0,1]|.%
-%% Outputs% *|y|* : clamped output of the same class as |x|.
-%%% Credit
-% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)%
-%% See also% Related:
-% <RESCALE.html |RESCALE|>.%% Function implementation
-function y = clamp(x, a, b)if nargin<3,  b = 1;
-    if nargin<2,  a = 0;  endend
-if iscell(x),
-    y = x;    for i=1:length(x)
-        y{i} = clamp(x{i}, a, b);    end
-    return;end
-[m,n] = size(x);
-if ~(isequal(size(x),size(a)) || numel(a)==1) || ...
-        ~(isequal(size(x),size(b)) || numel(b)==1)    error('clamp:inputerror', ...
-        'clamping value must be scalar or same size as input matrix');end
-if numel(a)==1,  a = repmat(a, [m n]);  end
-if numel(b)==1,  b = repmat(b, [m n]);  endy = max([x(:), a(:)], [], 2);
-y = min([y, b(:)], [], 2);y = reshape(y, [m,n]);
-end % end of clamp##### SOURCE END #####
---></body>
-</html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>  <head>    <meta content="text/html; charset=UTF-8" http-equiv="content-type">    <title>CLAMP - Clamp data.</title>    <meta name="generator" content="MATLAB 7.11">    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">    <meta name="DC.date" content="2011-07-11">    <meta name="DC.source" content="clamp.m">    <style type="text/css">body {  background-color: white;  margin:10px;}h1 {  color: #990000;   font-size: x-large;}h2 {  color: #990000;  font-size: medium;}/* Make the text shrink to fit narrow windows, but not stretch too far in wide windows. */ p,h1,h2,div.content div {  max-width: 600px;  /* Hack for IE6 */  width: auto !important; width: 600px;}pre.codeinput {  background: #EEEEEE;  padding: 10px;}@media print {  pre.codeinput {word-wrap:break-word; width:100%;}} span.keyword {color: #0000FF}span.comment {color: #228B22}span.string {color: #A020F0}span.untermstring {color: #B20000}span.syscmd {color: #B28C00}pre.codeoutput {  color: #666666;  padding: 10px;}pre.error {  color: red;}p.footer {  text-align: right;  font-size: xx-small;  font-weight: lighter;  font-style: italic;  color: gray;}  </style>  </head>  <body>    <div class="content">      <h1>CLAMP - Clamp data.</h1>      <!--introduction--><!--/introduction-->      <h2>Contents</h2>      <div>        <ul>          <li><a href="#1">Description</a></li>          <li><a href="#2">Syntax</a></li>          <li><a href="#3">Inputs</a></li>          <li><a href="#4">Outputs</a></li>          <li><a href="#6">See also</a></li>          <li><a href="#7">Function implementation</a></li>        </ul>      </div>      <h2>Description<a name="1"></a></h2>      <p>Clamp the entry(ies) of scalar, cell or array signal.</p>      <h2>Syntax<a name="2"></a></h2>      <pre>   y = CLAMP(x);   y = CLAMP(x, a, b);</pre>      <h2>Inputs<a name="3"></a></h2>      <p><b><tt>x</tt></b> : input scalar, matrix or cell to clamp.</p>      <p><b><tt>a, b</tt></b> : (optional) clamping values; <tt>a</tt> and <tt>b</tt>        must be scalar values or matrices of the same dimension as <tt>x</tt>        (or <tt>x{1}</tt> in the case <tt>x</tt> is a cell); default: <tt>[a,b]=[0,1]</tt>.</p>      <h2>Outputs<a name="4"></a></h2>      <p><b><tt>y</tt></b> : clamped output of the same class as <tt>x</tt>.</p>      <h2>See also<a name="6"></a></h2>      <p>Related: <a href="RESCALE.html"><tt>RESCALE</tt></a>.</p>      <h2>Function implementation<a name="7"></a></h2>      <pre class="codeinput"><span class="keyword">function</span> y = clamp(x, a, b)<span class="keyword">if</span> nargin&lt;3,  b = 1;    <span class="keyword">if</span> nargin&lt;2,  a = 0;  <span class="keyword">end</span><span class="keyword">end</span><span class="keyword">if</span> iscell(x),    y = x;    <span class="keyword">for</span> i=1:length(x)        y{i} = clamp(x{i}, a, b);    <span class="keyword">end</span>    <span class="keyword">return</span>;<span class="keyword">end</span>[m,n] = size(x);<span class="keyword">if</span> ~(isequal(size(x),size(a)) || numel(a)==1) || <spanclass="keyword">...</span>        ~(isequal(size(x),size(b)) || numel(b)==1)    error(<span class="string">'clamp:inputerror'</span>, <span class="keyword">...</span>        <span class="string">'clamping value must be scalar or same size as input matrix'</span>);<span class="keyword">end</span><span class="keyword">if</span> numel(a)==1,  a = repmat(a, [m n]);  <span class="keyword">end</span><span class="keyword">if</span> numel(b)==1,  b = repmat(b, [m n]);  <span class="keyword">end</span>y = max([x(:), a(:)], [], 2);y = min([y, b(:)], [], 2);y = reshape(y, [m,n]);<span class="keyword">end</span> <span class="comment">% end of clamp</span></pre> </div>    <!--##### SOURCE BEGIN #####%% CLAMP - Clamp data.%%% Description% Clamp the entry(ies) of scalar, cell or array signal.%%% Syntax%     y = CLAMP(x);%     y = CLAMP(x, a, b);%%% Inputs% *|x|* : input scalar, matrix or cell to clamp.%% *|a, b|* : (optional) clamping values; |a| and |b| must be scalar values %     or matrices of the same dimension as |x| (or |x{1}| in the case |x| is %     a cell); default: |[a,b]=[0,1]|.%%% Outputs% *|y|* : clamped output of the same class as |x|.%%% Credit% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)%%% See also% Related:% <RESCALE.html |RESCALE|>.%% Function implementationfunction y = clamp(x, a, b)if nargin<3,  b = 1;    if nargin<2,  a = 0;  endendif iscell(x),    y = x;    for i=1:length(x)        y{i} = clamp(x{i}, a, b);    end    return;end[m,n] = size(x);if ~(isequal(size(x),size(a)) || numel(a)==1) || ...        ~(isequal(size(x),size(b)) || numel(b)==1)    error('clamp:inputerror', ...        'clamping value must be scalar or same size as input matrix');endif numel(a)==1,  a = repmat(a, [m n]);  endif numel(b)==1,  b = repmat(b, [m n]);  endy = max([x(:), a(:)], [], 2);y = min([y, b(:)], [], 2);y = reshape(y, [m,n]);end % end of clamp##### SOURCE END #####-->  </body></html>

@@ -1,0 +1,203 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ANISOR - Compute the orientation information derived from the anisotropic</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-14"><meta name="DC.source" content="anisor.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+
+  </style></head><body><div class="content"><h1>ANISOR - Compute the orientation information derived from the anisotropic</h1><!--introduction--><p>continous scale model of [BBW07].</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Syntax</a></li><li><a href="#3">Inputs</a></li><li><a href="#4">Property [propertyname  propertyvalues]</a></li><li><a href="#5">Output</a></li><li><a href="#6">Reference</a></li><li><a href="#7">Credit</a></li><li><a href="#8">See also</a></li><li><a href="#9">Function implementation</a></li></ul></div><h2>Description<a name="1"></a></h2><h2>Syntax<a name="2"></a></h2><pre>  kappa = anisor(I);
+  kappa = anisor(I, nu, rho, sig, ...
+                          'Property', propertyvalue, ...);</pre><h2>Inputs<a name="3"></a></h2><p><b><tt>I</tt></b> : an input image with size <tt>(X,Y,C)</tt>, where <tt>C&gt;1</tt> when <tt>I</tt> is multichannel.</p><p><b><tt>nu</tt></b> : (optional) nonegative integer which influences the propagation of     the structures in the normal to the gradient direction; default: nu=4.</p><p><b><tt>rho</tt></b> : post-smoothing width; this parameter sets the integration scale     for spatial averaging, that controls the size of the neighbourhood     in which an orientation is dominant; it is  used for averaging the     partial directional derivatives of the tensor with a Gaussian kernel;     if rho&lt;0.05, then no smoothing is performed; default: rho=1.</p><p><b><tt>sig</tt></b> : pre-smoothing width; this parameter sets the differentiation     scale in the case the image is smoothed prior to the differentiation     through Gaussian filtering; sigma typically controls the size of the     objects whose orientation has to be estimated; default: sigma=1,     i.e. Gaussian regularisation is used for estimating the derivatives.</p><h2>Property [propertyname  propertyvalues]<a name="4"></a></h2><p><b><tt>'der'</tt></b> : string defining the method of pre-smoothing/differentiation used     for estimating the directional derivatives of the input image; it is     either (see GRDSMOOTH): 'matlab', 'vista', 'fast', 'conv', 'diag',     'tap5', 'sob', 'opt' or 'ana'; default: der='fast'.</p><p><b><tt>'int'</tt></b> : string defining the method used for the post-smoothing of the GST;     it is either (see GRD2GST): 'matlab', 'conv' or 'fast' for isotropic     Gaussian intoothing, or 'ani' for anisotropic Gaussian (using hour-     glass shaped Gaussian kernels) along the edges; this latter better     captures edges anisotropy; default: int='fast'.</p><p><b><tt>'samp'</tt></b> : to perform (* samp) interpolation of the estimated gradient to     avoid aliasing (should set to 2); default: samp=1, ie no interpolation     is performed.</p><h2>Output<a name="5"></a></h2><p><b><tt>kappa</tt></b> : orientation information in [0,1].</p><h2>Reference<a name="6"></a></h2><p>[BBW07]  M. Breu&szlig;, B. Burgeth and J. Weickert: "Anisotropic continuous-scale      morphology", Proc. IbPRIA, LNCS 4478, pp. 515-522, Springer, 2007.      <a href="http://www.springerlink.com/content/1hm264w86111m148/">http://www.springerlink.com/content/1hm264w86111m148/</a></p><h2>Credit<a name="7"></a></h2><p><a href="mailto:grazzja@lanl.gov">J.Grazzini</a> &amp; <a href="mailto:prasad@lanl.gov">L.Prasad</a> (ISR-2/LANL)</p><h2>See also<a name="8"></a></h2><p>Related: <a href="../../derive/html/GSTSMOOTH.html"><tt>GSTSMOOTH</tt></a>, <a href="ANISORFILT.html"><tt>ANISORFILT</tt></a>. Called: <a href="ANISOR_BASE.html"><tt>ANISOR_BASE</tt></a>.</p><h2>Function implementation<a name="9"></a></h2><pre class="codeinput"><span class="keyword">function</span> kappa = anisor(I,varargin)
+</pre><p>parsing parameters</p><pre class="codeinput">error(nargchk(1, 18, nargin, <span class="string">'struct'</span>));
+error(nargoutchk(1, 1, nargout, <span class="string">'struct'</span>));
+
+<span class="comment">% mandatory parameter</span>
+<span class="keyword">if</span> ~isnumeric(I)
+    error(<span class="string">'anisor:inputerror'</span>,<span class="string">'a matrix is required in input'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">% optional parameters</span>
+p = createParser(<span class="string">'ANISOR'</span>);
+<span class="comment">% principal optional parameters</span>
+p.addOptional(<span class="string">'nu'</span>, 4, @(x)isscalar(x) &amp;&amp; x&gt;=0);
+p.addOptional(<span class="string">'rho'</span>, 3, @(x)isscalar(x) &amp;&amp; isfloat(x) &amp;&amp; x&gt;=0);
+p.addOptional(<span class="string">'sigma'</span>, 1, @(x)isscalar(x) &amp;&amp; isfloat(x) &amp;&amp; x&gt;=0);
+p.addParamValue(<span class="string">'der'</span>, <span class="string">'fast'</span>, @(x)islogical(x) || (ischar(x) &amp;&amp; <span class="keyword">...</span>
+    any(strcmpi(x,{<span class="string">'matlab'</span>,<span class="string">'vista'</span>,<span class="string">'fast'</span>,<span class="string">'conv'</span>,<span class="string">'diag'</span>, <span class="keyword">...</span>
+    <span class="string">'tap5'</span>,<span class="string">'sob'</span>,<span class="string">'opt'</span>,<span class="string">'ana'</span>}))));
+p.addParamValue(<span class="string">'int'</span>, <span class="string">'fast'</span>, @(x)islogical(x) || (ischar(x) &amp;&amp; <span class="keyword">...</span>
+    any(strcmpi(x,{<span class="string">'matlab'</span>,<span class="string">'conv'</span>,<span class="string">'fast'</span>,<span class="string">'ani'</span>}))));
+p.addParamValue(<span class="string">'samp'</span>, 2, @(x)isscalar(x) &amp;&amp; round(x)==x &amp;&amp; x&gt;=1 &amp;&amp; x&lt;=5);
+
+<span class="comment">% parse and validate all input arguments</span>
+p.parse(varargin{:});
+p = getvarParser(p);
+</pre><p>calculation</p><pre class="codeinput">kappa = anisor_base(I, p.nu, p.rho, p.sigma, p.der, p.int, p.samp);
+</pre><p>display</p><pre class="codeinput"><span class="keyword">if</span> p.disp
+    figure, imagesc(kappa), colormap <span class="string">gray</span>, axis <span class="string">image</span> <span class="string">off</span>;
+    title(<span class="string">'orientation indice'</span>)
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of anisor</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.14<br></p></div><!--
+##### SOURCE BEGIN #####
+%% ANISOR - Compute the orientation information derived from the anisotropic
+% continous scale model of [BBW07].
+%
+%% Description
+%
+%% Syntax
+%    kappa = anisor(I);
+%    kappa = anisor(I, nu, rho, sig, ...
+%                            'Property', propertyvalue, ...);
+%
+%% Inputs
+% *|I|* : an input image with size |(X,Y,C)|, where |C>1| when |I| is multichannel.
+%
+% *|nu|* : (optional) nonegative integer which influences the propagation of
+%     the structures in the normal to the gradient direction; default: nu=4.
+%
+% *|rho|* : post-smoothing width; this parameter sets the integration scale
+%     for spatial averaging, that controls the size of the neighbourhood
+%     in which an orientation is dominant; it is  used for averaging the
+%     partial directional derivatives of the tensor with a Gaussian kernel;
+%     if rho<0.05, then no smoothing is performed; default: rho=1.
+%
+% *|sig|* : pre-smoothing width; this parameter sets the differentiation
+%     scale in the case the image is smoothed prior to the differentiation 
+%     through Gaussian filtering; sigma typically controls the size of the
+%     objects whose orientation has to be estimated; default: sigma=1,
+%     i.e. Gaussian regularisation is used for estimating the derivatives.
+%
+%% Property [propertyname  propertyvalues]
+% *|'der'|* : string defining the method of pre-smoothing/differentiation used
+%     for estimating the directional derivatives of the input image; it is 
+%     either (see GRDSMOOTH): 'matlab', 'vista', 'fast', 'conv', 'diag', 
+%     'tap5', 'sob', 'opt' or 'ana'; default: der='fast'.
+%
+% *|'int'|* : string defining the method used for the post-smoothing of the GST;
+%     it is either (see GRD2GST): 'matlab', 'conv' or 'fast' for isotropic 
+%     Gaussian intoothing, or 'ani' for anisotropic Gaussian (using hour-
+%     glass shaped Gaussian kernels) along the edges; this latter better
+%     captures edges anisotropy; default: int='fast'.
+%
+% *|'samp'|* : to perform (* samp) interpolation of the estimated gradient to
+%     avoid aliasing (should set to 2); default: samp=1, ie no interpolation
+%     is performed.
+%
+%% Output
+% *|kappa|* : orientation information in [0,1].
+%
+%% Reference
+% [BBW07]  M. Breuß, B. Burgeth and J. Weickert: "Anisotropic continuous-scale
+%      morphology", Proc. IbPRIA, LNCS 4478, pp. 515-522, Springer, 2007.	
+%      <http://www.springerlink.com/content/1hm264w86111m148/>
+%
+%% Credit
+% <mailto:grazzja@lanl.gov J.Grazzini> & <mailto:prasad@lanl.gov L.Prasad> (ISR-2/LANL)
+%
+%% See also
+% Related:
+% <../../derive/html/GSTSMOOTH.html |GSTSMOOTH|>,
+% <ANISORFILT.html |ANISORFILT|>.
+% Called:
+% <ANISOR_BASE.html |ANISOR_BASE|>.
+
+%% Function implementation
+function kappa = anisor(I,varargin)
+
+%%
+% parsing parameters
+
+error(nargchk(1, 18, nargin, 'struct'));
+error(nargoutchk(1, 1, nargout, 'struct'));
+
+% mandatory parameter
+if ~isnumeric(I)
+    error('anisor:inputerror','a matrix is required in input'); 
+end
+
+% optional parameters
+p = createParser('ANISOR');   
+% principal optional parameters
+p.addOptional('nu', 4, @(x)isscalar(x) && x>=0);
+p.addOptional('rho', 3, @(x)isscalar(x) && isfloat(x) && x>=0);
+p.addOptional('sigma', 1, @(x)isscalar(x) && isfloat(x) && x>=0);
+p.addParamValue('der', 'fast', @(x)islogical(x) || (ischar(x) && ...
+    any(strcmpi(x,{'matlab','vista','fast','conv','diag', ...
+    'tap5','sob','opt','ana'}))));
+p.addParamValue('int', 'fast', @(x)islogical(x) || (ischar(x) && ...
+    any(strcmpi(x,{'matlab','conv','fast','ani'}))));
+p.addParamValue('samp', 2, @(x)isscalar(x) && round(x)==x && x>=1 && x<=5);
+
+% parse and validate all input arguments
+p.parse(varargin{:}); 
+p = getvarParser(p);                                                            
+
+%% 
+% calculation
+
+kappa = anisor_base(I, p.nu, p.rho, p.sigma, p.der, p.int, p.samp);
+
+%%
+% display
+
+if p.disp
+    figure, imagesc(kappa), colormap gray, axis image off;
+    title('orientation indice')
+end
+
+end % end of anisor
+
+##### SOURCE END #####
+--></body></html>

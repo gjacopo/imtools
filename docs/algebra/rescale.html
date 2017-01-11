@@ -1,153 +1,1 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>RESCALE
-      - Rescale data.</title>
-    <meta name="generator" content="MATLAB 7.11">
-    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-    <meta name="DC.date" content="2011-07-12">
-    <meta name="DC.source" content="rescale.m">
-    <style type="text/css">
-
-body {
-  background-color: white;
-  margin:10px;
-}
-
-h1 {
-  color: #990000; 
-  font-size: x-large;
-}
-
-h2 {
-  color: #990000;
-  font-size: medium;
-}
-
-/* Make the text shrink to fit narrow windows, but not stretch too far in 
-wide windows. */ 
-p,h1,h2,div.content div {
-  max-width: 600px;
-  /* Hack for IE6 */
-  width: auto !important; width: 600px;
-}
-
-pre.codeinput {
-  background: #EEEEEE;
-  padding: 10px;
-}
-@media print {
-  pre.codeinput {word-wrap:break-word; width:100%;}
-} 
-
-span.keyword {color: #0000FF}
-span.comment {color: #228B22}
-span.string {color: #A020F0}
-span.untermstring {color: #B20000}
-span.syscmd {color: #B28C00}
-
-pre.codeoutput {
-  color: #666666;
-  padding: 10px;
-}
-
-pre.error {
-  color: red;
-}
-
-p.footer {
-  text-align: right;
-  font-size: xx-small;
-  font-weight: lighter;
-  font-style: italic;
-  color: gray;
-}
-
-  </style>
-  </head>
-  <body>
-    <div class="content">
-      <h1>RESCALE - Rescale data.</h1>
-      <!--introduction--><!--/introduction-->
-      <h2>Contents</h2>
-      <div>
-        <ul>
-          <li><a href="#1">Description</a></li>
-          <li><a href="#2">Syntax</a></li>
-          <li><a href="#3">Inputs</a></li>
-          <li><a href="#4">Outputs</a></li>
-          <li><a href="#5">Credit</a></li>
-          <li><a href="#6">See also</a></li>
-          <li><a href="#7">Function implementation</a></li>
-        </ul>
-      </div>
-      <h2>Description<a name="1"></a></h2>
-      <p>Rescale cell or array signal in <tt>[a,b]</tt>.</p>
-      <h2>Syntax<a name="2"></a></h2>
-      <pre> y = RESCALE(x);
- [y, d] = RESCALE(x, a, b);</pre>
-      <h2>Inputs<a name="3"></a></h2>
-      <p><b><tt>x</tt></b> : input matrix or cell to rescale.</p>
-      <p><b><tt>a, b</tt></b> : (optional) rescaling values; <tt>a</tt>
-        and <tt>b</tt> must be scalar; default: <tt>a=0, b=1</tt>.</p>
-      <h2>Outputs<a name="4"></a></h2>
-      <p><b><tt>y</tt></b> : matrix with entries rescaled in the range <tt>[a,b]</tt>.</p>
-      <p><b><tt>d</tt></b> : (optional) variable returning the
-        difference <tt>max(x(:))-min(x(:))</tt> of the entries in the
-        input matrix <tt>x</tt>.</p>
-      <h2>See also<a name="6"></a></h2>
-      <p>Related: <a href="CLAMP.html"><tt>CLAMP</tt></a>.</p>
-      <h2>Function implementation<a name="7"></a></h2>
-      <pre class="codeinput"><span class="keyword">function</span> [y, d] = rescale(x, a, b)
-
-<span class="keyword">if</span> nargin&lt;3,  b = 1;
-    <span class="keyword">if</span> nargin&lt;2,  a = 0;  <span class="keyword">end</span>
-<span class="keyword">end</span>
-
-<span class="keyword">if</span> iscell(x),
-    y = x;
-    <span class="keyword">for</span> i=1:length(x)
-        y{i} = rescale(x{i}, a, b);
-    <span class="keyword">end</span>
-    <span class="keyword">return</span>;
-<span class="keyword">end</span>
-
-m = min(x(:));
-M = max(x(:));
-d = M - m;
-
-<span class="keyword">if</span> d&lt;eps,  y = x;
-<span class="keyword">else</span>         y = (b-a) * (x-m) / d + a;
-<span class="keyword">end</span>
-<span class="keyword">end</span> <span class="comment">% end of rescale</span>
-</pre>
-    </div>
-    <!--##### SOURCE BEGIN #####
-%% RESCALE - Rescale data.%
-%% Description% Rescale cell or array signal in |[a,b]|.
-%%% Syntax
-%   y = RESCALE(x);%   [y, d] = RESCALE(x, a, b);
-%%% Inputs
-% *|x|* : input matrix or cell to rescale.%
-% *|a, b|* : (optional) rescaling values; |a| and |b| must be scalar; default:%     |a=0, b=1|.
-%%% Outputs
-% *|y|* : matrix with entries rescaled in the range |[a,b]|.%
-% *|d|* : (optional) variable returning the difference |max(x(:))-min(x(:))|%     of the entries in the input matrix |x|.
-%%% Credit
-% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)%
-%% See also% Related:
-% <CLAMP.html |CLAMP|>.%% Function implementation
-function [y, d] = rescale(x, a, b)if nargin<3,  b = 1;
-    if nargin<2,  a = 0;  endend
-if iscell(x),
-    y = x;    for i=1:length(x)
-        y{i} = rescale(x{i}, a, b);    end
-    return;end
-m = min(x(:));
-M = max(x(:));d = M - m;
-if d<eps,  y = x;
-else         y = (b-a) * (x-m) / d + a;end
-end % end of rescale##### SOURCE END #####
---></body>
-</html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>  <head>    <meta content="text/html; charset=UTF-8" http-equiv="content-type">    <title>RESCALE - Rescale data.</title>    <meta name="generator" content="MATLAB 7.11">    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">    <meta name="DC.date" content="2011-07-12">    <meta name="DC.source" content="rescale.m">    <style type="text/css">body {  background-color: white;  margin:10px;}h1 {  color: #990000;   font-size: x-large;}h2 {  color: #990000;  font-size: medium;}/* Make the text shrink to fit narrow windows, but not stretch too far in wide windows. */ p,h1,h2,div.content div {  max-width: 600px;  /* Hack for IE6 */  width: auto !important; width: 600px;}pre.codeinput {  background: #EEEEEE;  padding: 10px;}@media print {  pre.codeinput {word-wrap:break-word; width:100%;}} span.keyword {color: #0000FF}span.comment {color: #228B22}span.string {color: #A020F0}span.untermstring {color: #B20000}span.syscmd {color: #B28C00}pre.codeoutput {  color: #666666;  padding: 10px;}pre.error {  color: red;}p.footer {  text-align: right;  font-size: xx-small;  font-weight: lighter;  font-style: italic;  color: gray;}  </style>  </head>  <body>    <div class="content">      <h1>RESCALE - Rescale data.</h1>      <!--introduction--><!--/introduction-->      <h2>Contents</h2>      <div>        <ul>          <li><a href="#1">Description</a></li>          <li><a href="#2">Syntax</a></li>          <li><a href="#3">Inputs</a></li>          <li><a href="#4">Outputs</a></li>          <li><a href="#6">See also</a></li>          <li><a href="#7">Function implementation</a></li>        </ul>      </div>      <h2>Description<a name="1"></a></h2>      <p>Rescale cell or array signal in <tt>[a,b]</tt>.</p>      <h2>Syntax<a name="2"></a></h2>      <pre> y = RESCALE(x); [y, d] = RESCALE(x, a, b);</pre>      <h2>Inputs<a name="3"></a></h2>      <p><b><tt>x</tt></b> : input matrix or cell to rescale.</p>      <p><b><tt>a, b</tt></b> : (optional) rescaling values; <tt>a</tt> and <tt>b</tt>        must be scalar; default: <tt>a=0, b=1</tt>.</p>      <h2>Outputs<a name="4"></a></h2>      <p><b><tt>y</tt></b> : matrix with entries rescaled in the range <tt>[a,b]</tt>.</p>      <p><b><tt>d</tt></b> : (optional) variable returning the difference <tt>max(x(:))-min(x(:))</tt>        of the entries in the input matrix <tt>x</tt>.</p>      <h2>See also<a name="6"></a></h2>      <p>Related: <a href="CLAMP.html"><tt>CLAMP</tt></a>.</p>      <h2>Function implementation<a name="7"></a></h2>      <pre class="codeinput"><span class="keyword">function</span> [y, d] = rescale(x, a, b)<span class="keyword">if</span> nargin&lt;3,  b = 1;    <span class="keyword">if</span> nargin&lt;2,  a = 0;  <span class="keyword">end</span><span class="keyword">end</span><span class="keyword">if</span> iscell(x),    y = x;    <span class="keyword">for</span> i=1:length(x)        y{i} = rescale(x{i}, a, b);    <span class="keyword">end</span>    <span class="keyword">return</span>;<span class="keyword">end</span>m = min(x(:));M = max(x(:));d = M - m;<span class="keyword">if</span> d&lt;eps,  y = x;<span class="keyword">else</span>         y = (b-a) * (x-m) / d + a;<span class="keyword">end</span><span class="keyword">end</span> <span class="comment">% end of rescale</span></pre> </div>    <!--##### SOURCE BEGIN #####%% RESCALE - Rescale data.%%% Description% Rescale cell or array signal in |[a,b]|.%%% Syntax%   y = RESCALE(x);%   [y, d] = RESCALE(x, a, b);%%% Inputs% *|x|* : input matrix or cell to rescale.%% *|a, b|* : (optional) rescaling values; |a| and |b| must be scalar; default:%     |a=0, b=1|.%%% Outputs% *|y|* : matrix with entries rescaled in the range |[a,b]|.%% *|d|* : (optional) variable returning the difference |max(x(:))-min(x(:))|%     of the entries in the input matrix |x|.%%% Credit% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)%%% See also% Related:% <CLAMP.html |CLAMP|>.%% Function implementationfunction [y, d] = rescale(x, a, b)if nargin<3,  b = 1;    if nargin<2,  a = 0;  endendif iscell(x),    y = x;    for i=1:length(x)        y{i} = rescale(x{i}, a, b);    end    return;endm = min(x(:));M = max(x(:));d = M - m;if d<eps,  y = x;else         y = (b-a) * (x-m) / d + a;endend % end of rescale##### SOURCE END #####-->  </body></html>

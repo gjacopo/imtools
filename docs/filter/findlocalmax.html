@@ -1,0 +1,171 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>FINDLOCALMAX - Local maxima of a matrix.</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-14"><meta name="DC.source" content="findlocalmax.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+
+  </style></head><body><div class="content"><h1>FINDLOCALMAX - Local maxima of a matrix.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Syntax</a></li><li><a href="#3">Inputs</a></li><li><a href="#4">Outputs</a></li><li><a href="#5">Remark</a></li><li><a href="#6">Credit</a></li><li><a href="#7">See also</a></li><li><a href="#8">Function implementation</a></li></ul></div><h2>Description<a name="1"></a></h2><p>Determine the local maxima of a given matrix image.</p><h2>Syntax<a name="2"></a></h2><pre>   max_local = FINDLOCALMAX(I);
+   [max_local,row,col] = FINDLOCALMAX(I, radius, method );</pre><h2>Inputs<a name="3"></a></h2><p><b><tt>I</tt></b> : a <tt>(N,M)</tt> matrix containing values to filter.</p><p>*<tt>radius : optional variable setting the radius of the neighborhood;     default: |radius=1</tt>, ie maxima in neighbourhoods <tt>(3,3)</tt> are extracted.</p><p><b><tt>method</tt></b> : optional string defining the technique used for extracting     the maxima; it is either <tt>'dil'</tt> (fast, not unique), <tt>'filt'</tt> (fast) or     'screen' (slow); default: <tt>method='filt'</tt>.</p><h2>Outputs<a name="4"></a></h2><p><b><tt>row</tt></b> : the row position of the local maxima.</p><p><b><tt>col</tt></b> : the column position of the local maxima.</p><p><b><tt>max_local</tt></b>	: the <tt>(N,M)</tt> matrix containing values of <tt>val</tt> on unique       local maximum.</p><h2>Remark<a name="5"></a></h2><p><tt>FINDLOCALMAX</tt> and <tt>FINDLOCALEXTREMA(..,'ord','max','corr','forall')</tt> provide identical results, except for the borders of the image.</p><h2>Credit<a name="6"></a></h2><p><a href="mailto:grazzja@lanl.gov">J.Grazzini</a> (ISR-2/LANL)</p><h2>See also<a name="7"></a></h2><p>Related: <a href="FINDLOCALEXTREMA.html"><tt>FINDLOCALEXTREMA</tt></a>, <a href="../../sharpen/html/MAPTRANSITION.html"><tt>MAPTRANSITION</tt></a>, <a href="matlab:webpub(whichpath('ORDFILT2'))"><tt>ORDFILT2</tt></a>. Called: <a href="FINDLOCALMAX_BASE.html"><tt>FINDLOCALMAX_BASE</tt></a>.</p><h2>Function implementation<a name="8"></a></h2><pre class="codeinput"><span class="keyword">function</span> [max_local,row,col] = findlocalmax(I,varargin)
+</pre><p>parsing and checking parameters</p><pre class="codeinput"><span class="keyword">if</span> ~isnumeric(I)
+    error(<span class="string">'findlocalmax:inputerror'</span>,<span class="string">'a matrix is required in input'</span>);
+<span class="keyword">end</span>
+
+p = createParser(<span class="string">'FINDLOCALMAX'</span>);
+<span class="comment">% mandatory parameter</span>
+<span class="comment">% optional parameters</span>
+p.addOptional(<span class="string">'radius'</span>,1., @(x)x&gt;=0); <span class="comment">% just for testing</span>
+p.addOptional(<span class="string">'find'</span>, <span class="string">'filt'</span>, @(x)ischar(x) &amp;&amp; <span class="keyword">...</span>
+    any(strcmpi(x,{<span class="string">'filt'</span>,<span class="string">'dil'</span>,<span class="string">'screen'</span>})));
+
+<span class="comment">% parse and validate all input arguments</span>
+p.parse(varargin{:});
+p = getvarParser(p);
+</pre><p>dealing with multispectral images [M,N,C] = size(I); if C&gt;1     max_local = zeros(size(I));     row = cell(C); col = cell(C);     for c=1:C         [max_local(:,:,c), row{c}, col{c}] = findlocalmax(I(:,:,c), 'parse', p);     end     return; end</p><p>main computation</p><pre class="codeinput">[max_local,row,col] = findlocalmax_base(I, p.radius, p.find);
+</pre><p>display</p><pre class="codeinput"><span class="keyword">if</span> p.disp
+    figure, imagesc(max_local), axis <span class="string">image</span> <span class="string">off</span>, title(<span class="string">'local maxima'</span>)
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of findlocalmax</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.14<br></p></div><!--
+##### SOURCE BEGIN #####
+%% FINDLOCALMAX - Local maxima of a matrix.
+%
+%% Description
+% Determine the local maxima of a given matrix image.
+%
+%% Syntax
+%     max_local = FINDLOCALMAX(I);  
+%     [max_local,row,col] = FINDLOCALMAX(I, radius, method );  
+%
+%% Inputs
+% *|I|* : a |(N,M)| matrix containing values to filter.
+%
+% *|radius : optional variable setting the radius of the neighborhood; 
+%     default: |radius=1|, ie maxima in neighbourhoods |(3,3)| are extracted.
+%
+% *|method|* : optional string defining the technique used for extracting
+%     the maxima; it is either |'dil'| (fast, not unique), |'filt'| (fast) or
+%     'screen' (slow); default: |method='filt'|.
+%
+%% Outputs
+% *|row|* : the row position of the local maxima.
+%
+% *|col|* : the column position of the local maxima.
+%
+% *|max_local|*	: the |(N,M)| matrix containing values of |val| on unique
+%       local maximum.
+%
+%% Remark
+% |FINDLOCALMAX| and |FINDLOCALEXTREMA(..,'ord','max','corr','forall')|
+% provide identical results, except for the borders of the image.
+%
+%% Credit
+% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)
+% 
+%% See also
+% Related:
+% <FINDLOCALEXTREMA.html |FINDLOCALEXTREMA|>,
+% <../../sharpen/html/MAPTRANSITION.html |MAPTRANSITION|>,
+% <matlab:webpub(whichpath('ORDFILT2')) |ORDFILT2|>.
+% Called: 
+% <FINDLOCALMAX_BASE.html |FINDLOCALMAX_BASE|>.
+
+%% Function implementation
+function [max_local,row,col] = findlocalmax(I,varargin)
+
+%%
+% parsing and checking parameters
+if ~isnumeric(I)
+    error('findlocalmax:inputerror','a matrix is required in input'); 
+end
+
+p = createParser('FINDLOCALMAX');   
+% mandatory parameter
+% optional parameters
+p.addOptional('radius',1., @(x)x>=0); % just for testing
+p.addOptional('find', 'filt', @(x)ischar(x) && ...
+    any(strcmpi(x,{'filt','dil','screen'})));
+
+% parse and validate all input arguments
+p.parse(varargin{:}); 
+p = getvarParser(p);                                                            
+
+%% 
+% dealing with multispectral images
+% [M,N,C] = size(I);
+% if C>1
+%     max_local = zeros(size(I));
+%     row = cell(C); col = cell(C);
+%     for c=1:C
+%         [max_local(:,:,c), row{c}, col{c}] = findlocalmax(I(:,:,c), 'parse', p);
+%     end
+%     return;
+% end
+
+%% 
+% main computation
+
+[max_local,row,col] = findlocalmax_base(I, p.radius, p.find);
+
+%%
+% display
+
+if p.disp
+    figure, imagesc(max_local), axis image off, title('local maxima')
+end
+
+end % end of findlocalmax
+
+##### SOURCE END #####
+--></body></html>

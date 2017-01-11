@@ -1,0 +1,408 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>FUZZIMPULSE_BASE - Base function for FUZZIMPULSE.</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-14"><meta name="DC.source" content="fuzzimpulse_base.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+
+  </style></head><body><div class="content"><h1>FUZZIMPULSE_BASE - Base function for FUZZIMPULSE.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Credit</a></li><li><a href="#3">See also</a></li><li><a href="#4">Function implementation</a></li></ul></div><h2>Syntax<a name="1"></a></h2><pre>   [F,isNoise] = FUZZIMPULSE_BASE(I, K, L);</pre><h2>Credit<a name="2"></a></h2><p><a href="mailto:grazzja@lanl.gov">J.Grazzini</a> (ISR-2/LANL)</p><h2>See also<a name="3"></a></h2><p>Related: <a href="FUZZIMPULSE.html"><tt>FUZZIMPULSE</tt></a>.</p><h2>Function implementation<a name="4"></a></h2><pre class="codeinput"><span class="keyword">function</span> [F,varargout] = fuzzimpulse_base(I, K, L)
+</pre><pre class="codeinput"><span class="comment">% image size</span>
+[X,Y,C] = size(I);
+
+<span class="comment">% prepare the output</span>
+F = I;
+</pre><p>dealing with multispectral images</p><pre class="codeinput"><span class="keyword">if</span> C&gt;1
+    <span class="keyword">if</span> nargout==2,  varargout{1} = false(size(I));  <span class="keyword">end</span>;
+    <span class="keyword">for</span> c=1:C
+        [F(:,:,c), n] = fuzzimpulse_base(I(:,:,c), K, L);
+        <span class="keyword">if</span> nargout==2,  varargout{1}(:,:,c) = n;   <span class="keyword">end</span>;
+    <span class="keyword">end</span>
+    <span class="keyword">return</span>;
+<span class="keyword">end</span>
+</pre><p>some useful internal variables</p><pre class="codeinput"><span class="comment">% analyzing windows' parameters</span>
+winK = 2*K+1;  <span class="comment">% window for impulse noise detection</span>
+icenterK = 2*K^2+ 2*K + 1; <span class="comment">% sub2ind([winK winK], K+1, K+1);</span>
+winL = 2*L + 1; <span class="comment">% window for fitering</span>
+icenterL =  2*L^2+ 2*L + 1; <span class="comment">% sub2ind([winL winL], L+1, L+1);</span>
+
+<span class="comment">% indexing matrix</span>
+ind = padarray(reshape(1:X*Y,[X, Y]),[1 1],<span class="string">'both'</span>,<span class="string">'replicate'</span>);
+<span class="comment">% indexing function</span>
+fskip = @(A, i, j)  A(2+i:1+i+X,2+j:1+j+Y);
+
+<span class="comment">% logical predicates used by fuzzy rules</span>
+fAND = @(p1,p2)  p1.*p2;  <span class="comment">% min(cat(3,p1,p2),[],3);</span>
+fOR = @(p1,p2)  max(cat(3,p1,p2),[],3);
+fNOT = @(p1)  (1-p1);
+
+<span class="comment">% membership function used by fuzzy rules</span>
+mularge = @(x, a, b) <span class="keyword">...</span><span class="comment">              % Fig.(1)</span>
+    (x&gt;=b) + ((x-a)./(b-a)).*(x&gt;a&amp;x&lt;b);
+<span class="comment">% membership function used for filtering</span>
+musimilar = @(x, p2, p1, q1, q2) <span class="keyword">...</span><span class="comment">  % Fig.(4)</span>
+    (x&gt;=p1&amp;x&lt;=q1) + ((x-p2)./(p1-p2)).*(x&gt;p2&amp;x&lt;p1) + <span class="keyword">...</span>
+    (1-((x-q1)./(q2-q1))).*(x&gt;q1&amp;x&lt;q2);
+</pre><div><ul><li>first detection unit</li></ul></div><pre class="codeinput">fun = @(x)  sum(abs(x - repmat(x(icenterK,:),[size(x,1) 1]))) / (winK^2-1);
+Obs2 = colfilt(I,[winK winK],<span class="string">'sliding'</span>,fun);   <span class="comment">% Eq.(4)</span>
+
+Obs1 = colfilt(Obs2,[winK winK],<span class="string">'sliding'</span>,@mean);   <span class="comment">% Eq.(3)</span>
+
+a = colfilt(Obs1,[winK winK],<span class="string">'sliding'</span>,@min);  <span class="comment">% Eq.(5)</span>
+b = 1.2 * a;
+
+<span class="comment">% fuzzy rule 1</span>
+rule1 =  @(p1)  p1;
+
+muimpulse = rule1(mularge(abs(Obs1-Obs2),a,b));
+</pre><div><ul><li>second detection unit</li></ul></div><p>indices of orientation</p><pre>        ---------------         -------------
+        | NW | N | NE |         | 1 | 4 | 7 |
+        ---------------         -------------
+        | W  |   | E  |    =&gt;   | 2 | 5 | 8 |
+        ---------------         -------------
+        | SW | S | SE |         | 3 | 6 | 9 |
+        ---------------         -------------</pre><p>indices of gradients and coordinates skip associated 'related' gradients</p><pre class="codeinput">NW = struct(<span class="string">'ind'</span>,1, <span class="string">'indrel'</span>,[+1 -1; -1 +1]);
+N =  struct(<span class="string">'ind'</span>,4, <span class="string">'indrel'</span>,[ 0 -1;  0 +1]);
+NE = struct(<span class="string">'ind'</span>,7, <span class="string">'indrel'</span>,[-1 -1; +1 +1]);
+E =  struct(<span class="string">'ind'</span>,8, <span class="string">'indrel'</span>,[-1  0; +1 0]);
+SE = struct(<span class="string">'ind'</span>,9, <span class="string">'indrel'</span>,[-1 +1; +1 -1]);
+S =  struct(<span class="string">'ind'</span>,6, <span class="string">'indrel'</span>,[ 0 -1;  0 +1]);
+SW = struct(<span class="string">'ind'</span>,3, <span class="string">'indrel'</span>,[-1 -1; +1 +1]);
+W =  struct(<span class="string">'ind'</span>,2, <span class="string">'indrel'</span>,[-1  0; +1 0]);
+D0 = 5;
+dir_indices = {NW, N, NE, E, SE, S, SW, W, D0};
+</pre><p>compute directional gradients</p><pre class="codeinput">I = padarray(I,[1 1],<span class="string">'both'</span>,<span class="string">'replicate'</span>);
+
+Delta = cell(9,1);
+k = 1;
+<span class="keyword">for</span> j=-1:1  <span class="comment">% see above: NW, W, SW, N, central, S, NE, E, SE in this order</span>
+    <span class="keyword">for</span> i=-1:1
+        Delta{k} = fskip(I,i,j);      <span class="comment">% note: Delta{D0}=I</span>
+        k = k+1;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">for</span> k=1:9
+    <span class="keyword">if</span> k~=5,  Delta{k} = Delta{k} - Delta{D0};   <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+I = I(2:end-1,2:end-1);
+</pre><p>logical detection variables</p><pre class="codeinput">gammaimpulse = zeros(X,Y);
+gammafree = zeros(X,Y);
+
+a = (Obs1*winK^2 - Obs2) / (winK^2-1);   <span class="comment">% Eq.(7)</span>
+<span class="comment">%a = (colfilt(Obs2,[winK winK],'sliding',@sum) - Obs2) / (winK^2-1);</span>
+b = 1.2 * a;
+</pre><p>composed predicates used in rules 2 and 3</p><pre class="codeinput">YYY = @(p1,p2,p3)  fAND(fAND(p1,p2),p3);
+NNN = @(p1,p2,p3)  fAND(fAND(fNOT(p1),fNOT(p2)),fNOT(p3));
+YYN = @(p1,p2,p3)  fAND(fAND(p1,p2),fNOT(p3));
+YNN = @(p1,p2,p3)  fAND(fAND(p1,fNOT(p2)),fNOT(p3));
+</pre><p>fuzzy rule 2</p><pre class="codeinput">rule2 = @(p1,p2,p3)  fOR(YYN(p2,p3,p1), fOR(YNN(p1,p2,p3), fOR(YYN(p1,p2,p3),YYN(p1,p3,p2))));
+</pre><p>fuzzy rule 1</p><pre class="codeinput">rule3 = @(p1,p2,p3)  fOR(YYY(p1,p2,p3),NNN(p1,p2,p3));
+
+frelgrad = @(D) Delta{D.ind}(fskip(ind,D.indrel(1),D.indrel(2)));
+fdirgrad = @(D) Delta{D.ind};
+</pre><p>apply rule</p><pre class="codeinput"><span class="keyword">for</span> i=1:8
+    <span class="comment">% direction</span>
+    D = dir_indices{i};
+    <span class="comment">% predicates</span>
+    p1 = mularge(fdirgrad(D),a,b);
+    p2 = mularge(frelgrad(D),a,b);
+    p3 = mularge(frelgrad(D),a,b);
+    <span class="comment">% fuzzy ouput</span>
+    gammaimpulse = gammaimpulse + rule2(p1,p2,p3);
+    gammafree = gammafree + rule3(p1,p2,p3);
+<span class="keyword">end</span>
+
+isNoise = muimpulse&gt;0 &amp; gammaimpulse&gt;gammafree; <span class="comment">% Eq.(8)</span>
+nNoise = sum(isNoise(:)==true);
+</pre><p>filtering</p><pre class="codeinput">I = padarray(I,[L L], <span class="string">'both'</span>, <span class="string">'replicate'</span>);
+<span class="comment">% isNoise = padarray(isNoise, [L L], false, 'both');</span>
+<span class="comment">% xk = find(isNoise);</span>
+xk = find(padarray(isNoise, [L L], false, <span class="string">'both'</span>));
+
+nei = neiposkernel(L, X);
+nei(icenterL) = []; <span class="comment">% central pixel: inserted later as it corresponds to xk</span>
+nei = transpose(nei(:));
+
+xkd = [I(xk) I(repmat(xk,[1 numel(nei)]) + repmat(nei,[nNoise 1]))];
+
+<span class="comment">% concatenate and sort the rows (along dimension 2)</span>
+xk = sort(xkd, 2);
+xij = xk(:,icenterL); <span class="comment">% median values in the winL window</span>
+
+rho = sum(diff(xk,1,2),2) / (winL^2-1);    <span class="comment">% Eq.(10)</span>
+
+p1 = repmat(xij - rho, [1 winL^2]);
+p2 = repmat(xij - 1.1*rho, [1 winL^2]);
+q1 = repmat(xij + rho, [1 winL^2]);
+q2 = repmat(xij + 1.1*rho, [1 winL^2]);   <span class="comment">% Eq.(11)</span>
+
+w = musimilar(xkd, p2, p1, q1, q2);
+lambda = w(:,1); <span class="comment">% choice of lambda</span>
+
+f = sum(w .* xkd, 2) ./ sum(w, 2);
+
+<span class="comment">% F = I(L+1:end-L,L+1:end-L);</span>
+<span class="comment">% isNoise = isNoise(L+1:end-L,L+1:end-L);</span>
+F(isNoise) = lambda .* F(isNoise)  + (1 - lambda) .* f;
+
+<span class="keyword">if</span> nargout==2,  varargout{1} = isNoise;  <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of fuzzimpulse_base</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.14<br></p></div><!--
+##### SOURCE BEGIN #####
+%% FUZZIMPULSE_BASE - Base function for FUZZIMPULSE.
+%
+%% Syntax
+%     [F,isNoise] = FUZZIMPULSE_BASE(I, K, L);
+% 
+%% Credit
+% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)
+% 
+%% See also
+% Related:
+% <FUZZIMPULSE.html |FUZZIMPULSE|>. 
+
+%% Function implementation
+function [F,varargout] = fuzzimpulse_base(I, K, L)
+
+% image size
+[X,Y,C] = size(I);                                                     
+
+% prepare the output
+F = I;
+
+%% 
+% dealing with multispectral images
+
+if C>1
+    if nargout==2,  varargout{1} = false(size(I));  end;
+    for c=1:C
+        [F(:,:,c), n] = fuzzimpulse_base(I(:,:,c), K, L);
+        if nargout==2,  varargout{1}(:,:,c) = n;   end;
+    end
+    return;
+end
+
+%% 
+% some useful internal variables
+
+% analyzing windows' parameters
+winK = 2*K+1;  % window for impulse noise detection
+icenterK = 2*K^2+ 2*K + 1; % sub2ind([winK winK], K+1, K+1);
+winL = 2*L + 1; % window for fitering
+icenterL =  2*L^2+ 2*L + 1; % sub2ind([winL winL], L+1, L+1);
+
+% indexing matrix
+ind = padarray(reshape(1:X*Y,[X, Y]),[1 1],'both','replicate');
+% indexing function
+fskip = @(A, i, j)  A(2+i:1+i+X,2+j:1+j+Y);
+
+% logical predicates used by fuzzy rules
+fAND = @(p1,p2)  p1.*p2;  % min(cat(3,p1,p2),[],3);
+fOR = @(p1,p2)  max(cat(3,p1,p2),[],3);
+fNOT = @(p1)  (1-p1);
+
+% membership function used by fuzzy rules 
+mularge = @(x, a, b) ...              % Fig.(1)
+    (x>=b) + ((x-a)./(b-a)).*(x>a&x<b);
+% membership function used for filtering
+musimilar = @(x, p2, p1, q1, q2) ...  % Fig.(4)
+    (x>=p1&x<=q1) + ((x-p2)./(p1-p2)).*(x>p2&x<p1) + ...
+    (1-((x-q1)./(q2-q1))).*(x>q1&x<q2);
+
+%% 
+% * first detection unit
+
+fun = @(x)  sum(abs(x - repmat(x(icenterK,:),[size(x,1) 1]))) / (winK^2-1);
+Obs2 = colfilt(I,[winK winK],'sliding',fun);   % Eq.(4)
+
+Obs1 = colfilt(Obs2,[winK winK],'sliding',@mean);   % Eq.(3)
+
+a = colfilt(Obs1,[winK winK],'sliding',@min);  % Eq.(5)
+b = 1.2 * a;   
+
+% fuzzy rule 1
+rule1 =  @(p1)  p1;
+
+muimpulse = rule1(mularge(abs(Obs1-Obs2),a,b));
+
+%% 
+% * second detection unit
+
+%%
+% indices of orientation
+%
+%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%          | NW | N | NE |         | 1 | 4 | 7 |
+%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%          | W  |   | E  |    =>   | 2 | 5 | 8 |
+%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%          | SW | S | SE |         | 3 | 6 | 9 |
+%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%
+% indices of gradients and coordinates skip associated 'related' gradients
+NW = struct('ind',1, 'indrel',[+1 -1; -1 +1]);
+N =  struct('ind',4, 'indrel',[ 0 -1;  0 +1]);
+NE = struct('ind',7, 'indrel',[-1 -1; +1 +1]);
+E =  struct('ind',8, 'indrel',[-1  0; +1 0]);
+SE = struct('ind',9, 'indrel',[-1 +1; +1 -1]);
+S =  struct('ind',6, 'indrel',[ 0 -1;  0 +1]);
+SW = struct('ind',3, 'indrel',[-1 -1; +1 +1]);
+W =  struct('ind',2, 'indrel',[-1  0; +1 0]);
+D0 = 5;
+dir_indices = {NW, N, NE, E, SE, S, SW, W, D0};
+
+%%
+% compute directional gradients
+I = padarray(I,[1 1],'both','replicate');
+
+Delta = cell(9,1);
+k = 1;
+for j=-1:1  % see above: NW, W, SW, N, central, S, NE, E, SE in this order
+    for i=-1:1
+        Delta{k} = fskip(I,i,j);      % note: Delta{D0}=I
+        k = k+1;
+    end
+end
+
+for k=1:9
+    if k~=5,  Delta{k} = Delta{k} - Delta{D0};   end
+end
+
+I = I(2:end-1,2:end-1);
+
+%%
+% logical detection variables
+gammaimpulse = zeros(X,Y);
+gammafree = zeros(X,Y);
+
+a = (Obs1*winK^2 - Obs2) / (winK^2-1);   % Eq.(7)
+%a = (colfilt(Obs2,[winK winK],'sliding',@sum) - Obs2) / (winK^2-1); 
+b = 1.2 * a;
+
+%%
+% composed predicates used in rules 2 and 3
+YYY = @(p1,p2,p3)  fAND(fAND(p1,p2),p3);
+NNN = @(p1,p2,p3)  fAND(fAND(fNOT(p1),fNOT(p2)),fNOT(p3));
+YYN = @(p1,p2,p3)  fAND(fAND(p1,p2),fNOT(p3));
+YNN = @(p1,p2,p3)  fAND(fAND(p1,fNOT(p2)),fNOT(p3));
+
+%%
+% fuzzy rule 2
+rule2 = @(p1,p2,p3)  fOR(YYN(p2,p3,p1), fOR(YNN(p1,p2,p3), fOR(YYN(p1,p2,p3),YYN(p1,p3,p2))));
+
+%%
+% fuzzy rule 1
+rule3 = @(p1,p2,p3)  fOR(YYY(p1,p2,p3),NNN(p1,p2,p3));
+
+frelgrad = @(D) Delta{D.ind}(fskip(ind,D.indrel(1),D.indrel(2)));
+fdirgrad = @(D) Delta{D.ind};
+
+%%
+% apply rule
+for i=1:8
+    % direction 
+    D = dir_indices{i};
+    % predicates
+    p1 = mularge(fdirgrad(D),a,b);
+    p2 = mularge(frelgrad(D),a,b);
+    p3 = mularge(frelgrad(D),a,b);
+    % fuzzy ouput
+    gammaimpulse = gammaimpulse + rule2(p1,p2,p3);
+    gammafree = gammafree + rule3(p1,p2,p3);
+end
+
+isNoise = muimpulse>0 & gammaimpulse>gammafree; % Eq.(8)
+nNoise = sum(isNoise(:)==true);
+
+%% 
+% filtering
+
+I = padarray(I,[L L], 'both', 'replicate');
+% isNoise = padarray(isNoise, [L L], false, 'both');
+% xk = find(isNoise);
+xk = find(padarray(isNoise, [L L], false, 'both'));
+
+nei = neiposkernel(L, X);
+nei(icenterL) = []; % central pixel: inserted later as it corresponds to xk
+nei = transpose(nei(:));
+
+xkd = [I(xk) I(repmat(xk,[1 numel(nei)]) + repmat(nei,[nNoise 1]))];
+
+% concatenate and sort the rows (along dimension 2)
+xk = sort(xkd, 2);
+xij = xk(:,icenterL); % median values in the winL window
+
+rho = sum(diff(xk,1,2),2) / (winL^2-1);    % Eq.(10)
+
+p1 = repmat(xij - rho, [1 winL^2]);
+p2 = repmat(xij - 1.1*rho, [1 winL^2]);
+q1 = repmat(xij + rho, [1 winL^2]);
+q2 = repmat(xij + 1.1*rho, [1 winL^2]);   % Eq.(11)
+
+w = musimilar(xkd, p2, p1, q1, q2);
+lambda = w(:,1); % choice of lambda
+
+f = sum(w .* xkd, 2) ./ sum(w, 2);
+
+% F = I(L+1:end-L,L+1:end-L);
+% isNoise = isNoise(L+1:end-L,L+1:end-L);
+F(isNoise) = lambda .* F(isNoise)  + (1 - lambda) .* f;
+
+if nargout==2,  varargout{1} = isNoise;  end
+
+end % end of fuzzimpulse_base
+
+##### SOURCE END #####
+--></body></html>

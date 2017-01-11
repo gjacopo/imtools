@@ -1,217 +1,1 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>IND2RC
-      - Variant of IND2SUB behaving nicely with single output.</title>
-    <meta name="generator" content="MATLAB 7.11">
-    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-    <meta name="DC.date" content="2011-07-11">
-    <meta name="DC.source" content="ind2rc.m">
-    <style type="text/css">
-
-body {
-  background-color: white;
-  margin:10px;
-}
-
-h1 {
-  color: #990000; 
-  font-size: x-large;
-}
-
-h2 {
-  color: #990000;
-  font-size: medium;
-}
-
-/* Make the text shrink to fit narrow windows, but not stretch too far in 
-wide windows. */ 
-p,h1,h2,div.content div {
-  max-width: 600px;
-  /* Hack for IE6 */
-  width: auto !important; width: 600px;
-}
-
-pre.codeinput {
-  background: #EEEEEE;
-  padding: 10px;
-}
-@media print {
-  pre.codeinput {word-wrap:break-word; width:100%;}
-} 
-
-span.keyword {color: #0000FF}
-span.comment {color: #228B22}
-span.string {color: #A020F0}
-span.untermstring {color: #B20000}
-span.syscmd {color: #B28C00}
-
-pre.codeoutput {
-  color: #666666;
-  padding: 10px;
-}
-
-pre.error {
-  color: red;
-}
-
-p.footer {
-  text-align: right;
-  font-size: xx-small;
-  font-weight: lighter;
-  font-style: italic;
-  color: gray;
-}
-
-  </style>
-  </head>
-  <body>
-    <div class="content">
-      <h1>IND2RC - Variant of IND2SUB behaving nicely with
-        single output.</h1>
-      <!--introduction--><!--/introduction-->
-      <h2>Contents</h2>
-      <div>
-        <ul>
-          <li><a href="#1">Description</a></li>
-          <li><a href="#2">Syntax</a></li>
-          <li><a href="#3">Inputs</a></li>
-          <li><a href="#4">Output:</a></li>
-          <li><a href="#5">Remark</a></li>
-          <li><a href="#6">Credit</a></li>
-          <li><a href="#7">See also</a></li>
-          <li><a href="#8">Function implementation</a></li>
-        </ul>
-      </div>
-      <h2>Description<a name="1"></a></h2>
-      <p>Output the x- and/or y- subscripts from linear index as does <tt>IND2SUB</tt>,
-        but enable one output only.</p>
-      <h2>Syntax<a name="2"></a></h2>
-      <pre>  ij = IND2RC(siz, ind);
-  ij = IND2RC(siz, ind, flag);</pre>
-      <h2>Inputs<a name="3"></a></h2>
-      <p><b><tt>siz</tt></b> : dimensions of the input matrix; note that
-        it can be reduced to its x-dimension only.</p>
-      <p><b><tt>ind</tt></b> : vector or matrix of linear indices.</p>
-      <p><b><tt>flag</tt></b> (optional) string specifying the subscript
-        to be computed; either the row (<tt>'r'</tt>) or the colum (<tt>'c'</tt>)
-        subscript alone will be returned; flag can also be set to <tt>'rc'</tt>
-        or <tt>'cr'</tt> to return both subscripts concatenated in the
-        order indicated by the letter sequence; default: <tt>flag='rc'</tt>.</p>
-      <h2>Output:<a name="4"></a></h2>
-      <p><b><tt>ij</tt></b> : matrix of dimension <tt>(n,k)</tt>, where
-        <tt>n</tt> is the number of rows of the input <tt>ind</tt>
-        variable, and <tt>k</tt> is equal to <tt>length(flag)</tt>:</p>
-      <div>
-        <ul>
-          <li>when <tt>length(flag)=1</tt>, <tt>ij</tt> is the list of
-            row or column (depending on <tt>flag</tt>) subscripts
-            corresponding to the linear indices present in <tt>ind</tt>
-            for a matrix of size <tt>siz</tt>,</li>
-          <li>when <tt>length(flag)=2</tt>, <tt>ij</tt> concatenates
-            both the row and column subscripts and the order of
-            concatenation is indicated by the char sequence in <tt>flag</tt>.</li>
-        </ul>
-      </div>
-      <h2>Remark<a name="5"></a></h2>
-      <p>This function is implemented to remedy the behaviour of <tt>IND2SUB(siz,ind)</tt>
-        which, by default, returns <tt>ind</tt> when one output only is
-        specified.</p>
-      <h2>See also<a name="7"></a></h2>
-      <p>Related: <a href="matlab:webpub%28whichpath%28%27IND2SUB%27%29%29"><tt>IND2SUB</tt></a>,
-        <a href="matlab:webpub%28whichpath%28%27SUB2IND%27%29%29"><tt>SUB2IND</tt></a>.
-        Called: <a href="matlab:webpub%28whichpath%28%27FLOOR%27%29%29"><tt>FLOOR</tt></a>,
-        <a href="matlab:webpub%28whichpath%28%27MOD%27%29%29"><tt>MOD</tt></a>.</p>
-      <h2>Function implementation<a name="8"></a></h2>
-      <pre class="codeinput"><span class="keyword">function</span> ij = ind2rc(siz, ind, flag)
-
-error(nargchk(1, 3, nargin, <span class="string">'struct'</span>));
-error(nargoutchk(0, 1, nargout, <span class="string">'struct'</span>));
-
-X = siz(1);
-
-<span class="keyword">if</span> nargin&lt;3 || isempty(flag)
-    flag = <span class="string">'rc'</span>;
-<span class="keyword">elseif</span> ~(ischar(flag) &amp;&amp; any(strcmpi(flag,{<span
-class="string">'row'</span>,<span
-class="string">'col'</span>,<span
-class="string">'r'</span>,<span
-class="string">'c'</span>,<span
-class="string">'rc'</span>,<span
-class="string">'cr'</span>})))
-    error(<span class="string">'ind2rc:errorinput'</span>, <span class="keyword">...</span>
-        <span class="string">'flag must be any string among ''r'', ''c'', ''rc'' or  ''cr'''</span>)
-<span class="keyword">end</span>
-
-ind2row = @(i) mod((i-1),X) + 1;
-ind2col = @(i) floor((i-1) / X) + 1;
-
-<span class="keyword">switch</span> flag(1)
-    <span class="keyword">case</span> {<span class="string">'r'</span>,<span
-class="string">'row'</span>}
-        ij = ind2row(ind);
-
-    <span class="keyword">case</span> {<span class="string">'c'</span>,<span
-class="string">'col'</span>}
-        ij = ind2col(ind);
-<span class="keyword">end</span>
-
-<span class="keyword">if</span> length(flag)==2
-    <span class="keyword">switch</span> flag(2)
-        <span class="keyword">case</span> <span class="string">'r'</span>
-            ij = cat(2,ij,ind2row(ind));
-
-        <span class="keyword">case</span> <span class="string">'c'</span>
-            ij = cat(2,ij,ind2col(ind));
-    <span class="keyword">end</span>
-
-<span class="keyword">end</span>
-
-<span class="keyword">end</span> <span class="comment">% end of ind2rc</span>
-</pre>
-    </div>
-    <!--##### SOURCE BEGIN #####
-%% IND2RC - Variant of IND2SUB behaving nicely with single output.%
-%% Description% Output the x- and/or y- subscripts from linear index as does |IND2SUB|,
-% but enable one output only.%
-%% Syntax%    ij = IND2RC(siz, ind);
-%    ij = IND2RC(siz, ind, flag);% 
-%% Inputs% *|siz|* : dimensions of the input matrix; note that it can be reduced to
-%     its x-dimension only.% 
-% *|ind|* : vector or matrix of linear indices.% 
-% *|flag|* (optional) string specifying the subscript to be computed; either%     the row (|'r'|) or the colum (|'c'|) subscript alone will be returned;
-%     flag can also be set to |'rc'| or |'cr'| to return both subscripts %     concatenated in the order indicated by the letter sequence; default:
-%     |flag='rc'|.%
-%% Output:% *|ij|* : matrix of dimension |(n,k)|, where |n| is the number of rows of 
-%     the input |ind| variable, and |k| is equal to |length(flag)|:% 
-% * when |length(flag)=1|, |ij| is the list of row or column (depending on%         |flag|) subscripts corresponding to the linear indices present 
-%         in |ind| for a matrix of size |siz|,% * when |length(flag)=2|, |ij| concatenates both the row and column 
-%         subscripts and the order of concatenation is indicated by the%         char sequence in |flag|.
-% %% Remark
-% This function is implemented to remedy the behaviour of |IND2SUB(siz,ind)|% which, by default, returns |ind| when one output only is specified.
-%%% Credit
-% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)%
-%% See also  % Related: 
-% <matlab:webpub(whichpath('IND2SUB')) |IND2SUB|>,% <matlab:webpub(whichpath('SUB2IND')) |SUB2IND|>.
-% Called: % <matlab:webpub(whichpath('FLOOR')) |FLOOR|>,
-% <matlab:webpub(whichpath('MOD')) |MOD|>.%% Function implementation
-function ij = ind2rc(siz, ind, flag)error(nargchk(1, 3, nargin, 'struct'));
-error(nargoutchk(0, 1, nargout, 'struct'));X = siz(1);
-if nargin<3 || isempty(flag)
-    flag = 'rc';elseif ~(ischar(flag) && any(strcmpi(flag,{'row','col','r','c','rc','cr'})))
-    error('ind2rc:errorinput', ...        'flag must be any string among ''r'', ''c'', ''rc'' or  ''cr''')
-endind2row = @(i) mod((i-1),X) + 1;
-ind2col = @(i) floor((i-1) / X) + 1;switch flag(1)
-    case {'r','row'}        ij = ind2row(ind);
-            case {'c','col'}
-        ij = ind2col(ind);end
-if length(flag)==2
-    switch flag(2)             case 'r'
-            ij = cat(2,ij,ind2row(ind));            
-        case 'c'            ij = cat(2,ij,ind2col(ind));
-    end    
-endend % end of ind2rc
-##### SOURCE END #####-->
-  </body>
-</html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>  <head>    <meta content="text/html; charset=UTF-8" http-equiv="content-type">    <title>IND2RC - Variant of IND2SUB behaving nicely with single output.</title>    <meta name="generator" content="MATLAB 7.11">    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">    <meta name="DC.date" content="2011-07-11">    <meta name="DC.source" content="ind2rc.m">    <style type="text/css">body {  background-color: white;  margin:10px;}h1 {  color: #990000;   font-size: x-large;}h2 {  color: #990000;  font-size: medium;}/* Make the text shrink to fit narrow windows, but not stretch too far in wide windows. */ p,h1,h2,div.content div {  max-width: 600px;  /* Hack for IE6 */  width: auto !important; width: 600px;}pre.codeinput {  background: #EEEEEE;  padding: 10px;}@media print {  pre.codeinput {word-wrap:break-word; width:100%;}} span.keyword {color: #0000FF}span.comment {color: #228B22}span.string {color: #A020F0}span.untermstring {color: #B20000}span.syscmd {color: #B28C00}pre.codeoutput {  color: #666666;  padding: 10px;}pre.error {  color: red;}p.footer {  text-align: right;  font-size: xx-small;  font-weight: lighter;  font-style: italic;  color: gray;}  </style>  </head>  <body>    <div class="content">      <h1>IND2RC - Variant of IND2SUB behaving nicely with single output.</h1>      <!--introduction--><!--/introduction-->      <h2>Contents</h2>      <div>        <ul>          <li><a href="#1">Description</a></li>          <li><a href="#2">Syntax</a></li>          <li><a href="#3">Inputs</a></li>          <li><a href="#4">Output</a></li>          <li><a href="#5">Remark</a></li>          <li><a href="#7">See also</a></li>          <li><a href="#8">Function implementation</a></li>        </ul>      </div>      <h2>Description<a name="1"></a></h2>      <p>Output the x- and/or y- subscripts from linear index as does <tt>IND2SUB</tt>,        but enable one output only.</p>      <h2>Syntax<a name="2"></a></h2>      <pre>  ij = IND2RC(siz, ind);  ij = IND2RC(siz, ind, flag);</pre>      <h2>Inputs<a name="3"></a></h2>      <p><b><tt>siz</tt></b> : dimensions of the input matrix; note that it can        be reduced to its x-dimension only.</p>      <p><b><tt>ind</tt></b> : vector or matrix of linear indices.</p>      <p><b><tt>flag</tt></b> (optional) string specifying the subscript to be        computed; either the row (<tt>'r'</tt>) or the colum (<tt>'c'</tt>)        subscript alone will be returned; flag can also be set to <tt>'rc'</tt>        or <tt>'cr'</tt> to return both subscripts concatenated in the order        indicated by the letter sequence; default: <tt>flag='rc'</tt>.</p>      <h2>Output<a name="4"></a></h2>      <p><b><tt>ij</tt></b> : matrix of dimension <tt>(n,k)</tt>, where <tt>n</tt>        is the number of rows of the input <tt>ind</tt> variable, and <tt>k</tt>        is equal to <tt>length(flag)</tt>:</p>      <div>        <ul>          <li>when <tt>length(flag)=1</tt>, <tt>ij</tt> is the list of row or            column (depending on <tt>flag</tt>) subscripts corresponding to the            linear indices present in <tt>ind</tt> for a matrix of size <tt>siz</tt>,</li>          <li>when <tt>length(flag)=2</tt>, <tt>ij</tt> concatenates both the            row and column subscripts and the order of concatenation is            indicated by the char sequence in <tt>flag</tt>.</li>        </ul>      </div>      <h2>Remark<a name="5"></a></h2>      <p>This function is implemented to remedy the behaviour of <tt>IND2SUB(siz,ind)</tt>        which, by default, returns <tt>ind</tt> when one output only is        specified.</p>      <h2>See also<a name="7"></a></h2>      <p>Related: <a href="matlab:webpub%28whichpath%28%27IND2SUB%27%29%29"><tt>IND2SUB</tt></a>,        <a href="matlab:webpub%28whichpath%28%27SUB2IND%27%29%29"><tt>SUB2IND</tt></a>.        Called: <a href="matlab:webpub%28whichpath%28%27FLOOR%27%29%29"><tt>FLOOR</tt></a>,        <a href="matlab:webpub%28whichpath%28%27MOD%27%29%29"><tt>MOD</tt></a>.</p>      <h2>Function implementation<a name="8"></a></h2>      <pre class="codeinput"><span class="keyword">function</span> ij = ind2rc(siz, ind, flag)error(nargchk(1, 3, nargin, <span class="string">'struct'</span>));error(nargoutchk(0, 1, nargout, <span class="string">'struct'</span>));X = siz(1);<span class="keyword">if</span> nargin&lt;3 || isempty(flag)    flag = <span class="string">'rc'</span>;<span class="keyword">elseif</span> ~(ischar(flag) &amp;&amp; any(strcmpi(flag,{<spanclass="string">'row'</span>,<spanclass="string">'col'</span>,<spanclass="string">'r'</span>,<spanclass="string">'c'</span>,<spanclass="string">'rc'</span>,<spanclass="string">'cr'</span>})))    error(<span class="string">'ind2rc:errorinput'</span>, <span class="keyword">...</span>        <span class="string">'flag must be any string among ''r'', ''c'', ''rc'' or  ''cr'''</span>)<span class="keyword">end</span>ind2row = @(i) mod((i-1),X) + 1;ind2col = @(i) floor((i-1) / X) + 1;<span class="keyword">switch</span> flag(1)    <span class="keyword">case</span> {<span class="string">'r'</span>,<span class="string">'row'</span>}        ij = ind2row(ind);    <span class="keyword">case</span> {<span class="string">'c'</span>,<span class="string">'col'</span>}        ij = ind2col(ind);<span class="keyword">end</span><span class="keyword">if</span> length(flag)==2    <span class="keyword">switch</span> flag(2)        <span class="keyword">case</span> <span class="string">'r'</span>            ij = cat(2,ij,ind2row(ind));        <span class="keyword">case</span> <span class="string">'c'</span>            ij = cat(2,ij,ind2col(ind));    <span class="keyword">end</span><span class="keyword">end</span><span class="keyword">end</span> <span class="comment">% end of ind2rc</span></pre> </div>    <!--##### SOURCE BEGIN #####%% IND2RC - Variant of IND2SUB behaving nicely with single output.%%% Description% Output the x- and/or y- subscripts from linear index as does |IND2SUB|,% but enable one output only.%%% Syntax%    ij = IND2RC(siz, ind);%    ij = IND2RC(siz, ind, flag);% %% Inputs% *|siz|* : dimensions of the input matrix; note that it can be reduced to%     its x-dimension only.% % *|ind|* : vector or matrix of linear indices.% % *|flag|* (optional) string specifying the subscript to be computed; either%     the row (|'r'|) or the colum (|'c'|) subscript alone will be returned;%     flag can also be set to |'rc'| or |'cr'| to return both subscripts %     concatenated in the order indicated by the letter sequence; default:%     |flag='rc'|.%%% Output:% *|ij|* : matrix of dimension |(n,k)|, where |n| is the number of rows of %     the input |ind| variable, and |k| is equal to |length(flag)|:% % * when |length(flag)=1|, |ij| is the list of row or column (depending on%         |flag|) subscripts corresponding to the linear indices present %         in |ind| for a matrix of size |siz|,% * when |length(flag)=2|, |ij| concatenates both the row and column %         subscripts and the order of concatenation is indicated by the%         char sequence in |flag|.% %% Remark% This function is implemented to remedy the behaviour of |IND2SUB(siz,ind)|% which, by default, returns |ind| when one output only is specified.%%% Credit% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)%%% See also  % Related: % <matlab:webpub(whichpath('IND2SUB')) |IND2SUB|>,% <matlab:webpub(whichpath('SUB2IND')) |SUB2IND|>.% Called: % <matlab:webpub(whichpath('FLOOR')) |FLOOR|>,% <matlab:webpub(whichpath('MOD')) |MOD|>.%% Function implementationfunction ij = ind2rc(siz, ind, flag)error(nargchk(1, 3, nargin, 'struct'));error(nargoutchk(0, 1, nargout, 'struct'));X = siz(1);if nargin<3 || isempty(flag)    flag = 'rc';elseif ~(ischar(flag) && any(strcmpi(flag,{'row','col','r','c','rc','cr'})))    error('ind2rc:errorinput', ...        'flag must be any string among ''r'', ''c'', ''rc'' or  ''cr''')endind2row = @(i) mod((i-1),X) + 1;ind2col = @(i) floor((i-1) / X) + 1;switch flag(1)    case {'r','row'}        ij = ind2row(ind);            case {'c','col'}        ij = ind2col(ind);endif length(flag)==2    switch flag(2)             case 'r'            ij = cat(2,ij,ind2row(ind));                    case 'c'            ij = cat(2,ij,ind2col(ind));    end    endend % end of ind2rc##### SOURCE END #####-->  </body></html>

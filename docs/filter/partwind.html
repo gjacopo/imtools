@@ -1,0 +1,165 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>partwind</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-14"><meta name="DC.source" content="partwind.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Creates scaled window of set size.</span>
+<span class="comment">% function to calculate window centered at the zero segment of outwind size</span>
+<span class="keyword">function</span> windd = partwind(wfunc, insidewind, outwind)
+<span class="comment">%   function to calculate window centered at the zero segment of outwind size</span>
+<span class="comment">%   WFUNC - windowing function from the list:</span>
+<span class="comment">%   'barthannwin' 'bartlett' 'blackman' 'blackmanharris' 'bohmanwin'</span>
+<span class="comment">%   'gausswin' 'hann' 'nuttallwin' 'parzenwin' 'triang' 'hamming' 'flattopwin'</span>
+<span class="comment">%   OUTWIND  - length of the OUTPUT total window segment (padded with zero</span>
+<span class="comment">%   if OUTWIND&gt; INSIDEWIND or truncated INSIDEWIND if OUTWIND &lt; INSIDEWIND</span>
+<span class="comment">%   INSIDEWIND - length of the windowing function centered in OUTWIND</span>
+<span class="comment">%</span>
+<span class="comment">%EXAMPLE:</span>
+<span class="comment">%</span>
+<span class="comment">%       windd1 = partwind('flattopwin', 20, 60);</span>
+<span class="comment">%       windd2 = partwind('flattopwin', 60);</span>
+<span class="comment">%       windd3 = partwind('flattopwin', 90, 60);</span>
+<span class="comment">%       figure; plot(windd1, 'r.-'); hold on; plot(windd2, 'b+-');</span>
+<span class="comment">%       plot(windd3, 'ko-'); grid; axis tight</span>
+<span class="comment">%       legend('insidewind&lt;outwind', 'insidewind=outwind', 'insidewind&gt;outwind')</span>
+
+<span class="comment">% Other m-files required: none</span>
+<span class="comment">% Subfunctions: none</span>
+<span class="comment">% MAT-files required:</span>
+<span class="comment">% window.m from Signal Processing Toolboxes</span>
+
+<span class="comment">%____________________________________________</span>
+<span class="comment">% 	Sergei Koptenko, Resonant Medical Inc.,</span>
+<span class="comment">%           Montreal, Qc., Canada</span>
+<span class="comment">%	sergei.koptenko@resonantmedical.com</span>
+<span class="comment">%   Website: http://www.resonantmedical.com</span>
+<span class="comment">%____________Apr/22/2005_____________________</span>
+
+<span class="keyword">if</span> (nargin&lt;3), outwind = insidewind; <span class="keyword">end</span>;
+
+wnd1 = floor(insidewind/2);       <span class="comment">% Get half window size</span>
+wnd2 = floor(outwind/2);       <span class="comment">% Get half window size</span>
+insidewind = 2* wnd1+1; <span class="comment">%Force INSIDE window size to be ODD</span>
+outwind = 2* wnd2+1; <span class="comment">%Force OUTPUT window size to be ODD</span>
+eval([<span class="string">'windi =window(@'</span> wfunc <span class="string">', insidewind);'</span>]); <span class="comment">% windowing function</span>
+
+<span class="comment">%___NEED TO SCALE THIS WINDOW___</span>
+<span class="keyword">if</span> wnd1 &lt; wnd2, <span class="comment">% inside window is SMALLER that output</span>
+   <span class="comment">%disp('wnd1 &lt; wnd2')</span>
+    windd = zeros(outwind,1);
+    windd(wnd2-wnd1+1:wnd2+wnd1+1) = windi;
+<span class="keyword">elseif</span> wnd1 &gt; wnd2, <span class="comment">% inside window is BIGGER that output</span>
+    <span class="comment">%disp('wnd1 &gt; wnd2')</span>
+    windd= windi(wnd1-wnd2+1:wnd1+wnd2+1);
+<span class="keyword">else</span>     <span class="comment">%disp('wnd1 = wnd2')</span>
+    windd= windi; <span class="comment">% dimensions are equal</span>
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.14<br></p></div><!--
+##### SOURCE BEGIN #####
+% Creates scaled window of set size.
+% function to calculate window centered at the zero segment of outwind size
+function windd = partwind(wfunc, insidewind, outwind)
+%   function to calculate window centered at the zero segment of outwind size
+%   WFUNC - windowing function from the list:
+%   'barthannwin' 'bartlett' 'blackman' 'blackmanharris' 'bohmanwin'
+%   'gausswin' 'hann' 'nuttallwin' 'parzenwin' 'triang' 'hamming' 'flattopwin'
+%   OUTWIND  - length of the OUTPUT total window segment (padded with zero
+%   if OUTWIND> INSIDEWIND or truncated INSIDEWIND if OUTWIND < INSIDEWIND
+%   INSIDEWIND - length of the windowing function centered in OUTWIND
+%
+%EXAMPLE:
+%       
+%       windd1 = partwind('flattopwin', 20, 60);
+%       windd2 = partwind('flattopwin', 60);
+%       windd3 = partwind('flattopwin', 90, 60);
+%       figure; plot(windd1, 'r.-'); hold on; plot(windd2, 'b+-');
+%       plot(windd3, 'ko-'); grid; axis tight
+%       legend('insidewind<outwind', 'insidewind=outwind', 'insidewind>outwind')
+
+% Other m-files required: none
+% Subfunctions: none
+% MAT-files required: 
+% window.m from Signal Processing Toolboxes
+
+%____________________________________________
+% 	Sergei Koptenko, Resonant Medical Inc., 
+%           Montreal, Qc., Canada
+%	sergei.koptenko@resonantmedical.com 
+%   Website: http://www.resonantmedical.com
+%____________Apr/22/2005_____________________
+
+if (nargin<3), outwind = insidewind; end;
+
+wnd1 = floor(insidewind/2);       % Get half window size
+wnd2 = floor(outwind/2);       % Get half window size
+insidewind = 2* wnd1+1; %Force INSIDE window size to be ODD
+outwind = 2* wnd2+1; %Force OUTPUT window size to be ODD
+eval(['windi =window(@' wfunc ', insidewind);']); % windowing function
+
+%___NEED TO SCALE THIS WINDOW___
+if wnd1 < wnd2, % inside window is SMALLER that output
+   %disp('wnd1 < wnd2')
+    windd = zeros(outwind,1);
+    windd(wnd2-wnd1+1:wnd2+wnd1+1) = windi;   
+elseif wnd1 > wnd2, % inside window is BIGGER that output
+    %disp('wnd1 > wnd2')
+    windd= windi(wnd1-wnd2+1:wnd1+wnd2+1);
+else     %disp('wnd1 = wnd2')
+    windd= windi; % dimensions are equal
+end
+
+##### SOURCE END #####
+--></body></html>
