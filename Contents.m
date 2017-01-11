@@ -299,18 +299,20 @@
 %   histvariance   - Calculate the variance feature.
 %
 % misc/  Miscellaneous functions:		
-%   askifcontinue  - Utilitiy function to pause a program and asking if
-%                    pursueing it or not.
+%   askifcontinue  - Utilitiy function to pause a program execution.
 %   catstruct      - Concatenate structures.
+%   cellstrsubtrim - Trim a set of strings from its matching substrings.
+%   createparser   - Create an instance of the inputParser class, with some additional fields.
+%   editemplate    - Create and edit a new function with standard documentation template.
+%   getvarparser   - Return the structure containing the full list of parameters from the input Parser structure.
+%   legendgroup    - Provide legends for groups of plot handles.
 %   mergestruct    - Merge structures with unique fields.
-%   str2vsubstr    - Vertically concatenate the substrings of a collection 
-%                    of patterns strings found in the input string.
-%   structa2astruct - Utility function converting a structure of arrays an 
-%                    array of structures for utility.
-%   comparecols    - Compare the columns of a matrix in increasing order.
-%   createparser   - Create an instance of the inputParser class, with some
-%                    additional fields.
-%   getvarparser   - Returns the structure containing the full list of parameters
-%                    from the input Parser structure.
-%   freadenvi      - Read an image of ENVI standard type to a MATLAB array.
+%   readenviraster - Read an image of ENVI standard type to a MATLAB array.
+%   readenviroi    - Read ENVI files.
+%   str2vsubstr    - Vertically concatenate the substrings of a collection of patterns strings found in the input string.
+%   structa2astruct - Convert a structure of arrays to an array of structures..
+%   suptitle       - Utility to put a title above all subplots
+%   webpub         - Creation of web formatted functions' documentation.
+%   whichpath      - Return the full path name of a function.
+
 
