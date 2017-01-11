@@ -7,7 +7,6 @@
 * [hessmooth](hessmooth.html)      - Compute the Hessian Tensor of a (possibly multichannel) image.
 * [hessmooth_base](hessmooth_base.html).
 * [gstdecomp](gstdecomp.html)      - Perform the eigen decomposition or the reconstruction of a tensor field.
-* [gstdecomp_base](gstdecomp_base.html).
 * [eigendecomp2x2sym](eigendecomp2x2sym.html) - Test function for `gstdecomp`.
 * [gstfeature](gstfeature.html)     - Derive features like norm, orientation, coherence, or inertia from tensor representation
 * [gstfeature_base](gstfeature_base.html).
@@ -17,4 +16,5 @@
 * [grd2hess_base](grd2hess_base.html).
 * [grdmask](grdmask.html)        - Compute the directional derivatives of an image through classical gradient operators using local difference masks.
 * [grdmask_base](grdmask_base.html).
+* [grdmaskmap_base](grdmaskmap_base.html).
 
