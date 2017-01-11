@@ -38,7 +38,7 @@ Various basic low-level image processing tools used in the experiments/analyses 
 See [`Contents.m`](Contents.m) for the whole list of functions. See [`Contents.html`](https://gjacopo.github.io/imtools/Contents.html) for a quick overview, 
 
 **Note** 
-Run `webpub` function to generate html documentation. Check script use.
+Run [`webpub`](https://gjacopo.github.io/imtools/misc/webpub.html) function to generate html documentation. Check script use.
 
 **<a name="References"></a>References** 
 
