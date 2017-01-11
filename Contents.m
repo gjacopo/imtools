@@ -23,9 +23,6 @@
 %                    symmetric matrix..
 %   uniqueunsort   - Retrieve unsorted list of unique elements.  
 %
-% cluster/  Clustering and classification:		
-%   fuzzbound      - Computes the fuzzy boundaries on a fuzzy categorical map.
-%
 % derive/  Differentiation functions:		
 %   gstsmooth      - Compute the Gradient Structure Tensor of a (possibly 
 %                    multichannel) image.
@@ -63,6 +60,7 @@
 %   fastcorner     - Wrapping function for the FAST corner detector.
 %   fastcpda       - Fast corner detector based on the chord-to-point distance
 %                    accumulation technique.
+%   fuzzbound      - Compute the fuzzy boundaries on a fuzzy categorical map.
 %   harriscorner   - Harris' corner/keypoints detector.
 %   inforgbedge    - Provide edge magnitude and orientation of colour images
 %                    based on its derivatives

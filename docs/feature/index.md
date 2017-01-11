@@ -26,6 +26,8 @@
 * [fastcorner_base](fastcorner_base.html).
 * [fastcpda](fastcpda.html) -               Fast corner detector based on the chord-to-point distance accumulation technique.
 * [fastcpda_base](fastcpda_base.html).
+* [fuzzbound](fuzzbound.html) - Compute the fuzzy boundaries on a fuzzy categorical map.
+* [fuzzbound_base](fuzzbound_base.html)
 * [harriscorner](harriscorner.html) -       Harris' corner/keypoints detector.
 * [harriscorner_base](harriscorner_base.html).
 * [inforgbedge](inforgbedge.html) -         Provide edge magnitude and orientation of colour images based on its derivatives.
