@@ -1,0 +1,298 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>multiedge</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-05-31"><meta name="DC.source" content="multiedge.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Parsing parameters</a></li><li><a href="#4">Main computation</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> map = multiedge(I,nsc,varargin)
+</pre><pre class="codeinput"><span class="comment">% MULTIEDGE - Compute a multiscale edge map using a 2D Sobel-like wavelet.</span>
+<span class="comment">%</span>
+<span class="comment">%         map = multiedge(I,nsc);</span>
+<span class="comment">%         map = multiedge(I,nsc,ave);</span>
+<span class="comment">%</span>
+<span class="comment">% Inputs:</span>
+<span class="comment">%     I : original image.</span>
+<span class="comment">%     nsc : maximum level of wavelet scales.</span>
+<span class="comment">%     ave : size of the filter used</span>
+<span class="comment">%</span>
+<span class="comment">% Output:</span>
+<span class="comment">%     map : binary edge map.</span>
+
+<span class="comment">% acknowledgment: "A Wavelet Approach to Edge Detection" by J.Li, 2003</span>
+<span class="comment">%    http://eref.uqu.edu.sa/files/Others/Image%20Processing/A%20wavelet%20a</span>
+<span class="comment">%    pproach%20to%20edge%20detection%20-%20Thesis.pdf</span>
+<span class="comment">%</span>
+<span class="comment">% credit: J.Grazzini (ISR-2/LANL)</span>
+<span class="comment">% last update: 09-11-03</span>
+</pre><h2>Parsing parameters<a name="3"></a></h2><pre class="codeinput">p = inputParser;   <span class="comment">% create an instance of the inputParser class.</span>
+<span class="comment">% mandatory parameter</span>
+p.addRequired(<span class="string">'I'</span>, @isnumeric);
+p.addRequired(<span class="string">'nsc'</span>, @(x)isscalar(x) &amp;&amp; round(x)==x &amp;&amp; x&gt;=1);
+p.addOptional(<span class="string">'ave'</span>, 10, @(x)isscalar(x) &amp;&amp; round(x)==x &amp;&amp; x&gt;1);
+
+<span class="comment">% parse and validate all input arguments</span>
+p.FunctionName=<span class="string">'MULTIEDGE'</span>;
+p.parse(I,nsc,varargin{:});
+
+<span class="comment">% create the variables associated to the fieldnames</span>
+ave = p.Results.ave;
+</pre><h2>Main computation<a name="4"></a></h2><pre class="codeinput">[m n] = size(I);
+
+h1 = fspecial(<span class="string">'sobel'</span>);
+h2 = h1';
+v = [1 2 1;2 4 2; 1 2 1];
+
+I1 = filter2(h1,I);
+I2 = filter2(h2,I);
+
+ns = h1;
+<span class="comment">% loop over the scales range</span>
+<span class="keyword">for</span> ii=1:nsc
+    nsh = conv2(ns,v); <span class="comment">% imfilter(ns,v);</span>
+    p = max(max(ns)) / max(max(nsh));
+
+    <span class="comment">% increase the scale of the wavelet</span>
+    Ih1 = filter2(v,I1) * p;
+    Ih2 = filter2(v,I2) * p;
+    ns = nsh;
+
+    <span class="comment">% distinguish noise and real edges</span>
+    I1 = I1.*(abs(I1)&lt;=abs(Ih1)) + Ih1.*(abs(I1)&gt;abs(Ih1));
+    I2 = I2.*(abs(I2)&lt;=abs(Ih2)) + Ih2.*(abs(I2)&gt;abs(Ih2));
+<span class="keyword">end</span>
+
+<span class="comment">% compute the magnitude</span>
+e = (I1.^2 + I2.^2);
+
+<span class="comment">% threshold the magnitude</span>
+ave = fspecial(<span class="string">'average'</span>, ave);
+
+map = (e&gt;(imfilter(e,ave))) .* (e&gt;mean2(e));
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="keyword">function</span> y = psi(axis,a,h)
+<span class="comment">% PSI - cascade algorithm for the wavelet model</span>
+<span class="comment">%</span>
+<span class="comment">%        y = psi(axis, a, h);</span>
+<span class="comment">%</span>
+<span class="comment">% Inputs:</span>
+<span class="comment">%    axis : 1 for x, 2 for y, 3 for (x+y), 4 for (x-y)</span>
+<span class="comment">%    a : variance</span>
+<span class="comment">%    h : order of derivative</span>
+<span class="comment">% Output:</span>
+<span class="comment">%    y : wavelet with support = (a+h+1)x(a+h+1)</span>
+<span class="comment">%</span>
+<span class="comment">% Examples</span>
+<span class="comment">%   y=psi(1,10,0) gives a Gaussian with support of 11 by 11</span>
+<span class="comment">%   y=psi(3,6,4) gives a 4th derivative of Gaussian rotated pi/4.</span>
+
+<span class="keyword">switch</span> axis
+    <span class="keyword">case</span> <span class="string">'x'</span>
+        d = [0 0 0; 0 1 -1; 0 0 0]/2;
+    <span class="keyword">case</span> <span class="string">'y'</span>
+        d = [0 0 0; 0 1 0; 0 -1 0]/2;
+    <span class="keyword">case</span> {<span class="string">'x+y'</span>,<span class="string">'y+x'</span>}
+        d = [0 0 0; 0 1 0; 0 0 -1]/2;
+    <span class="keyword">case</span> <span class="string">'x-y'</span>
+        d = [0 0 0; 0 1 0; -1 0 0]/2;
+    <span class="keyword">otherwise</span>
+        error(<span class="string">'psi:invalidparameter'</span>,<span class="string">'invalid axis parameter'</span>);
+<span class="keyword">end</span>
+
+v = [1 1; 1 1]/4;
+
+<span class="keyword">if</span> h &gt; 0
+    y = d;
+    <span class="keyword">for</span> i=1:h-1,
+        y = conv2(y,d);
+    <span class="keyword">end</span>
+
+<span class="keyword">else</span>
+    y = v;
+    a = a-1;
+<span class="keyword">end</span>
+
+<span class="keyword">for</span> i=1:a
+    y = conv2(y,v);
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.14<br></p></div><!--
+##### SOURCE BEGIN #####
+function map = multiedge(I,nsc,varargin)
+% MULTIEDGE - Compute a multiscale edge map using a 2D Sobel-like wavelet.
+%
+%         map = multiedge(I,nsc);
+%         map = multiedge(I,nsc,ave);
+%
+% Inputs:
+%     I : original image.
+%     nsc : maximum level of wavelet scales.
+%     ave : size of the filter used
+%
+% Output:
+%     map : binary edge map.
+
+% acknowledgment: "A Wavelet Approach to Edge Detection" by J.Li, 2003
+%    http://eref.uqu.edu.sa/files/Others/Image%20Processing/A%20wavelet%20a
+%    pproach%20to%20edge%20detection%20-%20Thesis.pdf
+%
+% credit: J.Grazzini (ISR-2/LANL)
+% last update: 09-11-03
+
+%% Parsing parameters
+
+p = inputParser;   % create an instance of the inputParser class.
+% mandatory parameter
+p.addRequired('I', @isnumeric);
+p.addRequired('nsc', @(x)isscalar(x) && round(x)==x && x>=1);
+p.addOptional('ave', 10, @(x)isscalar(x) && round(x)==x && x>1);
+
+% parse and validate all input arguments
+p.FunctionName='MULTIEDGE';
+p.parse(I,nsc,varargin{:}); 
+
+% create the variables associated to the fieldnames
+ave = p.Results.ave;
+
+%% Main computation
+
+[m n] = size(I);
+
+h1 = fspecial('sobel');
+h2 = h1';
+v = [1 2 1;2 4 2; 1 2 1];
+
+I1 = filter2(h1,I);
+I2 = filter2(h2,I);
+
+ns = h1;
+% loop over the scales range
+for ii=1:nsc
+    nsh = conv2(ns,v); % imfilter(ns,v);
+    p = max(max(ns)) / max(max(nsh));
+    
+    % increase the scale of the wavelet
+    Ih1 = filter2(v,I1) * p;
+    Ih2 = filter2(v,I2) * p;
+    ns = nsh;
+    
+    % distinguish noise and real edges
+    I1 = I1.*(abs(I1)<=abs(Ih1)) + Ih1.*(abs(I1)>abs(Ih1));
+    I2 = I2.*(abs(I2)<=abs(Ih2)) + Ih2.*(abs(I2)>abs(Ih2));
+end
+
+% compute the magnitude
+e = (I1.^2 + I2.^2);
+
+% threshold the magnitude
+ave = fspecial('average', ave);
+
+map = (e>(imfilter(e,ave))) .* (e>mean2(e));
+end
+
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function y = psi(axis,a,h) 
+% PSI - cascade algorithm for the wavelet model 
+%
+%        y = psi(axis, a, h);
+%
+% Inputs:
+%    axis : 1 for x, 2 for y, 3 for (x+y), 4 for (x-y) 
+%    a : variance 
+%    h : order of derivative 
+% Output:
+%    y : wavelet with support = (a+h+1)x(a+h+1) 
+%
+% Examples
+%   y=psi(1,10,0) gives a Gaussian with support of 11 by 11 
+%   y=psi(3,6,4) gives a 4th derivative of Gaussian rotated pi/4. 
+
+switch axis
+    case 'x'
+        d = [0 0 0; 0 1 -1; 0 0 0]/2;
+    case 'y'
+        d = [0 0 0; 0 1 0; 0 -1 0]/2;
+    case {'x+y','y+x'}
+        d = [0 0 0; 0 1 0; 0 0 -1]/2;
+    case 'x-y'
+        d = [0 0 0; 0 1 0; -1 0 0]/2;
+    otherwise
+        error('psi:invalidparameter','invalid axis parameter');
+end
+
+v = [1 1; 1 1]/4;
+
+if h > 0
+    y = d;
+    for i=1:h-1,  
+        y = conv2(y,d);
+    end
+    
+else
+    y = v;
+    a = a-1;
+end
+
+for i=1:a
+    y = conv2(y,v);
+end
+
+end
+##### SOURCE END #####
+--></body></html>
