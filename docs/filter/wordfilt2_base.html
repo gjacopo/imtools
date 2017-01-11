@@ -1,201 +1,1 @@
-
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   <!--
-This HTML was auto-generated from MATLAB code.
-To make changes, update the MATLAB code and republish this document.
-      --><title>WORDFILT2_BASE - Base function for WORDFILT2.</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-14"><meta name="DC.source" content="wordfilt2_base.m"><style type="text/css">
-html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
-
-html { min-height:100%; margin-bottom:1px; }
-html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
-html body td { vertical-align:top; text-align:left; }
-
-h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
-h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
-h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
-
-a { color:#005fce; text-decoration:none; }
-a:hover { color:#005fce; text-decoration:underline; }
-a:visited { color:#004aa0; text-decoration:none; }
-
-p { padding:0px; margin:0px 0px 20px; }
-img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
-
-ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
-ul li { padding:0px; margin:0px 0px 7px 0px; }
-ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
-ul li ol li { list-style:decimal; }
-ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
-ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
-ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
-ol li ol li { list-style-type:lower-alpha; }
-ol li ul { padding-top:7px; }
-ol li ul li { list-style:square; }
-
-.content { font-size:1.2em; line-height:140%; padding: 20px; }
-
-pre, tt, code { font-size:12px; }
-pre { margin:0px 0px 20px; }
-pre.error { color:red; }
-pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
-pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
-
-@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
-
-span.keyword { color:#0000FF }
-span.comment { color:#228B22 }
-span.string { color:#A020F0 }
-span.untermstring { color:#B20000 }
-span.syscmd { color:#B28C00 }
-
-.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
-.footer p { margin:0px; }
-
-  </style></head><body><div class="content"><h1>WORDFILT2_BASE - Base function for WORDFILT2.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Credit</a></li><li><a href="#3">See also</a></li><li><a href="#4">Function implementation</a></li></ul></div><h2>Syntax<a name="1"></a></h2><pre>   WOI = wordfilt2(I, wk);
-   WOI = wordfilt2(I, wk, order)</pre><h2>Credit<a name="2"></a></h2><p><a href="mailto:grazzja@lanl.gov">J.Grazzini</a> (ISR-2/LANL)</p><h2>See also<a name="3"></a></h2><p>Related: <a href="WORDFILT2.html"><tt>WORDFILT2</tt></a>, <a href="WMEDFILT2_BASE.html"><tt>WMEDFILT2_BASE</tt></a>. Called: <a href="matlab:webpub(whichpath('SORT'))"><tt>SORT</tt></a>, <a href="matlab:webpub(whichpath('MEDIAN'))"><tt>MEDIAN</tt></a>, <a href="matlab:webpub(whichpath('MIN'))"><tt>MIN</tt></a>, <a href="matlab:webpub(whichpath('MAX'))"><tt>MAX</tt></a>, <a href="matlab:webpub(whichpath('MODE'))"><tt>MODE</tt></a>.</p><h2>Function implementation<a name="4"></a></h2><pre class="codeinput"><span class="keyword">function</span> WOI = wordfilt2_base(I,wk,order)
-</pre><pre class="codeinput">[X Y C] = size(I);
-[x y c] = size(wk);
-
-cpos = find(wk&lt;0,1,<span class="string">'first'</span>);
-<span class="keyword">if</span> isempty(cpos),  cpos = (x+1+x*(y-1))/2; <span class="keyword">end</span>;
-
-[i,j] = ind2sub([x y],cpos); <span class="comment">% position of the center</span>
-</pre><p>dealing with multispectral matrices</p><pre class="codeinput"><span class="keyword">if</span> C&gt;1
-    WOI = zeros(size(I));
-    <span class="keyword">for</span> ic=1:C
-        <span class="keyword">if</span> c~=1; icc=ic; <span class="keyword">else</span> icc=1; <span class="keyword">end</span>
-        WOI(:,:,ic) = wordfilt2_base(I(:,:,ic), wk(:,:,icc), order);
-    <span class="keyword">end</span>
-    <span class="keyword">return</span>
-<span class="keyword">end</span>
-</pre><p>main processing</p><pre class="codeinput"><span class="comment">% pad the image</span>
-A = padarray(I,[i-1 j-1],<span class="string">'symmetric'</span>,<span class="string">'pre'</span>);
-A = padarray(A,[x-i y-j],<span class="string">'symmetric'</span>,<span class="string">'post'</span>);
-Xpad = X+x-1; <span class="comment">% size(A,1)</span>
-Ypad = Y+y-1; <span class="comment">% size(A,2)</span>
-
-<span class="comment">% index of the pixels inside the padded image</span>
-apix = reshape(1:Xpad*Ypad, [Xpad Ypad]);
-ipix = apix(i:X+i-1,j:j+Y-1);
-
-<span class="comment">% index of the kernel</span>
-ik = repmat((1:y)-j,[x 1])*Xpad + repmat(((1:x)-i)',[1 y]);
-</pre><p>create the 3D matrice with weightened values: the k-th pixel value in the neighbourhood specified by wk is replicated along the 3rd dimension wk(k) times</p><pre class="codeinput">WI = [];
-<span class="keyword">for</span> k=1:x*y
-    <span class="keyword">if</span> wk(k)
-        <span class="comment">% replicate wk(k) times along the 3rd dimension</span>
-        WI = cat(3,WI,repmat(A(ipix+ik(k)),[1 1 abs(wk(k))]));
-    <span class="keyword">end</span>
-<span class="keyword">end</span>
-</pre><p>compute the order statistics</p><pre class="codeinput"><span class="keyword">if</span> isscalar(order)
-    WI = sort(WI,3);
-    WOI = WI(:,:,order);
-
-<span class="keyword">else</span> <span class="comment">% ischar(order)</span>
-    <span class="keyword">switch</span> order
-        <span class="keyword">case</span> <span class="string">'med'</span>
-            WOI = median(WI,3);
-
-        <span class="keyword">case</span> <span class="string">'mod'</span>
-            WOI = mode(WI,3);
-    <span class="keyword">end</span>
-<span class="keyword">end</span>
-</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of wordfilt2_base</span>
-</pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.14<br></p></div><!--
-##### SOURCE BEGIN #####
-%% WORDFILT2_BASE - Base function for WORDFILT2.
-% 
-%% Syntax
-%     WOI = wordfilt2(I, wk);
-%     WOI = wordfilt2(I, wk, order)
-%
-%% Credit
-% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)
-% 
-%% See also
-% Related:
-% <WORDFILT2.html |WORDFILT2|>,
-% <WMEDFILT2_BASE.html |WMEDFILT2_BASE|>.
-% Called:
-% <matlab:webpub(whichpath('SORT')) |SORT|>,
-% <matlab:webpub(whichpath('MEDIAN')) |MEDIAN|>,
-% <matlab:webpub(whichpath('MIN')) |MIN|>,
-% <matlab:webpub(whichpath('MAX')) |MAX|>,
-% <matlab:webpub(whichpath('MODE')) |MODE|>.
-
-%% Function implementation
-function WOI = wordfilt2_base(I,wk,order)
-
-[X Y C] = size(I);
-[x y c] = size(wk);
-
-cpos = find(wk<0,1,'first');
-if isempty(cpos),  cpos = (x+1+x*(y-1))/2; end;
-
-[i,j] = ind2sub([x y],cpos); % position of the center
-
-%%
-% dealing with multispectral matrices
-
-if C>1
-    WOI = zeros(size(I));
-    for ic=1:C
-        if c~=1; icc=ic; else icc=1; end
-        WOI(:,:,ic) = wordfilt2_base(I(:,:,ic), wk(:,:,icc), order);
-    end
-    return
-end
-
-%% 
-% main processing
-
-% pad the image
-A = padarray(I,[i-1 j-1],'symmetric','pre');
-A = padarray(A,[x-i y-j],'symmetric','post');
-Xpad = X+x-1; % size(A,1)
-Ypad = Y+y-1; % size(A,2)
-
-% index of the pixels inside the padded image
-apix = reshape(1:Xpad*Ypad, [Xpad Ypad]);
-ipix = apix(i:X+i-1,j:j+Y-1);
-
-% index of the kernel
-ik = repmat((1:y)-j,[x 1])*Xpad + repmat(((1:x)-i)',[1 y]);
-
-%%
-% create the 3D matrice with weightened values: the k-th pixel value in the 
-% neighbourhood specified by wk is replicated along the 3rd dimension wk(k)
-% times
-WI = [];
-for k=1:x*y
-    if wk(k)
-        % replicate wk(k) times along the 3rd dimension
-        WI = cat(3,WI,repmat(A(ipix+ik(k)),[1 1 abs(wk(k))]));
-    end
-end
-
-%%
-% compute the order statistics
-if isscalar(order)
-    WI = sort(WI,3);
-    WOI = WI(:,:,order);
-    
-else % ischar(order)
-    switch order
-        case 'med'
-            WOI = median(WI,3);
-                    
-        case 'mod'
-            WOI = mode(WI,3);
-    end
-end
-
-end % end of wordfilt2_base
-
-##### SOURCE END #####
---></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>  <head>    <meta content="text/html; charset=utf-8" http-equiv="content-type">    <!--This HTML was auto-generated from MATLAB code.To make changes, update the MATLAB code and republish this document.      -->    <title>WORDFILT2_BASE - Base function for WORDFILT2.</title>    <meta name="generator" content="MATLAB 7.14">    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">    <meta name="DC.date" content="2012-11-14">    <meta name="DC.source" content="wordfilt2_base.m">    <style type="text/css">html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}html { min-height:100%; margin-bottom:1px; }html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }html body td { vertical-align:top; text-align:left; }h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }a { color:#005fce; text-decoration:none; }a:hover { color:#005fce; text-decoration:underline; }a:visited { color:#004aa0; text-decoration:none; }p { padding:0px; margin:0px 0px 20px; }img { padding:0px; margin:0px 0px 20px; border:none; }p img, pre img, tt img, li img { margin-bottom:0px; } ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }ul li { padding:0px; margin:0px 0px 7px 0px; }ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }ul li ol li { list-style:decimal; }ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }ol li ol li { list-style-type:lower-alpha; }ol li ul { padding-top:7px; }ol li ul li { list-style:square; }.content { font-size:1.2em; line-height:140%; padding: 20px; }pre, tt, code { font-size:12px; }pre { margin:0px 0px 20px; }pre.error { color:red; }pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }span.keyword { color:#0000FF }span.comment { color:#228B22 }span.string { color:#A020F0 }span.untermstring { color:#B20000 }span.syscmd { color:#B28C00 }.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }.footer p { margin:0px; }  </style>  </head>  <body>    <div class="content">      <h1>WORDFILT2_BASE - Base function for WORDFILT2.</h1>      <!--introduction--><!--/introduction-->      <h2>Contents</h2>      <div>        <ul>          <li><a href="#1">Syntax</a></li>          <li><a href="#3">See also</a></li>          <li><a href="#4">Function implementation</a></li>        </ul>      </div>      <h2>Syntax<a name="1"></a></h2>      <pre>   WOI = wordfilt2(I, wk);   WOI = wordfilt2(I, wk, order)</pre>      <h2>See also<a name="3"></a></h2>      <p>Related: <a href="WORDFILT2.html"><tt>WORDFILT2</tt></a>, <a href="WMEDFILT2_BASE.html"><tt>WMEDFILT2_BASE</tt></a>.        Called: <a href="matlab:webpub%28whichpath%28%27SORT%27%29%29"><tt>SORT</tt></a>,        <a href="matlab:webpub%28whichpath%28%27MEDIAN%27%29%29"><tt>MEDIAN</tt></a>,        <a href="matlab:webpub%28whichpath%28%27MIN%27%29%29"><tt>MIN</tt></a>,        <a href="matlab:webpub%28whichpath%28%27MAX%27%29%29"><tt>MAX</tt></a>,        <a href="matlab:webpub%28whichpath%28%27MODE%27%29%29"><tt>MODE</tt></a>.</p>      <h2>Function implementation<a name="4"></a></h2>      <pre class="codeinput"><span class="keyword">function</span> WOI = wordfilt2_base(I,wk,order)</pre>      <pre class="codeinput">[X Y C] = size(I);[x y c] = size(wk);cpos = find(wk&lt;0,1,<span class="string">'first'</span>);<span class="keyword">if</span> isempty(cpos),  cpos = (x+1+x*(y-1))/2; <span class="keyword">end</span>;[i,j] = ind2sub([x y],cpos); <span class="comment">% position of the center</span></pre>      <p>dealing with multispectral matrices</p>      <pre class="codeinput"><span class="keyword">if</span> C&gt;1    WOI = zeros(size(I));    <span class="keyword">for</span> ic=1:C        <span class="keyword">if</span> c~=1; icc=ic; <span class="keyword">else</span> icc=1; <spanclass="keyword">end</span>        WOI(:,:,ic) = wordfilt2_base(I(:,:,ic), wk(:,:,icc), order);    <span class="keyword">end</span>    <span class="keyword">return</span><span class="keyword">end</span></pre>      <p>main processing</p>      <pre class="codeinput"><span class="comment">% pad the image</span>A = padarray(I,[i-1 j-1],<span class="string">'symmetric'</span>,<span class="string">'pre'</span>);A = padarray(A,[x-i y-j],<span class="string">'symmetric'</span>,<span class="string">'post'</span>);Xpad = X+x-1; <span class="comment">% size(A,1)</span>Ypad = Y+y-1; <span class="comment">% size(A,2)</span><span class="comment">% index of the pixels inside the padded image</span>apix = reshape(1:Xpad*Ypad, [Xpad Ypad]);ipix = apix(i:X+i-1,j:j+Y-1);<span class="comment">% index of the kernel</span>ik = repmat((1:y)-j,[x 1])*Xpad + repmat(((1:x)-i)',[1 y]);</pre>      <p>create the 3D matrice with weightened values: the k-th pixel value in        the neighbourhood specified by wk is replicated along the 3rd dimension        wk(k) times</p>      <pre class="codeinput">WI = [];<span class="keyword">for</span> k=1:x*y    <span class="keyword">if</span> wk(k)        <span class="comment">% replicate wk(k) times along the 3rd dimension</span>        WI = cat(3,WI,repmat(A(ipix+ik(k)),[1 1 abs(wk(k))]));    <span class="keyword">end</span><span class="keyword">end</span></pre>      <p>compute the order statistics</p>      <pre class="codeinput"><span class="keyword">if</span> isscalar(order)    WI = sort(WI,3);    WOI = WI(:,:,order);<span class="keyword">else</span> <span class="comment">% ischar(order)</span>    <span class="keyword">switch</span> order        <span class="keyword">case</span> <span class="string">'med'</span>            WOI = median(WI,3);        <span class="keyword">case</span> <span class="string">'mod'</span>            WOI = mode(WI,3);    <span class="keyword">end</span><span class="keyword">end</span></pre>      <pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of wordfilt2_base</span></pre></div>    <!--##### SOURCE BEGIN #####%% WORDFILT2_BASE - Base function for WORDFILT2.% %% Syntax%     WOI = wordfilt2(I, wk);%     WOI = wordfilt2(I, wk, order)%%% Credit% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)% %% See also% Related:% <WORDFILT2.html |WORDFILT2|>,% <WMEDFILT2_BASE.html |WMEDFILT2_BASE|>.% Called:% <matlab:webpub(whichpath('SORT')) |SORT|>,% <matlab:webpub(whichpath('MEDIAN')) |MEDIAN|>,% <matlab:webpub(whichpath('MIN')) |MIN|>,% <matlab:webpub(whichpath('MAX')) |MAX|>,% <matlab:webpub(whichpath('MODE')) |MODE|>.%% Function implementationfunction WOI = wordfilt2_base(I,wk,order)[X Y C] = size(I);[x y c] = size(wk);cpos = find(wk<0,1,'first');if isempty(cpos),  cpos = (x+1+x*(y-1))/2; end;[i,j] = ind2sub([x y],cpos); % position of the center%%% dealing with multispectral matricesif C>1    WOI = zeros(size(I));    for ic=1:C        if c~=1; icc=ic; else icc=1; end        WOI(:,:,ic) = wordfilt2_base(I(:,:,ic), wk(:,:,icc), order);    end    returnend%% % main processing% pad the imageA = padarray(I,[i-1 j-1],'symmetric','pre');A = padarray(A,[x-i y-j],'symmetric','post');Xpad = X+x-1; % size(A,1)Ypad = Y+y-1; % size(A,2)% index of the pixels inside the padded imageapix = reshape(1:Xpad*Ypad, [Xpad Ypad]);ipix = apix(i:X+i-1,j:j+Y-1);% index of the kernelik = repmat((1:y)-j,[x 1])*Xpad + repmat(((1:x)-i)',[1 y]);%%% create the 3D matrice with weightened values: the k-th pixel value in the % neighbourhood specified by wk is replicated along the 3rd dimension wk(k)% timesWI = [];for k=1:x*y    if wk(k)        % replicate wk(k) times along the 3rd dimension        WI = cat(3,WI,repmat(A(ipix+ik(k)),[1 1 abs(wk(k))]));    endend%%% compute the order statisticsif isscalar(order)    WI = sort(WI,3);    WOI = WI(:,:,order);    else % ischar(order)    switch order        case 'med'            WOI = median(WI,3);                            case 'mod'            WOI = mode(WI,3);    endendend % end of wordfilt2_base##### SOURCE END #####-->  </body></html>

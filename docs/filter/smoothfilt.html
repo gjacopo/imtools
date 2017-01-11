@@ -1,254 +1,1 @@
-
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   <!--
-This HTML was auto-generated from MATLAB code.
-To make changes, update the MATLAB code and republish this document.
-      --><title>SMOOTHFILT - Isotropic or anisotropic non-linear smoothing.</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-14"><meta name="DC.source" content="smoothfilt.m"><style type="text/css">
-html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
-
-html { min-height:100%; margin-bottom:1px; }
-html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
-html body td { vertical-align:top; text-align:left; }
-
-h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
-h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
-h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
-
-a { color:#005fce; text-decoration:none; }
-a:hover { color:#005fce; text-decoration:underline; }
-a:visited { color:#004aa0; text-decoration:none; }
-
-p { padding:0px; margin:0px 0px 20px; }
-img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
-
-ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
-ul li { padding:0px; margin:0px 0px 7px 0px; }
-ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
-ul li ol li { list-style:decimal; }
-ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
-ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
-ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
-ol li ol li { list-style-type:lower-alpha; }
-ol li ul { padding-top:7px; }
-ol li ul li { list-style:square; }
-
-.content { font-size:1.2em; line-height:140%; padding: 20px; }
-
-pre, tt, code { font-size:12px; }
-pre { margin:0px 0px 20px; }
-pre.error { color:red; }
-pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
-pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
-
-@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
-
-span.keyword { color:#0000FF }
-span.comment { color:#228B22 }
-span.string { color:#A020F0 }
-span.untermstring { color:#B20000 }
-span.syscmd { color:#B28C00 }
-
-.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
-.footer p { margin:0px; }
-
-  </style></head><body><div class="content"><h1>SMOOTHFILT - Isotropic or anisotropic non-linear smoothing.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Syntax</a></li><li><a href="#3">Inputs</a></li><li><a href="#4">Property [propertyname  propertyvalues]</a></li><li><a href="#5">Output</a></li><li><a href="#6">References</a></li><li><a href="#7">Credit</a></li><li><a href="#8">See also</a></li><li><a href="#9">Function implementation</a></li></ul></div><h2>Description<a name="1"></a></h2><p>Perform either isotropic smoothing using a Gaussian filter with 3 possible different techniques or anisotropic non-linear hour-glass smoothing.</p><h2>Syntax<a name="2"></a></h2><pre>   S = SMOOTHFILT (I);
-   S = SMOOTHFILT (I, rho, 'Property', propertyvalue, ... );</pre><h2>Inputs<a name="3"></a></h2><p><b><tt>I</tt></b> : an image with size <tt>(X,Y,C)</tt>, where <tt>C&gt;1</tt> when <tt>I</tt> is multichannel.</p><p><b><tt>rho</tt></b> : (optional) smoothing parameter setting the integration scale for      spatial averaging of the input image; default: <tt>rho=1</tt>.</p><h2>Property [propertyname  propertyvalues]<a name="4"></a></h2><p><b><tt>'sm'</tt></b> : optional string setting the method used for smoothing the input;       the smoothing can be either isotropic, performed in local isotropic       neighbourhoods, by setting <tt>sm</tt> to:</p><div><ul><li><tt>'fast'</tt> for the (fast) 2D Gaussian smoothing with <tt>IMGAUSSIAN</tt> proposed          by D.Kroon [Kro09],</li><li><tt>'conv'</tt> or <tt>'convolution'</tt> for the implementation of the 2D Gaussian filter          using <tt>GAUSSKERNEL</tt> for defining the kernel and <tt>CONVOLUTION</tt> for          filtering,</li><li><tt>'matlab'</tt> or <tt>'conv2'</tt> for a direct implementation of the 2D smoothing          using <tt>FSPECIAL</tt>, <tt>CONV2</tt> and <tt>IMFILTER</tt>,</li></ul></div><p>or anisotropic, to better capture edges anisotropy, by setting it to:</p><div><ul><li><tt>'ani'</tt> or <tt>'hourglass'</tt> for anisotropic Gaussian filtering along the edges          as proposed by U.Koethe [Koht03] using <tt>HOURGLASSKERNEL</tt> for defining          hourglass shaped Gaussian kernels and <tt>CONVOLUTION</tt> for filtering;</li></ul></div><p>default: <tt>sm='fast'</tt>.</p><p><b><tt>'theta'</tt></b> : optional (array of) matrix used by the anisotropic filter when       <tt>sm='ani'</tt> is selected; it stores either the orientation (angle in       <img src="smoothfilt_eq69980.png" alt="$[0,\pi]$">) of the filter, or the 2D vector field from which this       orientation will be estimated.</p><p><b><tt>'hsize'</tt></b> : size of the window of the filtering kernel; default: <tt>hsize</tt>       is estimated depending on <tt>rho</tt>.</p><p><b><tt>'samp'</tt></b> : if the gradients are interpolated gradients to avoid aliasing,       the filters need to be adapted using this sampling factor; default:       <tt>samp=1</tt>.</p><p><b><tt>'thez', 'sigt'</tt></b> : parameters used by the anisotropic filtering with       hourglass filters (see <tt>HOURGLASSKERNEL</tt>); <tt>thez</tt> is the number of       discretized directions, <tt>sigt</tt> is the variance in angular direction;       default: <tt>thez=8, sigt=.4</tt>.</p><h2>Output<a name="5"></a></h2><p><b><tt>S</tt></b> : smoothed version of the input image <tt>I</tt>, with same dimension.</p><h2>References<a name="6"></a></h2><p>[GW02]  R.C. Gonzales and R.E. Woods: "Digital Image Processing",      Prentice Hall, 2002.</p><p>[Kro09]  D.J. Kroon: "Numerical optimization of kernel based image      derivatives", University of Twente, 2009.      <a href="http://www.mendeley.com/research/numerical-optimization-kernel-based-image-derivatives/">http://www.mendeley.com/research/numerical-optimization-kernel-based-image-derivatives/</a></p><h2>Credit<a name="7"></a></h2><p><a href="mailto:grazzja@lanl.gov">J.Grazzini</a> (ISR-2/LANL)</p><h2>See also<a name="8"></a></h2><p>Related: <a href="../../filter/html/CONVOLUTION.html"><tt>CONVOLUTION</tt></a>, <a href="../../kernel/html/HOURGLASSKERNEL.html"><tt>HOURGLASSKERNEL</tt></a>, <a href="../../kernel/html/GAUSSKERNEL.html"><tt>GAUSSKERNEL</tt></a>, <a href="../../kernel/html/DIRGAUSSKERNEL.html"><tt>DIRGAUSSKERNEL</tt></a>, <a href="matlab:webpub(whichpath('DERIVATIVES'))"><tt>DERIVATIVES</tt></a>, <a href="matlab:webpub(whichpath('IMGAUSSIAN'))"><tt>IMGAUSSIAN</tt></a>, <a href="matlab:webpub(whichpath('FSPECIAL'))"><tt>FSPECIAL</tt></a>, <a href="matlab:webpub(whichpath('IMFILTER'))"><tt>IMFILTER</tt></a>, <a href="matlab:webpub(whichpath('CONV2'))"><tt>CONV2</tt></a>. Called: <a href="SMOOTHFILT_BASE.html"><tt>SMOOTHFILT_BASE</tt></a>.</p><h2>Function implementation<a name="9"></a></h2><pre class="codeinput"><span class="keyword">function</span> S = smoothfilt (I,varargin)
-</pre><p>parsing and checking parameters</p><pre class="codeinput">error(nargchk(1, 22, nargin, <span class="string">'struct'</span>));
-error(nargoutchk(1,1, nargout, <span class="string">'struct'</span>));
-
-<span class="keyword">if</span> ~(isnumeric(I))
-    error(<span class="string">'smoothfilt:inputerror'</span>,<span class="string">'matrices are required in input'</span>);
-<span class="keyword">end</span>
-
-p = createParser(<span class="string">'SMOOTHFILT'</span>);
-<span class="comment">% optional parameters</span>
-p.addOptional(<span class="string">'rho'</span>,1., @(x)x&gt;=0);
-p.addParamValue(<span class="string">'sm'</span>, <span class="string">'fast'</span>, @(x) ischar(x) &amp;&amp; <span class="keyword">...</span>
-    any(strcmpi(x,{<span class="string">'fast'</span>,<span class="string">'imgaussian'</span>, <span class="string">'matlab'</span>,<span class="string">'conv2'</span>,<span class="keyword">...</span>
-    <span class="string">'conv'</span>,<span class="string">'convolution'</span>, <span class="string">'ani'</span>,<span class="string">'hourglass'</span>})));
-p.addParamValue(<span class="string">'hsize'</span>,[], @(x)isscalar(x) || isempty(x));
-p.addParamValue(<span class="string">'samp'</span>,1, @(x)isscalar(x) &amp;&amp; round(x)==x &amp;&amp; x&gt;=1);
-p.addParamValue(<span class="string">'thez'</span>, 8, @(x)isscalar(x) &amp;&amp; round(x)==x);
-p.addParamValue(<span class="string">'sigt'</span>, .4, @(x)isscalar(x) &amp;&amp; isfloat(x) &amp;&amp; x&gt;0);
-p.addParamValue(<span class="string">'theta'</span>, [], @(x)isnumeric(x) &amp;&amp; ndims(x)&gt;=2);
-
-<span class="comment">% parse and validate all input arguments</span>
-p.parse(varargin{:});
-p = getvarParser(p);
-</pre><p>checking parameters and setting variable</p><pre class="codeinput">C = size(I,3);
-
-<span class="keyword">if</span> any(strcmp(p.sm,{<span class="string">'ani'</span>,<span class="string">'hourglass'</span>}))
-    <span class="keyword">if</span> isempty(p.theta)
-        error(<span class="string">'smoothfilt:errorinput'</span>,<span class="keyword">...</span>
-        [<span class="string">'input fields must be provided with option '</span> p.sm]);
-    <span class="keyword">elseif</span> ndims(p.theta)==2 &amp;&amp; (any(p.theta(:)&lt;0) || any(p.theta(:)&gt;pi))
-        p.theta = mod(p.theta,pi);
-    <span class="keyword">elseif</span> ndims(p.theta)==3
-        p.theta = mod(atan2(p.theta(:,:,2),p.theta(:,:,1)),pi);
-    <span class="keyword">end</span>
-    <span class="keyword">if</span> ~(size(p.theta,1)==size(I,1) &amp;&amp; size(p.theta,2)==size(I,2))
-        error(<span class="string">'smoothfilt:errorinput'</span>,<span class="keyword">...</span>
-            <span class="string">'input directional field and image must have same size'</span>);
-    <span class="keyword">end</span>
-<span class="keyword">end</span>
-</pre><p>linear or nonlinear spatial smoothing</p><pre class="codeinput">S = smoothfilt_base(I, p.rho, p.sm, p.hsize, p.samp, p.thez, p.sigt, p.theta);
-</pre><p>display</p><pre class="codeinput"><span class="keyword">if</span> p.disp
-    figure, imagesc(rescale(S,0,1)), axis <span class="string">image</span> <span class="string">off</span>, title(<span class="string">'smoothed image'</span>);
-    <span class="keyword">if</span> C==1, colormap <span class="string">gray</span>;  <span class="keyword">end</span>;
-<span class="keyword">end</span>
-</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of smoothfilt</span>
-</pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.14<br></p></div><!--
-##### SOURCE BEGIN #####
-%% SMOOTHFILT - Isotropic or anisotropic non-linear smoothing.
-%
-%% Description
-% Perform either isotropic smoothing using a Gaussian filter with 3 possible 
-% different techniques or anisotropic non-linear hour-glass smoothing.
-%
-%% Syntax
-%     S = SMOOTHFILT (I);
-%     S = SMOOTHFILT (I, rho, 'Property', propertyvalue, ... );
-%
-%% Inputs
-% *|I|* : an image with size |(X,Y,C)|, where |C>1| when |I| is multichannel.
-%
-% *|rho|* : (optional) smoothing parameter setting the integration scale for
-%      spatial averaging of the input image; default: |rho=1|.
-% 
-%% Property [propertyname  propertyvalues]
-% *|'sm'|* : optional string setting the method used for smoothing the input;
-%       the smoothing can be either isotropic, performed in local isotropic
-%       neighbourhoods, by setting |sm| to:
-% 
-% * |'fast'| for the (fast) 2D Gaussian smoothing with |IMGAUSSIAN| proposed
-%          by D.Kroon [Kro09],
-% * |'conv'| or |'convolution'| for the implementation of the 2D Gaussian filter
-%          using |GAUSSKERNEL| for defining the kernel and |CONVOLUTION| for
-%          filtering, 
-% * |'matlab'| or |'conv2'| for a direct implementation of the 2D smoothing
-%          using |FSPECIAL|, |CONV2| and |IMFILTER|,
-%
-% or anisotropic, to better capture edges anisotropy, by setting it to:
-% 
-% * |'ani'| or |'hourglass'| for anisotropic Gaussian filtering along the edges
-%          as proposed by U.Koethe [Koht03] using |HOURGLASSKERNEL| for defining 
-%          hourglass shaped Gaussian kernels and |CONVOLUTION| for filtering;
-%
-% default: |sm='fast'|.
-%
-% *|'theta'|* : optional (array of) matrix used by the anisotropic filter when
-%       |sm='ani'| is selected; it stores either the orientation (angle in 
-%       $[0,\pi]$) of the filter, or the 2D vector field from which this 
-%       orientation will be estimated.
-%
-% *|'hsize'|* : size of the window of the filtering kernel; default: |hsize|
-%       is estimated depending on |rho|.
-%
-% *|'samp'|* : if the gradients are interpolated gradients to avoid aliasing,
-%       the filters need to be adapted using this sampling factor; default: 
-%       |samp=1|.
-%
-% *|'thez', 'sigt'|* : parameters used by the anisotropic filtering with
-%       hourglass filters (see |HOURGLASSKERNEL|); |thez| is the number of
-%       discretized directions, |sigt| is the variance in angular direction;
-%       default: |thez=8, sigt=.4|.
-%
-%% Output
-% *|S|* : smoothed version of the input image |I|, with same dimension.
-%
-%% References
-% [GW02]  R.C. Gonzales and R.E. Woods: "Digital Image Processing",      
-%      Prentice Hall, 2002.
-%
-% [Kro09]  D.J. Kroon: "Numerical optimization of kernel based image 
-%      derivatives", University of Twente, 2009.
-%      <http://www.mendeley.com/research/numerical-optimization-kernel-based-image-derivatives/>
-%
-%% Credit
-% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)
-%
-%% See also 
-% Related:
-% <../../filter/html/CONVOLUTION.html |CONVOLUTION|>,
-% <../../kernel/html/HOURGLASSKERNEL.html |HOURGLASSKERNEL|>,
-% <../../kernel/html/GAUSSKERNEL.html |GAUSSKERNEL|>,
-% <../../kernel/html/DIRGAUSSKERNEL.html |DIRGAUSSKERNEL|>,
-% <matlab:webpub(whichpath('DERIVATIVES')) |DERIVATIVES|>,
-% <matlab:webpub(whichpath('IMGAUSSIAN')) |IMGAUSSIAN|>,
-% <matlab:webpub(whichpath('FSPECIAL')) |FSPECIAL|>,
-% <matlab:webpub(whichpath('IMFILTER')) |IMFILTER|>,
-% <matlab:webpub(whichpath('CONV2')) |CONV2|>.
-% Called:
-% <SMOOTHFILT_BASE.html |SMOOTHFILT_BASE|>.
-
-%% Function implementation
-function S = smoothfilt (I,varargin)
-
-%% 
-% parsing and checking parameters
-
-error(nargchk(1, 22, nargin, 'struct'));
-error(nargoutchk(1,1, nargout, 'struct'));
-
-if ~(isnumeric(I))
-    error('smoothfilt:inputerror','matrices are required in input');
-end
-
-p = createParser('SMOOTHFILT'); 
-% optional parameters
-p.addOptional('rho',1., @(x)x>=0); 
-p.addParamValue('sm', 'fast', @(x) ischar(x) && ...
-    any(strcmpi(x,{'fast','imgaussian', 'matlab','conv2',...
-    'conv','convolution', 'ani','hourglass'})));
-p.addParamValue('hsize',[], @(x)isscalar(x) || isempty(x));
-p.addParamValue('samp',1, @(x)isscalar(x) && round(x)==x && x>=1);
-p.addParamValue('thez', 8, @(x)isscalar(x) && round(x)==x);
-p.addParamValue('sigt', .4, @(x)isscalar(x) && isfloat(x) && x>0);
-p.addParamValue('theta', [], @(x)isnumeric(x) && ndims(x)>=2);
-
-% parse and validate all input arguments
-p.parse(varargin{:}); 
-p = getvarParser(p);                                                            
-
-%% 
-% checking parameters and setting variable
-
-C = size(I,3);   
-
-if any(strcmp(p.sm,{'ani','hourglass'}))
-    if isempty(p.theta)
-        error('smoothfilt:errorinput',...
-        ['input fields must be provided with option ' p.sm]);
-    elseif ndims(p.theta)==2 && (any(p.theta(:)<0) || any(p.theta(:)>pi))
-        p.theta = mod(p.theta,pi);
-    elseif ndims(p.theta)==3
-        p.theta = mod(atan2(p.theta(:,:,2),p.theta(:,:,1)),pi);
-    end
-    if ~(size(p.theta,1)==size(I,1) && size(p.theta,2)==size(I,2))
-        error('smoothfilt:errorinput',...
-            'input directional field and image must have same size');
-    end
-end
-
-%% 
-% linear or nonlinear spatial smoothing
-
-S = smoothfilt_base(I, p.rho, p.sm, p.hsize, p.samp, p.thez, p.sigt, p.theta);
-
-%%
-% display
-
-if p.disp
-    figure, imagesc(rescale(S,0,1)), axis image off, title('smoothed image');
-    if C==1, colormap gray;  end;
-end
-              
-end % end of smoothfilt
-
-##### SOURCE END #####
---></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>  <head>    <meta content="text/html; charset=utf-8" http-equiv="content-type">    <!--This HTML was auto-generated from MATLAB code.To make changes, update the MATLAB code and republish this document.      -->    <title>SMOOTHFILT - Isotropic or anisotropic non-linear smoothing.</title>    <meta name="generator" content="MATLAB 7.14">    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">    <meta name="DC.date" content="2012-11-14">    <meta name="DC.source" content="smoothfilt.m">    <style type="text/css">html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}html { min-height:100%; margin-bottom:1px; }html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }html body td { vertical-align:top; text-align:left; }h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }a { color:#005fce; text-decoration:none; }a:hover { color:#005fce; text-decoration:underline; }a:visited { color:#004aa0; text-decoration:none; }p { padding:0px; margin:0px 0px 20px; }img { padding:0px; margin:0px 0px 20px; border:none; }p img, pre img, tt img, li img { margin-bottom:0px; } ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }ul li { padding:0px; margin:0px 0px 7px 0px; }ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }ul li ol li { list-style:decimal; }ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }ol li ol li { list-style-type:lower-alpha; }ol li ul { padding-top:7px; }ol li ul li { list-style:square; }.content { font-size:1.2em; line-height:140%; padding: 20px; }pre, tt, code { font-size:12px; }pre { margin:0px 0px 20px; }pre.error { color:red; }pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }span.keyword { color:#0000FF }span.comment { color:#228B22 }span.string { color:#A020F0 }span.untermstring { color:#B20000 }span.syscmd { color:#B28C00 }.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }.footer p { margin:0px; }  </style>  </head>  <body>    <div class="content">      <h1>SMOOTHFILT - Isotropic or anisotropic non-linear smoothing.</h1>      <!--introduction--><!--/introduction-->      <h2>Contents</h2>      <div>        <ul>          <li><a href="#1">Description</a></li>          <li><a href="#2">Syntax</a></li>          <li><a href="#3">Inputs</a></li>          <li><a href="#4">Property [propertyname propertyvalues]</a></li>          <li><a href="#5">Output</a></li>          <li><a href="#6">References</a></li>          <li><a href="#8">See also</a></li>          <li><a href="#9">Function implementation</a></li>        </ul>      </div>      <h2>Description<a name="1"></a></h2>      <p>Perform either isotropic smoothing using a Gaussian filter with 3        possible different techniques or anisotropic non-linear hour-glass        smoothing.</p>      <h2>Syntax<a name="2"></a></h2>      <pre>   S = SMOOTHFILT (I);   S = SMOOTHFILT (I, rho, 'Property', propertyvalue, ... );</pre>      <h2>Inputs<a name="3"></a></h2>      <p><b><tt>I</tt></b> : an image with size <tt>(X,Y,C)</tt>, where <tt>C&gt;1</tt>        when <tt>I</tt> is multichannel.</p>      <p><b><tt>rho</tt></b> : (optional) smoothing parameter setting the        integration scale for spatial averaging of the input image; default: <tt>rho=1</tt>.</p>      <h2>Property [propertyname propertyvalues]<a name="4"></a></h2>      <p><b><tt>'sm'</tt></b> : optional string setting the method used for        smoothing the input; the smoothing can be either isotropic, performed in        local isotropic neighbourhoods, by setting <tt>sm</tt> to:</p>      <div>        <ul>          <li><tt>'fast'</tt> for the (fast) 2D Gaussian smoothing with <tt>IMGAUSSIAN</tt>            proposed by D.Kroon [Kro09],</li>          <li><tt>'conv'</tt> or <tt>'convolution'</tt> for the implementation            of the 2D Gaussian filter using <tt>GAUSSKERNEL</tt> for defining            the kernel and <tt>CONVOLUTION</tt> for filtering,</li>          <li><tt>'matlab'</tt> or <tt>'conv2'</tt> for a direct implementation            of the 2D smoothing using <tt>FSPECIAL</tt>, <tt>CONV2</tt> and <tt>IMFILTER</tt>,</li>        </ul>      </div>      <p>or anisotropic, to better capture edges anisotropy, by setting it to:</p>      <div>        <ul>          <li><tt>'ani'</tt> or <tt>'hourglass'</tt> for anisotropic Gaussian            filtering along the edges as proposed by U.Koethe [Koht03] using <tt>HOURGLASSKERNEL</tt>            for defining hourglass shaped Gaussian kernels and <tt>CONVOLUTION</tt>            for filtering;</li>        </ul>      </div>      <p>default: <tt>sm='fast'</tt>.</p>      <p><b><tt>'theta'</tt></b> : optional (array of) matrix used by the        anisotropic filter when <tt>sm='ani'</tt> is selected; it stores either        the orientation (angle in <img src="smoothfilt_eq69980.png" alt="$[0,\pi]$">)        of the filter, or the 2D vector field from which this orientation will        be estimated.</p>      <p><b><tt>'hsize'</tt></b> : size of the window of the filtering kernel;        default: <tt>hsize</tt> is estimated depending on <tt>rho</tt>.</p>      <p><b><tt>'samp'</tt></b> : if the gradients are interpolated gradients to        avoid aliasing, the filters need to be adapted using this sampling        factor; default: <tt>samp=1</tt>.</p>      <p><b><tt>'thez', 'sigt'</tt></b> : parameters used by the anisotropic        filtering with hourglass filters (see <tt>HOURGLASSKERNEL</tt>); <tt>thez</tt>        is the number of discretized directions, <tt>sigt</tt> is the variance        in angular direction; default: <tt>thez=8, sigt=.4</tt>.</p>      <h2>Output<a name="5"></a></h2>      <p><b><tt>S</tt></b> : smoothed version of the input image <tt>I</tt>,        with same dimension.</p>      <h2>References<a name="6"></a></h2>      <p>[GW02] R.C. Gonzales and R.E. Woods: "Digital Image Processing",        Prentice Hall, 2002.</p>      <p>[Kro09] D.J. Kroon: "Numerical optimization of kernel based image        derivatives", University of Twente, 2009. <a href="http://www.mendeley.com/research/numerical-optimization-kernel-based-image-derivatives/">http://www.mendeley.com/research/numerical-optimization-kernel-based-image-derivatives/</a></p>      <h2>See also<a name="8"></a></h2>      <p>Related: <a href="../../filter/html/CONVOLUTION.html"><tt>CONVOLUTION</tt></a>,        <a href="../../kernel/html/HOURGLASSKERNEL.html"><tt>HOURGLASSKERNEL</tt></a>,        <a href="../../kernel/html/GAUSSKERNEL.html"><tt>GAUSSKERNEL</tt></a>, <a          href="../../kernel/html/DIRGAUSSKERNEL.html"><tt>DIRGAUSSKERNEL</tt></a>,        <a href="matlab:webpub%28whichpath%28%27DERIVATIVES%27%29%29"><tt>DERIVATIVES</tt></a>,        <a href="matlab:webpub%28whichpath%28%27IMGAUSSIAN%27%29%29"><tt>IMGAUSSIAN</tt></a>,        <a href="matlab:webpub%28whichpath%28%27FSPECIAL%27%29%29"><tt>FSPECIAL</tt></a>,        <a href="matlab:webpub%28whichpath%28%27IMFILTER%27%29%29"><tt>IMFILTER</tt></a>,        <a href="matlab:webpub%28whichpath%28%27CONV2%27%29%29"><tt>CONV2</tt></a>.        Called: <a href="SMOOTHFILT_BASE.html"><tt>SMOOTHFILT_BASE</tt></a>.</p>      <h2>Function implementation<a name="9"></a></h2>      <pre class="codeinput"><span class="keyword">function</span> S = smoothfilt (I,varargin)</pre>      <p>parsing and checking parameters</p>      <pre class="codeinput">error(nargchk(1, 22, nargin, <span class="string">'struct'</span>));error(nargoutchk(1,1, nargout, <span class="string">'struct'</span>));<span class="keyword">if</span> ~(isnumeric(I))    error(<span class="string">'smoothfilt:inputerror'</span>,<span class="string">'matrices are required in input'</span>);<span class="keyword">end</span>p = createParser(<span class="string">'SMOOTHFILT'</span>);<span class="comment">% optional parameters</span>p.addOptional(<span class="string">'rho'</span>,1., @(x)x&gt;=0);p.addParamValue(<span class="string">'sm'</span>, <span class="string">'fast'</span>, @(x) ischar(x) &amp;&amp; <spanclass="keyword">...</span>    any(strcmpi(x,{<span class="string">'fast'</span>,<span class="string">'imgaussian'</span>, <spanclass="string">'matlab'</span>,<spanclass="string">'conv2'</span>,<spanclass="keyword">...</span>    <span class="string">'conv'</span>,<span class="string">'convolution'</span>, <spanclass="string">'ani'</span>,<spanclass="string">'hourglass'</span>})));p.addParamValue(<span class="string">'hsize'</span>,[], @(x)isscalar(x) || isempty(x));p.addParamValue(<span class="string">'samp'</span>,1, @(x)isscalar(x) &amp;&amp; round(x)==x &amp;&amp; x&gt;=1);p.addParamValue(<span class="string">'thez'</span>, 8, @(x)isscalar(x) &amp;&amp; round(x)==x);p.addParamValue(<span class="string">'sigt'</span>, .4, @(x)isscalar(x) &amp;&amp; isfloat(x) &amp;&amp; x&gt;0);p.addParamValue(<span class="string">'theta'</span>, [], @(x)isnumeric(x) &amp;&amp; ndims(x)&gt;=2);<span class="comment">% parse and validate all input arguments</span>p.parse(varargin{:});p = getvarParser(p);</pre>      <p>checking parameters and setting variable</p>      <pre class="codeinput">C = size(I,3);<span class="keyword">if</span> any(strcmp(p.sm,{<span class="string">'ani'</span>,<spanclass="string">'hourglass'</span>}))    <span class="keyword">if</span> isempty(p.theta)        error(<span class="string">'smoothfilt:errorinput'</span>,<span class="keyword">...</span>        [<span class="string">'input fields must be provided with option '</span> p.sm]);    <span class="keyword">elseif</span> ndims(p.theta)==2 &amp;&amp; (any(p.theta(:)&lt;0) || any(p.theta(:)&gt;pi))        p.theta = mod(p.theta,pi);    <span class="keyword">elseif</span> ndims(p.theta)==3        p.theta = mod(atan2(p.theta(:,:,2),p.theta(:,:,1)),pi);    <span class="keyword">end</span>    <span class="keyword">if</span> ~(size(p.theta,1)==size(I,1) &amp;&amp; size(p.theta,2)==size(I,2))        error(<span class="string">'smoothfilt:errorinput'</span>,<span class="keyword">...</span>            <span class="string">'input directional field and image must have same size'</span>);    <span class="keyword">end</span><span class="keyword">end</span></pre>      <p>linear or nonlinear spatial smoothing</p>      <pre class="codeinput">S = smoothfilt_base(I, p.rho, p.sm, p.hsize, p.samp, p.thez, p.sigt, p.theta);</pre>      <p>display</p>      <pre class="codeinput"><span class="keyword">if</span> p.disp    figure, imagesc(rescale(S,0,1)), axis <span class="string">image</span> <spanclass="string">off</span>, title(<spanclass="string">'smoothed image'</span>);    <span class="keyword">if</span> C==1, colormap <span class="string">gray</span>;  <spanclass="keyword">end</span>;<span class="keyword">end</span></pre>      <pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of smoothfilt</span></pre></div>    <!--##### SOURCE BEGIN #####%% SMOOTHFILT - Isotropic or anisotropic non-linear smoothing.%%% Description% Perform either isotropic smoothing using a Gaussian filter with 3 possible % different techniques or anisotropic non-linear hour-glass smoothing.%%% Syntax%     S = SMOOTHFILT (I);%     S = SMOOTHFILT (I, rho, 'Property', propertyvalue, ... );%%% Inputs% *|I|* : an image with size |(X,Y,C)|, where |C>1| when |I| is multichannel.%% *|rho|* : (optional) smoothing parameter setting the integration scale for%      spatial averaging of the input image; default: |rho=1|.% %% Property [propertyname  propertyvalues]% *|'sm'|* : optional string setting the method used for smoothing the input;%       the smoothing can be either isotropic, performed in local isotropic%       neighbourhoods, by setting |sm| to:% % * |'fast'| for the (fast) 2D Gaussian smoothing with |IMGAUSSIAN| proposed%          by D.Kroon [Kro09],% * |'conv'| or |'convolution'| for the implementation of the 2D Gaussian filter%          using |GAUSSKERNEL| for defining the kernel and |CONVOLUTION| for%          filtering, % * |'matlab'| or |'conv2'| for a direct implementation of the 2D smoothing%          using |FSPECIAL|, |CONV2| and |IMFILTER|,%% or anisotropic, to better capture edges anisotropy, by setting it to:% % * |'ani'| or |'hourglass'| for anisotropic Gaussian filtering along the edges%          as proposed by U.Koethe [Koht03] using |HOURGLASSKERNEL| for defining %          hourglass shaped Gaussian kernels and |CONVOLUTION| for filtering;%% default: |sm='fast'|.%% *|'theta'|* : optional (array of) matrix used by the anisotropic filter when%       |sm='ani'| is selected; it stores either the orientation (angle in %       $[0,\pi]$) of the filter, or the 2D vector field from which this %       orientation will be estimated.%% *|'hsize'|* : size of the window of the filtering kernel; default: |hsize|%       is estimated depending on |rho|.%% *|'samp'|* : if the gradients are interpolated gradients to avoid aliasing,%       the filters need to be adapted using this sampling factor; default: %       |samp=1|.%% *|'thez', 'sigt'|* : parameters used by the anisotropic filtering with%       hourglass filters (see |HOURGLASSKERNEL|); |thez| is the number of%       discretized directions, |sigt| is the variance in angular direction;%       default: |thez=8, sigt=.4|.%%% Output% *|S|* : smoothed version of the input image |I|, with same dimension.%%% References% [GW02]  R.C. Gonzales and R.E. Woods: "Digital Image Processing",      %      Prentice Hall, 2002.%% [Kro09]  D.J. Kroon: "Numerical optimization of kernel based image %      derivatives", University of Twente, 2009.%      <http://www.mendeley.com/research/numerical-optimization-kernel-based-image-derivatives/>%%% Credit% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)%%% See also % Related:% <../../filter/html/CONVOLUTION.html |CONVOLUTION|>,% <../../kernel/html/HOURGLASSKERNEL.html |HOURGLASSKERNEL|>,% <../../kernel/html/GAUSSKERNEL.html |GAUSSKERNEL|>,% <../../kernel/html/DIRGAUSSKERNEL.html |DIRGAUSSKERNEL|>,% <matlab:webpub(whichpath('DERIVATIVES')) |DERIVATIVES|>,% <matlab:webpub(whichpath('IMGAUSSIAN')) |IMGAUSSIAN|>,% <matlab:webpub(whichpath('FSPECIAL')) |FSPECIAL|>,% <matlab:webpub(whichpath('IMFILTER')) |IMFILTER|>,% <matlab:webpub(whichpath('CONV2')) |CONV2|>.% Called:% <SMOOTHFILT_BASE.html |SMOOTHFILT_BASE|>.%% Function implementationfunction S = smoothfilt (I,varargin)%% % parsing and checking parameterserror(nargchk(1, 22, nargin, 'struct'));error(nargoutchk(1,1, nargout, 'struct'));if ~(isnumeric(I))    error('smoothfilt:inputerror','matrices are required in input');endp = createParser('SMOOTHFILT'); % optional parametersp.addOptional('rho',1., @(x)x>=0); p.addParamValue('sm', 'fast', @(x) ischar(x) && ...    any(strcmpi(x,{'fast','imgaussian', 'matlab','conv2',...    'conv','convolution', 'ani','hourglass'})));p.addParamValue('hsize',[], @(x)isscalar(x) || isempty(x));p.addParamValue('samp',1, @(x)isscalar(x) && round(x)==x && x>=1);p.addParamValue('thez', 8, @(x)isscalar(x) && round(x)==x);p.addParamValue('sigt', .4, @(x)isscalar(x) && isfloat(x) && x>0);p.addParamValue('theta', [], @(x)isnumeric(x) && ndims(x)>=2);% parse and validate all input argumentsp.parse(varargin{:}); p = getvarParser(p);                                                            %% % checking parameters and setting variableC = size(I,3);   if any(strcmp(p.sm,{'ani','hourglass'}))    if isempty(p.theta)        error('smoothfilt:errorinput',...        ['input fields must be provided with option ' p.sm]);    elseif ndims(p.theta)==2 && (any(p.theta(:)<0) || any(p.theta(:)>pi))        p.theta = mod(p.theta,pi);    elseif ndims(p.theta)==3        p.theta = mod(atan2(p.theta(:,:,2),p.theta(:,:,1)),pi);    end    if ~(size(p.theta,1)==size(I,1) && size(p.theta,2)==size(I,2))        error('smoothfilt:errorinput',...            'input directional field and image must have same size');    endend%% % linear or nonlinear spatial smoothingS = smoothfilt_base(I, p.rho, p.sm, p.hsize, p.samp, p.thez, p.sigt, p.theta);%%% displayif p.disp    figure, imagesc(rescale(S,0,1)), axis image off, title('smoothed image');    if C==1, colormap gray;  end;end              end % end of smoothfilt##### SOURCE END #####--></body></html>

@@ -1,265 +1,1 @@
-
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   <!--
-This HTML was auto-generated from MATLAB code.
-To make changes, update the MATLAB code and republish this document.
-      --><title>TENSANIFILT_BASE - Base function for TENSANIFILT.</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-14"><meta name="DC.source" content="tensanifilt_base.m"><style type="text/css">
-html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
-
-html { min-height:100%; margin-bottom:1px; }
-html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
-html body td { vertical-align:top; text-align:left; }
-
-h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
-h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
-h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
-
-a { color:#005fce; text-decoration:none; }
-a:hover { color:#005fce; text-decoration:underline; }
-a:visited { color:#004aa0; text-decoration:none; }
-
-p { padding:0px; margin:0px 0px 20px; }
-img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
-
-ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
-ul li { padding:0px; margin:0px 0px 7px 0px; }
-ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
-ul li ol li { list-style:decimal; }
-ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
-ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
-ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
-ol li ol li { list-style-type:lower-alpha; }
-ol li ul { padding-top:7px; }
-ol li ul li { list-style:square; }
-
-.content { font-size:1.2em; line-height:140%; padding: 20px; }
-
-pre, tt, code { font-size:12px; }
-pre { margin:0px 0px 20px; }
-pre.error { color:red; }
-pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
-pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
-
-@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
-
-span.keyword { color:#0000FF }
-span.comment { color:#228B22 }
-span.string { color:#A020F0 }
-span.untermstring { color:#B20000 }
-span.syscmd { color:#B28C00 }
-
-.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
-.footer p { margin:0px; }
-
-  </style></head><body><div class="content"><h1>TENSANIFILT_BASE - Base function for TENSANIFILT.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Credit</a></li><li><a href="#3">See also</a></li><li><a href="#4">Function implementation</a></li></ul></div><h2>Syntax<a name="1"></a></h2><pre>   [F, S, T] = TENSANIFILT_BASE(I,varargin);</pre><h2>Credit<a name="2"></a></h2><p><a href="mailto:grazzja@lanl.gov">J.Grazzini</a> (ISR-2/LANL)</p><h2>See also<a name="3"></a></h2><p><a href="TENSANIFILT.html"><tt>TENSANIFILT</tt></a>, <a href="CONVOLUTION_BASE.html"><tt>CONVOLUTION_BASE</tt></a>, <a href="MDLFILT_BASE.html"><tt>MDLFILT_BASE</tt></a>, <a href="ADAPTIVEFILT_BASE.html"><tt>ADAPTIVEFILT_BASE</tt></a>, <a href="GEODESICFILT_BASE.html"><tt>GEODESICFILT_BASE</tt></a>. Called: <a href="TENSCALEDIRFILT_BASE.html"><tt>TENSCALEDIRFILT_BASE</tt></a>, <a href="../../derive/html/HESSMOOTH_BASE.html"><tt>HESSMOOTH_BASE</tt></a>, <a href="../../derive/html/GSTSMOOTH_BASE.html"><tt>GSTSMOOTH_BASE</tt></a>, <a href="../../derive/html/GSTDECOMP.html"><tt>GSTDECOMP</tt></a>.</p><h2>Function implementation<a name="4"></a></h2><pre class="codeinput"><span class="keyword">function</span> [F, S, T] = tensanifilt_base(I, method, rho, sigma, der, int, <span class="keyword">...</span>
-    samp, a, c, alpha, beta, eps, p1, p2)
-</pre><p>setting internal variables</p><pre class="codeinput">C = size(I,3);
-
-<span class="comment">% initialize the output</span>
-F = I;
-
-<span class="keyword">if</span> any(strcmp(method,{<span class="string">'tsc'</span>,<span class="string">'tschumperle'</span>})) &amp;&amp; p1 &lt; p2
-    tmp = p1;    p1 = p2;    p2 = tmp;
-<span class="keyword">end</span>
-
-
-<span class="comment">% [dl,depth,best] = mdlfilt(I,scales,'int',int,'lam',lam);</span>
-<span class="comment">% S = scales(best);</span>
-S=[];
-
-<span class="keyword">if</span> any(strcmp(method,{<span class="string">'sol'</span>,<span class="string">'sole'</span>}))
-    <span class="comment">% compute the normalized Hessian tensor</span>
-    T = hessmooth_base(I, rho, sigma, der, int, 1, [], false, true, 8, .4);
-<span class="keyword">else</span>
-    <span class="comment">% compute the Gradient structure tensor</span>
-    T = gstsmooth_base(I, rho, sigma, der, int, samp, [], false, false, 8, .4);
-<span class="keyword">end</span>
-
-
-<span class="comment">%if any(strcmp(method,{'wei','weickert','kim','kimmel',...</span>
-<span class="comment">%                        'mid','middendorf','sol','sole'}))</span>
-
-<span class="keyword">if</span> ~strcmp(method,<span class="string">'gst'</span>)
-    [l1,l2,e1,e2] = gstdecomp(T);
-
-    <span class="comment">% modify the eigenvalues</span>
-    <span class="keyword">switch</span> method
-        <span class="keyword">case</span> {<span class="string">'wei'</span>,<span class="string">'weickert'</span>,<span class="string">'kim'</span>,<span class="string">'kimmel'</span>}
-            <span class="comment">% approaches from [Weick97] and [KMS00]</span>
-            nu = (l1 -l2) .* (l1 - l2); <span class="comment">% coherence measure</span>
-            ir = nu&lt;eps;
-            l1 = a * ones(size(nu));
-            l2(~ir) = l2(~ir) + (1-a) .* exp(-c ./ nu(~ir));
-            <span class="keyword">if</span> any(strcmp(method,{<span class="string">'kim'</span>,<span class="string">'kimmel'</span>}))
-                l1 = - 1 ./l2;
-            <span class="keyword">end</span>
-             <span class="comment">% eigenvectors</span>
-             tmp = e1;  e1 = e2;  e2 = tmp;
-
-        <span class="keyword">case</span> {<span class="string">'mid'</span>,<span class="string">'middendorf'</span>} <span class="comment">% approach from [MN02]</span>
-            <span class="comment">% eigenvalues</span>
-            tmp = 1 ./ (sqrt(l1)+eps);
-            l1 = 1 ./ (sqrt(l2)+eps);
-            l2 = tmp;
-            <span class="comment">% eigenvectors unchanged</span>
-
-        <span class="keyword">case</span> {<span class="string">'sol'</span>,<span class="string">'sole'</span>} <span class="comment">% approach from [SLS]</span>
-            k1 = max(abs(l1),abs(l2));
-            k2 = l1 + l2 - k1; <span class="comment">% min(abs(l1),abs(l2));</span>
-            nu = (k1 -k2) ./ (k1+k2);
-            nur = zeros(size(l1));
-            nuv = nur;
-            ir = k1&lt;0;
-            nur(ir) = nu(ir);  nuv(ir) = 0;
-            ir = k1&gt;0;
-            nur(ir) = 0;  nuv(ir) = nu(ir);
-
-            l1 = eps;
-            l2 = alpha * nur + beta * nuv;
-
-        <span class="keyword">case</span> {<span class="string">'tsc'</span>,<span class="string">'tschumperle'</span>}
-             tmp = l1;
-             l1 = power(1+l1+l2, -p1);
-             l2 = power(1+l1+l2, -p2);
-             l1 = tmp;
-
-        <span class="keyword">case</span> <span class="string">'gstort'</span>
-             tmp = e1;  e1 = e2;  e2 = tmp;
-
-    <span class="keyword">end</span>
-
-    <span class="comment">% recompose the structure tensor with modified eigenvalues and/or</span>
-    <span class="comment">% eigenvectors</span>
-    T = gstdecomp(l1,l2,e1,e2);
-
-<span class="keyword">end</span>
-</pre><p>perform adaptive filtering</p><pre class="codeinput"><span class="keyword">for</span> c=1:C
-    F(:,:,c) = tenscaledirfilt_base(I(:,:,c), T, S, 8, 3, 5, 12, 4, 0.5, false);
-   <span class="comment">%  F(:,:,c) = perform_directional_filtering(I(:,:,c),T);</span>
-<span class="keyword">end</span>
-</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of</span>
-</pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.14<br></p></div><!--
-##### SOURCE BEGIN #####
-%% TENSANIFILT_BASE - Base function for TENSANIFILT. 
-%
-%% Syntax
-%     [F, S, T] = TENSANIFILT_BASE(I,varargin);
-%
-%% Credit
-% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)
-% 
-%% See also
-% <TENSANIFILT.html |TENSANIFILT|>,
-% <CONVOLUTION_BASE.html |CONVOLUTION_BASE|>,
-% <MDLFILT_BASE.html |MDLFILT_BASE|>,
-% <ADAPTIVEFILT_BASE.html |ADAPTIVEFILT_BASE|>,
-% <GEODESICFILT_BASE.html |GEODESICFILT_BASE|>.
-% Called:
-% <TENSCALEDIRFILT_BASE.html |TENSCALEDIRFILT_BASE|>,
-% <../../derive/html/HESSMOOTH_BASE.html |HESSMOOTH_BASE|>,
-% <../../derive/html/GSTSMOOTH_BASE.html |GSTSMOOTH_BASE|>,
-% <../../derive/html/GSTDECOMP.html |GSTDECOMP|>.
-
-%% Function implementation
-function [F, S, T] = tensanifilt_base(I, method, rho, sigma, der, int, ...
-    samp, a, c, alpha, beta, eps, p1, p2)
-
-%%
-% setting internal variables
-C = size(I,3);
-
-% initialize the output
-F = I;
-
-if any(strcmp(method,{'tsc','tschumperle'})) && p1 < p2
-    tmp = p1;    p1 = p2;    p2 = tmp;
-end
-
-
-% [dl,depth,best] = mdlfilt(I,scales,'int',int,'lam',lam);
-% S = scales(best);
-S=[];
-
-if any(strcmp(method,{'sol','sole'}))
-    % compute the normalized Hessian tensor
-    T = hessmooth_base(I, rho, sigma, der, int, 1, [], false, true, 8, .4);
-else
-    % compute the Gradient structure tensor
-    T = gstsmooth_base(I, rho, sigma, der, int, samp, [], false, false, 8, .4);
-end
-
-
-%if any(strcmp(method,{'wei','weickert','kim','kimmel',...
-%                        'mid','middendorf','sol','sole'}))
-
-if ~strcmp(method,'gst')
-    [l1,l2,e1,e2] = gstdecomp(T);   
-    
-    % modify the eigenvalues
-    switch method
-        case {'wei','weickert','kim','kimmel'}
-            % approaches from [Weick97] and [KMS00]
-            nu = (l1 -l2) .* (l1 - l2); % coherence measure
-            ir = nu<eps;
-            l1 = a * ones(size(nu));
-            l2(~ir) = l2(~ir) + (1-a) .* exp(-c ./ nu(~ir));
-            if any(strcmp(method,{'kim','kimmel'}))
-                l1 = - 1 ./l2;
-            end
-             % eigenvectors
-             tmp = e1;  e1 = e2;  e2 = tmp;
-            
-        case {'mid','middendorf'} % approach from [MN02]
-            % eigenvalues
-            tmp = 1 ./ (sqrt(l1)+eps);
-            l1 = 1 ./ (sqrt(l2)+eps);
-            l2 = tmp;
-            % eigenvectors unchanged
-           
-        case {'sol','sole'} % approach from [SLS]
-            k1 = max(abs(l1),abs(l2));
-            k2 = l1 + l2 - k1; % min(abs(l1),abs(l2));
-            nu = (k1 -k2) ./ (k1+k2);
-            nur = zeros(size(l1));
-            nuv = nur;
-            ir = k1<0;
-            nur(ir) = nu(ir);  nuv(ir) = 0;
-            ir = k1>0;
-            nur(ir) = 0;  nuv(ir) = nu(ir);
-            
-            l1 = eps;
-            l2 = alpha * nur + beta * nuv;
-            
-        case {'tsc','tschumperle'}
-             tmp = l1;
-             l1 = power(1+l1+l2, -p1);
-             l2 = power(1+l1+l2, -p2);
-             l1 = tmp;
-             
-        case 'gstort'
-             tmp = e1;  e1 = e2;  e2 = tmp;            
-            
-    end
-    
-    % recompose the structure tensor with modified eigenvalues and/or
-    % eigenvectors
-    T = gstdecomp(l1,l2,e1,e2);
-
-end
-
-%%
-% perform adaptive filtering
-for c=1:C
-    F(:,:,c) = tenscaledirfilt_base(I(:,:,c), T, S, 8, 3, 5, 12, 4, 0.5, false);
-   %  F(:,:,c) = perform_directional_filtering(I(:,:,c),T);
-end
-
-end % end of 
-
-##### SOURCE END #####
---></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>  <head>    <meta content="text/html; charset=utf-8" http-equiv="content-type">    <!--This HTML was auto-generated from MATLAB code.To make changes, update the MATLAB code and republish this document.      -->    <title>TENSANIFILT_BASE - Base function for TENSANIFILT.</title>    <meta name="generator" content="MATLAB 7.14">    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">    <meta name="DC.date" content="2012-11-14">    <meta name="DC.source" content="tensanifilt_base.m">    <style type="text/css">html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}html { min-height:100%; margin-bottom:1px; }html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }html body td { vertical-align:top; text-align:left; }h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }a { color:#005fce; text-decoration:none; }a:hover { color:#005fce; text-decoration:underline; }a:visited { color:#004aa0; text-decoration:none; }p { padding:0px; margin:0px 0px 20px; }img { padding:0px; margin:0px 0px 20px; border:none; }p img, pre img, tt img, li img { margin-bottom:0px; } ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }ul li { padding:0px; margin:0px 0px 7px 0px; }ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }ul li ol li { list-style:decimal; }ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }ol li ol li { list-style-type:lower-alpha; }ol li ul { padding-top:7px; }ol li ul li { list-style:square; }.content { font-size:1.2em; line-height:140%; padding: 20px; }pre, tt, code { font-size:12px; }pre { margin:0px 0px 20px; }pre.error { color:red; }pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }span.keyword { color:#0000FF }span.comment { color:#228B22 }span.string { color:#A020F0 }span.untermstring { color:#B20000 }span.syscmd { color:#B28C00 }.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }.footer p { margin:0px; }  </style>  </head>  <body>    <div class="content">      <h1>TENSANIFILT_BASE - Base function for TENSANIFILT.</h1>      <!--introduction--><!--/introduction-->      <h2>Contents</h2>      <div>        <ul>          <li><a href="#1">Syntax</a></li>          <li><a href="#3">See also</a></li>          <li><a href="#4">Function implementation</a></li>        </ul>      </div>      <h2>Syntax<a name="1"></a></h2>      <pre>   [F, S, T] = TENSANIFILT_BASE(I,varargin);</pre>      <h2>See also<a name="3"></a></h2>      <p><a href="TENSANIFILT.html"><tt>TENSANIFILT</tt></a>, <a href="CONVOLUTION_BASE.html"><tt>CONVOLUTION_BASE</tt></a>,        <a href="MDLFILT_BASE.html"><tt>MDLFILT_BASE</tt></a>, <a href="ADAPTIVEFILT_BASE.html"><tt>ADAPTIVEFILT_BASE</tt></a>,        <a href="GEODESICFILT_BASE.html"><tt>GEODESICFILT_BASE</tt></a>. Called:        <a href="TENSCALEDIRFILT_BASE.html"><tt>TENSCALEDIRFILT_BASE</tt></a>, <a          href="../../derive/html/HESSMOOTH_BASE.html"><tt>HESSMOOTH_BASE</tt></a>,        <a href="../../derive/html/GSTSMOOTH_BASE.html"><tt>GSTSMOOTH_BASE</tt></a>,        <a href="../../derive/html/GSTDECOMP.html"><tt>GSTDECOMP</tt></a>.</p>      <h2>Function implementation<a name="4"></a></h2>      <pre class="codeinput"><span class="keyword">function</span> [F, S, T] = tensanifilt_base(I, method, rho, sigma, der, int, <spanclass="keyword">...</span>    samp, a, c, alpha, beta, eps, p1, p2)</pre>      <p>setting internal variables</p>      <pre class="codeinput">C = size(I,3);<span class="comment">% initialize the output</span>F = I;<span class="keyword">if</span> any(strcmp(method,{<span class="string">'tsc'</span>,<spanclass="string">'tschumperle'</span>})) &amp;&amp; p1 &lt; p2    tmp = p1;    p1 = p2;    p2 = tmp;<span class="keyword">end</span><span class="comment">% [dl,depth,best] = mdlfilt(I,scales,'int',int,'lam',lam);</span><span class="comment">% S = scales(best);</span>S=[];<span class="keyword">if</span> any(strcmp(method,{<span class="string">'sol'</span>,<spanclass="string">'sole'</span>}))    <span class="comment">% compute the normalized Hessian tensor</span>    T = hessmooth_base(I, rho, sigma, der, int, 1, [], false, true, 8, .4);<span class="keyword">else</span>    <span class="comment">% compute the Gradient structure tensor</span>    T = gstsmooth_base(I, rho, sigma, der, int, samp, [], false, false, 8, .4);<span class="keyword">end</span><span class="comment">%if any(strcmp(method,{'wei','weickert','kim','kimmel',...</span><span class="comment">%                        'mid','middendorf','sol','sole'}))</span><span class="keyword">if</span> ~strcmp(method,<span class="string">'gst'</span>)    [l1,l2,e1,e2] = gstdecomp(T);    <span class="comment">% modify the eigenvalues</span>    <span class="keyword">switch</span> method        <span class="keyword">case</span> {<span class="string">'wei'</span>,<spanclass="string">'weickert'</span>,<spanclass="string">'kim'</span>,<spanclass="string">'kimmel'</span>}            <span class="comment">% approaches from [Weick97] and [KMS00]</span>            nu = (l1 -l2) .* (l1 - l2); <span class="comment">% coherence measure</span>            ir = nu&lt;eps;            l1 = a * ones(size(nu));            l2(~ir) = l2(~ir) + (1-a) .* exp(-c ./ nu(~ir));            <span class="keyword">if</span> any(strcmp(method,{<span class="string">'kim'</span>,<spanclass="string">'kimmel'</span>}))                l1 = - 1 ./l2;            <span class="keyword">end</span>             <span class="comment">% eigenvectors</span>             tmp = e1;  e1 = e2;  e2 = tmp;        <span class="keyword">case</span> {<span class="string">'mid'</span>,<spanclass="string">'middendorf'</span>} <spanclass="comment">% approach from [MN02]</span>            <span class="comment">% eigenvalues</span>            tmp = 1 ./ (sqrt(l1)+eps);            l1 = 1 ./ (sqrt(l2)+eps);            l2 = tmp;            <span class="comment">% eigenvectors unchanged</span>        <span class="keyword">case</span> {<span class="string">'sol'</span>,<spanclass="string">'sole'</span>} <spanclass="comment">% approach from [SLS]</span>            k1 = max(abs(l1),abs(l2));            k2 = l1 + l2 - k1; <span class="comment">% min(abs(l1),abs(l2));</span>            nu = (k1 -k2) ./ (k1+k2);            nur = zeros(size(l1));            nuv = nur;            ir = k1&lt;0;            nur(ir) = nu(ir);  nuv(ir) = 0;            ir = k1&gt;0;            nur(ir) = 0;  nuv(ir) = nu(ir);            l1 = eps;            l2 = alpha * nur + beta * nuv;        <span class="keyword">case</span> {<span class="string">'tsc'</span>,<spanclass="string">'tschumperle'</span>}             tmp = l1;             l1 = power(1+l1+l2, -p1);             l2 = power(1+l1+l2, -p2);             l1 = tmp;        <span class="keyword">case</span> <span class="string">'gstort'</span>             tmp = e1;  e1 = e2;  e2 = tmp;    <span class="keyword">end</span>    <span class="comment">% recompose the structure tensor with modified eigenvalues and/or</span>    <span class="comment">% eigenvectors</span>    T = gstdecomp(l1,l2,e1,e2);<span class="keyword">end</span></pre>      <p>perform adaptive filtering</p>      <pre class="codeinput"><span class="keyword">for</span> c=1:C    F(:,:,c) = tenscaledirfilt_base(I(:,:,c), T, S, 8, 3, 5, 12, 4, 0.5, false);   <span class="comment">%  F(:,:,c) = perform_directional_filtering(I(:,:,c),T);</span><span class="keyword">end</span></pre>      <pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of</span></pre></div>    <!--##### SOURCE BEGIN #####%% TENSANIFILT_BASE - Base function for TENSANIFILT. %%% Syntax%     [F, S, T] = TENSANIFILT_BASE(I,varargin);%%% Credit% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)% %% See also% <TENSANIFILT.html |TENSANIFILT|>,% <CONVOLUTION_BASE.html |CONVOLUTION_BASE|>,% <MDLFILT_BASE.html |MDLFILT_BASE|>,% <ADAPTIVEFILT_BASE.html |ADAPTIVEFILT_BASE|>,% <GEODESICFILT_BASE.html |GEODESICFILT_BASE|>.% Called:% <TENSCALEDIRFILT_BASE.html |TENSCALEDIRFILT_BASE|>,% <../../derive/html/HESSMOOTH_BASE.html |HESSMOOTH_BASE|>,% <../../derive/html/GSTSMOOTH_BASE.html |GSTSMOOTH_BASE|>,% <../../derive/html/GSTDECOMP.html |GSTDECOMP|>.%% Function implementationfunction [F, S, T] = tensanifilt_base(I, method, rho, sigma, der, int, ...    samp, a, c, alpha, beta, eps, p1, p2)%%% setting internal variablesC = size(I,3);% initialize the outputF = I;if any(strcmp(method,{'tsc','tschumperle'})) && p1 < p2    tmp = p1;    p1 = p2;    p2 = tmp;end% [dl,depth,best] = mdlfilt(I,scales,'int',int,'lam',lam);% S = scales(best);S=[];if any(strcmp(method,{'sol','sole'}))    % compute the normalized Hessian tensor    T = hessmooth_base(I, rho, sigma, der, int, 1, [], false, true, 8, .4);else    % compute the Gradient structure tensor    T = gstsmooth_base(I, rho, sigma, der, int, samp, [], false, false, 8, .4);end%if any(strcmp(method,{'wei','weickert','kim','kimmel',...%                        'mid','middendorf','sol','sole'}))if ~strcmp(method,'gst')    [l1,l2,e1,e2] = gstdecomp(T);           % modify the eigenvalues    switch method        case {'wei','weickert','kim','kimmel'}            % approaches from [Weick97] and [KMS00]            nu = (l1 -l2) .* (l1 - l2); % coherence measure            ir = nu<eps;            l1 = a * ones(size(nu));            l2(~ir) = l2(~ir) + (1-a) .* exp(-c ./ nu(~ir));            if any(strcmp(method,{'kim','kimmel'}))                l1 = - 1 ./l2;            end             % eigenvectors             tmp = e1;  e1 = e2;  e2 = tmp;                    case {'mid','middendorf'} % approach from [MN02]            % eigenvalues            tmp = 1 ./ (sqrt(l1)+eps);            l1 = 1 ./ (sqrt(l2)+eps);            l2 = tmp;            % eigenvectors unchanged                   case {'sol','sole'} % approach from [SLS]            k1 = max(abs(l1),abs(l2));            k2 = l1 + l2 - k1; % min(abs(l1),abs(l2));            nu = (k1 -k2) ./ (k1+k2);            nur = zeros(size(l1));            nuv = nur;            ir = k1<0;            nur(ir) = nu(ir);  nuv(ir) = 0;            ir = k1>0;            nur(ir) = 0;  nuv(ir) = nu(ir);                        l1 = eps;            l2 = alpha * nur + beta * nuv;                    case {'tsc','tschumperle'}             tmp = l1;             l1 = power(1+l1+l2, -p1);             l2 = power(1+l1+l2, -p2);             l1 = tmp;                     case 'gstort'             tmp = e1;  e1 = e2;  e2 = tmp;                            end        % recompose the structure tensor with modified eigenvalues and/or    % eigenvectors    T = gstdecomp(l1,l2,e1,e2);end%%% perform adaptive filteringfor c=1:C    F(:,:,c) = tenscaledirfilt_base(I(:,:,c), T, S, 8, 3, 5, 12, 4, 0.5, false);   %  F(:,:,c) = perform_directional_filtering(I(:,:,c),T);endend % end of ##### SOURCE END #####--></body></html>

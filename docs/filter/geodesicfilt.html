@@ -1,319 +1,1 @@
-
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   <!--
-This HTML was auto-generated from MATLAB code.
-To make changes, update the MATLAB code and republish this document.
-      --><title>GEODESICFILT - Multispectral edge-preserving smoothing filter.</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-14"><meta name="DC.source" content="geodesicfilt.m"><style type="text/css">
-html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
-
-html { min-height:100%; margin-bottom:1px; }
-html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
-html body td { vertical-align:top; text-align:left; }
-
-h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
-h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
-h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
-
-a { color:#005fce; text-decoration:none; }
-a:hover { color:#005fce; text-decoration:underline; }
-a:visited { color:#004aa0; text-decoration:none; }
-
-p { padding:0px; margin:0px 0px 20px; }
-img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
-
-ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
-ul li { padding:0px; margin:0px 0px 7px 0px; }
-ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
-ul li ol li { list-style:decimal; }
-ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
-ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
-ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
-ol li ol li { list-style-type:lower-alpha; }
-ol li ul { padding-top:7px; }
-ol li ul li { list-style:square; }
-
-.content { font-size:1.2em; line-height:140%; padding: 20px; }
-
-pre, tt, code { font-size:12px; }
-pre { margin:0px 0px 20px; }
-pre.error { color:red; }
-pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
-pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
-
-@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
-
-span.keyword { color:#0000FF }
-span.comment { color:#228B22 }
-span.string { color:#A020F0 }
-span.untermstring { color:#B20000 }
-span.syscmd { color:#B28C00 }
-
-.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
-.footer p { margin:0px; }
-
-  </style></head><body><div class="content"><h1>GEODESICFILT - Multispectral edge-preserving smoothing filter.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Syntax</a></li><li><a href="#3">Inputs</a></li><li><a href="#4">Property [propertyname  propertyvalues]</a></li><li><a href="#5">Output</a></li><li><a href="#6">References</a></li><li><a href="#7">Credit</a></li><li><a href="#8">See also</a></li><li><a href="#9">Function implementation</a></li></ul></div><h2>Description<a name="1"></a></h2><p>Matlab (slow) implementation of the Sigma-filter for edge-preserving smoothing of multispectral images using local geodesic similarity measures, as described in [GS09a,GS09b] in its isotropic version and in [GSD10] in its generalized anisotropic version.</p><h2>Syntax<a name="2"></a></h2><pre>   F = GEODESICFILT(I);
-   F = GEODESICFILT(I, method, wei, winsize, ...
-                    'Property', propertyvalue, ... );</pre><h2>Inputs<a name="3"></a></h2><p><b><tt>I</tt></b> : input image, possibly multispectral.</p><p><b><tt>method</tt></b> : method used for selecting the geodesic iso- or aniso-tropic     filtering; it derives a cost function from the input image which     defines how distances are propagated from the center of the local     anylizing window (see <tt>IM2POTENTIAL_BASE</tt>); the potential function is     based on the gradient structure tensor (GST) of the image, and its     expression depends on the chosen method:</p><div><ul><li><tt>'iso'</tt> for a scalar potential set to the inverse of the GST norm,</li><li><tt>'ani'</tt> (or 'gstnorm') for a tensorial tensor set to the orthogonal           of the GST and scaled by the GST norm (scaled eigenvalues,           orthogonal eigenvector),</li><li><tt>'gstcoh'</tt> for a tensorial tensor set to the orthogonal of the GST and          scaled by the coherence (see <tt>GSTFEATURE</tt>); note that <tt>'gstcoh'</tt>          also performs anisotropic filtering;</li></ul></div><p>default: <tt>method='iso'</tt>.</p><p><b><tt>wei</tt></b> : (optional) scalar or string defining the (monotically decreasing)     function used for defining the geodesic kernel by weighting the geodesic     distances inside local windows (wee Eq.(7) of [GS09b]); the weighting     function can be either:</p><div><ul><li>the inverse scaled function: <img src="geodesicfilt_eq08104.png" alt="$x\rightarrow x^r$"> (the potential is therefore         the inverse geodesic distance to the central pixel) when <tt>wei='scale'</tt>         (then <tt>r=2</tt>) or <tt>wei</tt> is a scalar &lt;0 (then <tt>r=abs(wei)</tt>),</li><li>the gaussian function <img src="geodesicfilt_eq17608.png" alt="$x\rightarrow \exp(-r \cdot x)$"> when <tt>wei='gauss'</tt>         (then <tt>r=1</tt>) or when is a scalar &gt;0 (then r=wei); in the latter case,         <tt>wei</tt> is assimilated to alpha/sigma^2 (note that <tt>r</tt> stands for the         <img src="geodesicfilt_eq87919.png" alt="$\alpha$"> in Eq.(7) of [CG09b] as sigma was chosen to be 1 for         consistency),</li><li>the weighted median function <img src="geodesicfilt_eq99197.png" alt="$x\rightarrow \mbox{wmedian}(x)$"> when         <tt>wei='median'</tt> or <tt>wei=0</tt>;</li></ul></div><p>default: <tt>wei=1</tt>.</p><p><b><tt>winsize</tt></b> : (optional) size of the local analyzing window (should be odd,     otherwise adjusted); default: <tt>winsize=11</tt>, i.e a window with radius 5     is chosen.</p><h2>Property [propertyname  propertyvalues]<a name="4"></a></h2><p><b><tt>'iter'</tt></b> : (optional) number of iterations; default: <tt>iter=1</tt>.</p><p><b><tt>'a'</tt></b> : exponent(s) <tt>(1,n)</tt> with <tt>n={1,2}</tt> used for amplyfying the strenght     of the cost function (see <tt>IM2POTENTIAL_BASE</tt>); default: <tt>a=[1 1]</tt>.</p><p><b><tt>'rho', 'sig'</tt></b> : pre- and post- smoothing standard deviations used for GST     estimation (see <tt>GRD2GST</tt>); default: <tt>rho=3, sig=1</tt>.</p><p><b><tt>'der', 'int', 'samp', 'eign'</tt></b> : additional options for computing the GST     (see functions <tt>GRD2GST</tt> and <tt>GSTSMOOTH)</tt>; default: <tt>der='fast', int='fast',     samp=1</tt> and <tt>eign='l1'</tt>.</p><h2>Output<a name="5"></a></h2><p><b><tt>F</tt></b> : filtered image, with same dimension as the input image.</p><h2>References<a name="6"></a></h2><p>[GS09a]  J. Grazzini and P. Soille: "Image filtering based on locally      estimated geodesic functions", In Proc. VISIGRAPP, CCIS, vol. 24,      pp. 123-124, 2009.      <a href="http://www.springerlink.com/content/v264v11754004500/">http://www.springerlink.com/content/v264v11754004500/</a></p><p>[GS09b]  J. Grazzini and P. Soille: "Edge-preserving smoothing using a      similarity measure in adaptive geodesic neighbourhoods", Pattern      Recognition, 42(10):2306-2316, 2009.      <a href="http://www.sciencedirect.com/science/article/pii/S003132030800469X">http://www.sciencedirect.com/science/article/pii/S003132030800469X</a></p><p>[GSD10]  J. Grazzini, S. Dillard and P. Soille: "Multichannel image      regularisation using anisotropic geodesic filtering", Proc. ICPR,      pp. 2664-2667, 2010.      <a href="http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=5596008&amp;tag=1">http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=5596008&amp;tag=1</a></p><h2>Credit<a name="7"></a></h2><p><a href="mailto:jacopo.grazzini@jrc.ec.europa.eu">J.Grazzini</a> (IES/JRC)</p><h2>See also<a name="8"></a></h2><p>Related: <a href="ADAPTIVEFILT.html"><tt>ADAPTIVEFILT</tt></a>, <a href="TENSANIFILT.html"><tt>TENSANIFILT</tt></a>, <a href="TENSCALEDIRFILT.html"><tt>TENSCALEDIRFILT</tt></a>, <a href="MDLFILT.html"><tt>MDLFILT</tt></a>, <a href="../../derive/html/GSTSMOOTH.html"><tt>GSTSMOOTH</tt></a>, <a href="../../derive/html/GRD2GST.html"><tt>GRD2GST</tt></a>, <a href="../../propagation/html/FMMISOPROPAGATION.html"><tt>FMMISOPROPAGATION</tt></a>, <a href="../../propagation/html/FMMANISOPROPAGATION.html"><tt>FMMANISOPROPAGATION</tt></a>, <a href="../../propagation/html/POTENTIAL2FRONT.html"><tt>POTENTIAL2FRONT</tt></a>, <a href="../../propagation/html/IM2POTENTIAL.html"><tt>IM2POTENTIAL</tt></a>, <a href="../../propagation/html/FMM_BASE.html"><tt>FMM_BASE</tt></a>, <a href="../../pdem/html/PDEM.html"><tt>PDEM</tt></a>. Called: <a href="GEODESICFILT_BASE.html"><tt>GEODESICFILT_BASE</tt></a>.</p><pre class="codeinput"><span class="comment">% note: you can 'play' with the parameter method as other methods are</span>
-<span class="comment">% accepted (see function IM2POTENTIAL_BASE) but not mentioned here</span>
-</pre><h2>Function implementation<a name="9"></a></h2><pre class="codeinput"><span class="keyword">function</span> F = geodesicfilt(I,varargin)
-</pre><p>parsing parameters</p><pre class="codeinput">error(nargchk(1, 25, nargin, <span class="string">'struct'</span>));
-error(nargoutchk(1, 2, nargout, <span class="string">'struct'</span>));
-
-<span class="comment">% mandatory parameter</span>
-<span class="keyword">if</span> ~isnumeric(I)
-    error(<span class="string">'geodesicfilt:inputerror'</span>,<span class="string">'a matrix is required in input'</span>);
-<span class="keyword">end</span>
-
-<span class="comment">% optional parameters</span>
-p = createParser(<span class="string">'GEODESICFILT'</span>);   <span class="comment">% create an instance of the inputParser class.</span>
-p.addOptional(<span class="string">'method'</span>, <span class="string">'iso'</span>, @(x)ischar(x) &amp;&amp; <span class="keyword">...</span>
-    any(strcmpi(x,{<span class="string">'iso'</span>,<span class="string">'isotropic'</span>,<span class="string">'ani'</span>,<span class="string">'anisotropic'</span>, <span class="keyword">...</span>
-    <span class="string">'gstninv'</span>,<span class="string">'gst'</span>,<span class="string">'gstorth'</span>,<span class="string">'gstn'</span>,<span class="string">'gstn1'</span>,<span class="string">'gstn2'</span>,<span class="string">'gstn3'</span>,<span class="string">'gstcoh'</span>})));
-p.addOptional(<span class="string">'wei'</span>, 2, @(x) (isscalar(x) &amp;&amp; x&gt;=-5) || <span class="keyword">...</span>
-     (ischar(x) &amp;&amp; any(strcmpi(x,{<span class="string">'scale'</span>,<span class="string">'gauss'</span>,<span class="string">'median'</span>}))));
-p.addOptional(<span class="string">'winsize'</span>, 11, @(x)isscalar(x) &amp;&amp; isfloat(x) &amp;&amp; x&gt;=3);
-<span class="comment">% additional optional parameters</span>
-p.addParamValue(<span class="string">'iter'</span>, 1, @(x)isscalar(x) &amp;&amp; round(x)==x &amp;&amp; x&gt;=1);
-p.addParamValue(<span class="string">'rho'</span>, 3, @(x)isscalar(x) &amp;&amp; isfloat(x) &amp;&amp; x&gt;=0);
-p.addParamValue(<span class="string">'sig'</span>, 1, @(x)isscalar(x) &amp;&amp; isfloat(x) &amp;&amp; x&gt;=0);
-p.addParamValue(<span class="string">'der'</span>, <span class="string">'fast'</span>, @(x)islogical(x) || (ischar(x) &amp;&amp; <span class="keyword">...</span>
-    any(strcmpi(x,{<span class="string">'matlab'</span>,<span class="string">'vista'</span>,<span class="string">'fast'</span>,<span class="string">'conv'</span>,<span class="string">'fleck'</span>, <span class="keyword">...</span>
-    <span class="string">'tap5'</span>,<span class="string">'tap7'</span>,<span class="string">'sob'</span>,<span class="string">'opt'</span>,<span class="string">'ana'</span>}))));
-p.addParamValue(<span class="string">'int'</span>, <span class="string">'fast'</span>, @(x)islogical(x) || (ischar(x) &amp;&amp; <span class="keyword">...</span>
-    any(strcmpi(x,{<span class="string">'matlab'</span>,<span class="string">'conv'</span>,<span class="string">'fast'</span>,<span class="string">'ani'</span>}))));
-p.addParamValue(<span class="string">'samp'</span>, 1, @(x)isscalar(x) &amp;&amp; round(x)==x &amp;&amp; x&gt;=1 &amp;&amp; x&lt;=5);
-p.addParamValue(<span class="string">'eign'</span>,<span class="string">'l1'</span>,@(x)ischar(x) &amp;&amp; <span class="keyword">...</span>
-    any(strcmpi(x,{<span class="string">'abs'</span>,<span class="string">'zen'</span>,<span class="string">'l1'</span>,<span class="string">'sap'</span>,<span class="string">'sum'</span>,<span class="string">'ndi'</span>,<span class="string">'dif'</span>,<span class="string">'koe'</span>})));
-p.addParamValue(<span class="string">'a'</span>, [1 1], @(x)isscalar(x) || <span class="keyword">...</span>
-    (isvector(x) &amp;&amp; length(x)==2));
-
-<span class="comment">% parse and validate all input arguments</span>
-p.parse(varargin{:});
-p = getvarParser(p);
-</pre><p>checking/setting parameters</p><pre class="codeinput"><span class="keyword">if</span> strcmp(p.method,<span class="string">'anisotropic'</span>),    p.method = <span class="string">'ani'</span>;
-<span class="keyword">elseif</span> strcmp(p.method,<span class="string">'isotropic'</span>),  p.method = <span class="string">'iso'</span>;
-<span class="keyword">end</span>
-
-<span class="keyword">if</span> ischar(p.wei)
-    <span class="keyword">if</span> strcmpi(p.wei,<span class="string">'gauss'</span>),      p.wei =  1; <span class="comment">% weighting gaussian with alpha=1</span>
-    <span class="keyword">elseif</span> strcmpi(p.wei,<span class="string">'scale'</span>),  p.wei = -1; <span class="comment">% 1/D weighting function</span>
-    <span class="keyword">else</span>                            p.wei =  0; <span class="comment">% median</span>
-    <span class="keyword">end</span>
-<span class="keyword">end</span>
-
-<span class="comment">% set some default</span>
-<span class="keyword">if</span> any(strcmpi(p.method,{<span class="string">'gstnorm1'</span>,<span class="string">'gstnorm2'</span>,<span class="string">'gstnorm3'</span>}))
-    <span class="keyword">if</span> isempty(p.a),  p.a = [1 2];
-    <span class="keyword">elseif</span> length(p.a)==1,  p.a = [p.a p.a+eps];
-    <span class="keyword">end</span>
-<span class="keyword">end</span>
-
-<span class="keyword">if</span> isempty(p.a),  p.a = 1;  <span class="keyword">end</span>
-</pre><p>main calculation</p><pre class="codeinput">F = geodesicfilt_base(I, p.method, p.iter, p.wei, p.winsize, p.a, <span class="keyword">...</span>
-    p.rho, p.sig, p.der, p.int, p.samp, p.eign);
-</pre><p>display</p><pre class="codeinput"><span class="keyword">if</span> p.disp
-    figure, imagesc(rescale(F,0,1)), axis <span class="string">image</span> <span class="string">off</span>,
-    title([<span class="string">'geo-filtered image - method '</span> p.method]);
-    <span class="keyword">if</span> size(F,3)==1;  colormap <span class="string">gray</span>;  <span class="keyword">end</span>
-<span class="keyword">end</span>
-</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of geodesicfilt</span>
-</pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.14<br></p></div><!--
-##### SOURCE BEGIN #####
-%% GEODESICFILT - Multispectral edge-preserving smoothing filter.
-%
-%% Description
-% Matlab (slow) implementation of the Sigma-filter for edge-preserving smoothing
-% of multispectral images using local geodesic similarity measures, as
-% described in [GS09a,GS09b] in its isotropic version and in [GSD10] in its
-% generalized anisotropic version.
-%
-%% Syntax
-%     F = GEODESICFILT(I);
-%     F = GEODESICFILT(I, method, wei, winsize, ...
-%                      'Property', propertyvalue, ... );
-%
-%% Inputs
-% *|I|* : input image, possibly multispectral.
-%
-% *|method|* : method used for selecting the geodesic iso- or aniso-tropic 
-%     filtering; it derives a cost function from the input image which
-%     defines how distances are propagated from the center of the local 
-%     anylizing window (see |IM2POTENTIAL_BASE|); the potential function is
-%     based on the gradient structure tensor (GST) of the image, and its
-%     expression depends on the chosen method:
-%
-% * |'iso'| for a scalar potential set to the inverse of the GST norm,
-% * |'ani'| (or 'gstnorm') for a tensorial tensor set to the orthogonal
-%           of the GST and scaled by the GST norm (scaled eigenvalues, 
-%           orthogonal eigenvector),
-% * |'gstcoh'| for a tensorial tensor set to the orthogonal of the GST and
-%          scaled by the coherence (see |GSTFEATURE|); note that |'gstcoh'| 
-%          also performs anisotropic filtering;
-% 
-% default: |method='iso'|.
-%
-% *|wei|* : (optional) scalar or string defining the (monotically decreasing)
-%     function used for defining the geodesic kernel by weighting the geodesic 
-%     distances inside local windows (wee Eq.(7) of [GS09b]); the weighting
-%     function can be either:
-%
-% * the inverse scaled function: $x\rightarrow x^r$ (the potential is therefore 
-%         the inverse geodesic distance to the central pixel) when |wei='scale'|
-%         (then |r=2|) or |wei| is a scalar <0 (then |r=abs(wei)|),
-% * the gaussian function $x\rightarrow \exp(-r \cdot x)$ when |wei='gauss'|
-%         (then |r=1|) or when is a scalar >0 (then r=wei); in the latter case,
-%         |wei| is assimilated to alpha/sigma^2 (note that |r| stands for the
-%         $\alpha$ in Eq.(7) of [CG09b] as sigma was chosen to be 1 for 
-%         consistency),
-% * the weighted median function $x\rightarrow \mbox{wmedian}(x)$ when
-%         |wei='median'| or |wei=0|;
-%
-% default: |wei=1|.
-%
-% *|winsize|* : (optional) size of the local analyzing window (should be odd,
-%     otherwise adjusted); default: |winsize=11|, i.e a window with radius 5
-%     is chosen.
-%
-%% Property [propertyname  propertyvalues]
-% *|'iter'|* : (optional) number of iterations; default: |iter=1|.
-%
-% *|'a'|* : exponent(s) |(1,n)| with |n={1,2}| used for amplyfying the strenght
-%     of the cost function (see |IM2POTENTIAL_BASE|); default: |a=[1 1]|.
-%
-% *|'rho', 'sig'|* : pre- and post- smoothing standard deviations used for GST
-%     estimation (see |GRD2GST|); default: |rho=3, sig=1|.
-%
-% *|'der', 'int', 'samp', 'eign'|* : additional options for computing the GST
-%     (see functions |GRD2GST| and |GSTSMOOTH)|; default: |der='fast', int='fast', 
-%     samp=1| and |eign='l1'|.
-% 
-%% Output
-% *|F|* : filtered image, with same dimension as the input image.
-%
-%% References
-% [GS09a]  J. Grazzini and P. Soille: "Image filtering based on locally
-%      estimated geodesic functions", In Proc. VISIGRAPP, CCIS, vol. 24, 
-%      pp. 123-124, 2009.
-%      <http://www.springerlink.com/content/v264v11754004500/>
-%
-% [GS09b]  J. Grazzini and P. Soille: "Edge-preserving smoothing using a 
-%      similarity measure in adaptive geodesic neighbourhoods", Pattern
-%      Recognition, 42(10):2306-2316, 2009.
-%      <http://www.sciencedirect.com/science/article/pii/S003132030800469X>
-%
-% [GSD10]  J. Grazzini, S. Dillard and P. Soille: "Multichannel image 
-%      regularisation using anisotropic geodesic filtering", Proc. ICPR,
-%      pp. 2664-2667, 2010.
-%      <http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=5596008&tag=1>
-%
-%% Credit
-% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)
-% 
-%% See also
-% Related:
-% <ADAPTIVEFILT.html |ADAPTIVEFILT|>,
-% <TENSANIFILT.html |TENSANIFILT|>,
-% <TENSCALEDIRFILT.html |TENSCALEDIRFILT|>,
-% <MDLFILT.html |MDLFILT|>,
-% <../../derive/html/GSTSMOOTH.html |GSTSMOOTH|>,
-% <../../derive/html/GRD2GST.html |GRD2GST|>,
-% <../../propagation/html/FMMISOPROPAGATION.html |FMMISOPROPAGATION|>,
-% <../../propagation/html/FMMANISOPROPAGATION.html |FMMANISOPROPAGATION|>,
-% <../../propagation/html/POTENTIAL2FRONT.html |POTENTIAL2FRONT|>,
-% <../../propagation/html/IM2POTENTIAL.html |IM2POTENTIAL|>,
-% <../../propagation/html/FMM_BASE.html |FMM_BASE|>,
-% <../../pdem/html/PDEM.html |PDEM|>.
-% Called:
-% <GEODESICFILT_BASE.html |GEODESICFILT_BASE|>.
-
-% note: you can 'play' with the parameter method as other methods are
-% accepted (see function IM2POTENTIAL_BASE) but not mentioned here
-
-%% Function implementation
-function F = geodesicfilt(I,varargin)
-
-%%
-% parsing parameters
-
-error(nargchk(1, 25, nargin, 'struct'));
-error(nargoutchk(1, 2, nargout, 'struct'));
-
-% mandatory parameter
-if ~isnumeric(I)
-    error('geodesicfilt:inputerror','a matrix is required in input'); 
-end
-
-% optional parameters
-p = createParser('GEODESICFILT');   % create an instance of the inputParser class.
-p.addOptional('method', 'iso', @(x)ischar(x) && ...
-    any(strcmpi(x,{'iso','isotropic','ani','anisotropic', ...
-    'gstninv','gst','gstorth','gstn','gstn1','gstn2','gstn3','gstcoh'})));
-p.addOptional('wei', 2, @(x) (isscalar(x) && x>=-5) || ...
-     (ischar(x) && any(strcmpi(x,{'scale','gauss','median'}))));
-p.addOptional('winsize', 11, @(x)isscalar(x) && isfloat(x) && x>=3);
-% additional optional parameters
-p.addParamValue('iter', 1, @(x)isscalar(x) && round(x)==x && x>=1);
-p.addParamValue('rho', 3, @(x)isscalar(x) && isfloat(x) && x>=0);
-p.addParamValue('sig', 1, @(x)isscalar(x) && isfloat(x) && x>=0);
-p.addParamValue('der', 'fast', @(x)islogical(x) || (ischar(x) && ...
-    any(strcmpi(x,{'matlab','vista','fast','conv','fleck', ...
-    'tap5','tap7','sob','opt','ana'}))));
-p.addParamValue('int', 'fast', @(x)islogical(x) || (ischar(x) && ...
-    any(strcmpi(x,{'matlab','conv','fast','ani'}))));
-p.addParamValue('samp', 1, @(x)isscalar(x) && round(x)==x && x>=1 && x<=5);
-p.addParamValue('eign','l1',@(x)ischar(x) && ...
-    any(strcmpi(x,{'abs','zen','l1','sap','sum','ndi','dif','koe'})));
-p.addParamValue('a', [1 1], @(x)isscalar(x) || ...
-    (isvector(x) && length(x)==2));
-
-% parse and validate all input arguments
-p.parse(varargin{:}); 
-p = getvarParser(p);                                                            
-
-%%
-% checking/setting parameters
-
-if strcmp(p.method,'anisotropic'),    p.method = 'ani';
-elseif strcmp(p.method,'isotropic'),  p.method = 'iso';
-end        
-
-if ischar(p.wei)
-    if strcmpi(p.wei,'gauss'),      p.wei =  1; % weighting gaussian with alpha=1
-    elseif strcmpi(p.wei,'scale'),  p.wei = -1; % 1/D weighting function
-    else                            p.wei =  0; % median
-    end
-end
-
-% set some default
-if any(strcmpi(p.method,{'gstnorm1','gstnorm2','gstnorm3'}))
-    if isempty(p.a),  p.a = [1 2]; 
-    elseif length(p.a)==1,  p.a = [p.a p.a+eps];  
-    end
-end
-
-if isempty(p.a),  p.a = 1;  end
-
-%%
-% main calculation
-
-F = geodesicfilt_base(I, p.method, p.iter, p.wei, p.winsize, p.a, ...
-    p.rho, p.sig, p.der, p.int, p.samp, p.eign);
-
-%%
-% display
-
-if p.disp
-    figure, imagesc(rescale(F,0,1)), axis image off,
-    title(['geo-filtered image - method ' p.method]);
-    if size(F,3)==1;  colormap gray;  end
-end
-
-end % end of geodesicfilt
-
-##### SOURCE END #####
---></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>  <head>    <meta content="text/html; charset=utf-8" http-equiv="content-type">    <!--This HTML was auto-generated from MATLAB code.To make changes, update the MATLAB code and republish this document.      -->    <title>GEODESICFILT - Multispectral edge-preserving smoothing filter.</title>    <meta name="generator" content="MATLAB 7.14">    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">    <meta name="DC.date" content="2012-11-14">    <meta name="DC.source" content="geodesicfilt.m">    <style type="text/css">html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}html { min-height:100%; margin-bottom:1px; }html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }html body td { vertical-align:top; text-align:left; }h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }a { color:#005fce; text-decoration:none; }a:hover { color:#005fce; text-decoration:underline; }a:visited { color:#004aa0; text-decoration:none; }p { padding:0px; margin:0px 0px 20px; }img { padding:0px; margin:0px 0px 20px; border:none; }p img, pre img, tt img, li img { margin-bottom:0px; } ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }ul li { padding:0px; margin:0px 0px 7px 0px; }ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }ul li ol li { list-style:decimal; }ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }ol li ol li { list-style-type:lower-alpha; }ol li ul { padding-top:7px; }ol li ul li { list-style:square; }.content { font-size:1.2em; line-height:140%; padding: 20px; }pre, tt, code { font-size:12px; }pre { margin:0px 0px 20px; }pre.error { color:red; }pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }span.keyword { color:#0000FF }span.comment { color:#228B22 }span.string { color:#A020F0 }span.untermstring { color:#B20000 }span.syscmd { color:#B28C00 }.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }.footer p { margin:0px; }  </style>  </head>  <body>    <div class="content">      <h1>GEODESICFILT - Multispectral edge-preserving smoothing filter.</h1>      <!--introduction--><!--/introduction-->      <h2>Contents</h2>      <div>        <ul>          <li><a href="#1">Description</a></li>          <li><a href="#2">Syntax</a></li>          <li><a href="#3">Inputs</a></li>          <li><a href="#4">Property [propertyname propertyvalues]</a></li>          <li><a href="#5">Output</a></li>          <li><a href="#6">References</a></li>          <li><a href="#8">See also</a></li>          <li><a href="#9">Function implementation</a></li>        </ul>      </div>      <h2>Description<a name="1"></a></h2>      <p>Matlab (slow) implementation of the Sigma-filter for edge-preserving        smoothing of multispectral images using local geodesic similarity        measures, as described in [GS09a,GS09b] in its isotropic version and in        [GSD10] in its generalized anisotropic version.</p>      <h2>Syntax<a name="2"></a></h2>      <pre>   F = GEODESICFILT(I);   F = GEODESICFILT(I, method, wei, winsize, ...                    'Property', propertyvalue, ... );</pre>      <h2>Inputs<a name="3"></a></h2>      <p><b><tt>I</tt></b> : input image, possibly multispectral.</p>      <p><b><tt>method</tt></b> : method used for selecting the geodesic iso- or        aniso-tropic filtering; it derives a cost function from the input image        which defines how distances are propagated from the center of the local        anylizing window (see <tt>IM2POTENTIAL_BASE</tt>); the potential        function is based on the gradient structure tensor (GST) of the image,        and its expression depends on the chosen method:</p>      <div>        <ul>          <li><tt>'iso'</tt> for a scalar potential set to the inverse of the            GST norm,</li>          <li><tt>'ani'</tt> (or 'gstnorm') for a tensorial tensor set to the            orthogonal of the GST and scaled by the GST norm (scaled            eigenvalues, orthogonal eigenvector),</li>          <li><tt>'gstcoh'</tt> for a tensorial tensor set to the orthogonal of            the GST and scaled by the coherence (see <tt>GSTFEATURE</tt>); note            that <tt>'gstcoh'</tt> also performs anisotropic filtering;</li>        </ul>      </div>      <p>default: <tt>method='iso'</tt>.</p>      <p><b><tt>wei</tt></b> : (optional) scalar or string defining the        (monotically decreasing) function used for defining the geodesic kernel        by weighting the geodesic distances inside local windows (wee Eq.(7) of        [GS09b]); the weighting function can be either:</p>      <div>        <ul>          <li>the inverse scaled function: <img src="geodesicfilt_eq08104.png"              alt="$x\rightarrow x^r$">            (the potential is therefore the inverse geodesic distance to the            central pixel) when <tt>wei='scale'</tt> (then <tt>r=2</tt>) or <tt>wei</tt>            is a scalar &lt;0 (then <tt>r=abs(wei)</tt>),</li>          <li>the gaussian function <img src="geodesicfilt_eq17608.png" alt="$x\rightarrow \exp(-r \cdot x)$">            when <tt>wei='gauss'</tt> (then <tt>r=1</tt>) or when is a scalar            &gt;0 (then r=wei); in the latter case, <tt>wei</tt> is assimilated            to alpha/sigma^2 (note that <tt>r</tt> stands for the <img src="geodesicfilt_eq87919.png"              alt="$\alpha$">            in Eq.(7) of [CG09b] as sigma was chosen to be 1 for consistency),</li>          <li>the weighted median function <img src="geodesicfilt_eq99197.png"              alt="$x\rightarrow \mbox{wmedian}(x)$">            when <tt>wei='median'</tt> or <tt>wei=0</tt>;</li>        </ul>      </div>      <p>default: <tt>wei=1</tt>.</p>      <p><b><tt>winsize</tt></b> : (optional) size of the local analyzing window        (should be odd, otherwise adjusted); default: <tt>winsize=11</tt>, i.e        a window with radius 5 is chosen.</p>      <h2>Property [propertyname propertyvalues]<a name="4"></a></h2>      <p><b><tt>'iter'</tt></b> : (optional) number of iterations; default: <tt>iter=1</tt>.</p>      <p><b><tt>'a'</tt></b> : exponent(s) <tt>(1,n)</tt> with <tt>n={1,2}</tt>        used for amplyfying the strenght of the cost function (see <tt>IM2POTENTIAL_BASE</tt>);        default: <tt>a=[1 1]</tt>.</p>      <p><b><tt>'rho', 'sig'</tt></b> : pre- and post- smoothing standard        deviations used for GST estimation (see <tt>GRD2GST</tt>); default: <tt>rho=3,          sig=1</tt>.</p>      <p><b><tt>'der', 'int', 'samp', 'eign'</tt></b> : additional options for        computing the GST (see functions <tt>GRD2GST</tt> and <tt>GSTSMOOTH)</tt>;        default: <tt>der='fast', int='fast', samp=1</tt> and <tt>eign='l1'</tt>.</p>      <h2>Output<a name="5"></a></h2>      <p><b><tt>F</tt></b> : filtered image, with same dimension as the input        image.</p>      <h2>References<a name="6"></a></h2>      <p>[GS09a] J. Grazzini and P. Soille: "Image filtering based on locally        estimated geodesic functions", In Proc. VISIGRAPP, CCIS, vol. 24, pp.        123-124, 2009. <a href="http://www.springerlink.com/content/v264v11754004500/">http://www.springerlink.com/content/v264v11754004500/</a></p>      <p>[GS09b] J. Grazzini and P. Soille: "Edge-preserving smoothing using a        similarity measure in adaptive geodesic neighbourhoods", Pattern        Recognition, 42(10):2306-2316, 2009. <a href="http://www.sciencedirect.com/science/article/pii/S003132030800469X">http://www.sciencedirect.com/science/article/pii/S003132030800469X</a></p>      <p>[GSD10] J. Grazzini, S. Dillard and P. Soille: "Multichannel image        regularisation using anisotropic geodesic filtering", Proc. ICPR, pp.        2664-2667, 2010. <a href="http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=5596008&amp;tag=1">http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=5596008&amp;tag=1</a></p>      <h2>See also<a name="8"></a></h2>      <p>Related: <a href="ADAPTIVEFILT.html"><tt>ADAPTIVEFILT</tt></a>, <a href="TENSANIFILT.html"><tt>TENSANIFILT</tt></a>,        <a href="TENSCALEDIRFILT.html"><tt>TENSCALEDIRFILT</tt></a>, <a href="MDLFILT.html"><tt>MDLFILT</tt></a>,        <a href="../../derive/html/GSTSMOOTH.html"><tt>GSTSMOOTH</tt></a>, <a href="../../derive/html/GRD2GST.html"><tt>GRD2GST</tt></a>,        <a href="../../propagation/html/FMMISOPROPAGATION.html"><tt>FMMISOPROPAGATION</tt></a>,        <a href="../../propagation/html/FMMANISOPROPAGATION.html"><tt>FMMANISOPROPAGATION</tt></a>,        <a href="../../propagation/html/POTENTIAL2FRONT.html"><tt>POTENTIAL2FRONT</tt></a>,        <a href="../../propagation/html/IM2POTENTIAL.html"><tt>IM2POTENTIAL</tt></a>,        <a href="../../propagation/html/FMM_BASE.html"><tt>FMM_BASE</tt></a>, <a          href="../../pdem/html/PDEM.html"><tt>PDEM</tt></a>.        Called: <a href="GEODESICFILT_BASE.html"><tt>GEODESICFILT_BASE</tt></a>.</p>      <pre class="codeinput"><span class="comment">% note: you can 'play' with the parameter method as other methods are</span><span class="comment">% accepted (see function IM2POTENTIAL_BASE) but not mentioned here</span></pre>      <h2>Function implementation<a name="9"></a></h2>      <pre class="codeinput"><span class="keyword">function</span> F = geodesicfilt(I,varargin)</pre>      <p>parsing parameters</p>      <pre class="codeinput">error(nargchk(1, 25, nargin, <span class="string">'struct'</span>));error(nargoutchk(1, 2, nargout, <span class="string">'struct'</span>));<span class="comment">% mandatory parameter</span><span class="keyword">if</span> ~isnumeric(I)    error(<span class="string">'geodesicfilt:inputerror'</span>,<span class="string">'a matrix is required in input'</span>);<span class="keyword">end</span><span class="comment">% optional parameters</span>p = createParser(<span class="string">'GEODESICFILT'</span>);   <span class="comment">% create an instance of the inputParser class.</span>p.addOptional(<span class="string">'method'</span>, <span class="string">'iso'</span>, @(x)ischar(x) &amp;&amp; <spanclass="keyword">...</span>    any(strcmpi(x,{<span class="string">'iso'</span>,<span class="string">'isotropic'</span>,<spanclass="string">'ani'</span>,<spanclass="string">'anisotropic'</span>, <spanclass="keyword">...</span>    <span class="string">'gstninv'</span>,<span class="string">'gst'</span>,<spanclass="string">'gstorth'</span>,<spanclass="string">'gstn'</span>,<spanclass="string">'gstn1'</span>,<spanclass="string">'gstn2'</span>,<spanclass="string">'gstn3'</span>,<spanclass="string">'gstcoh'</span>})));p.addOptional(<span class="string">'wei'</span>, 2, @(x) (isscalar(x) &amp;&amp; x&gt;=-5) || <spanclass="keyword">...</span>     (ischar(x) &amp;&amp; any(strcmpi(x,{<span class="string">'scale'</span>,<spanclass="string">'gauss'</span>,<spanclass="string">'median'</span>}))));p.addOptional(<span class="string">'winsize'</span>, 11, @(x)isscalar(x) &amp;&amp; isfloat(x) &amp;&amp; x&gt;=3);<span class="comment">% additional optional parameters</span>p.addParamValue(<span class="string">'iter'</span>, 1, @(x)isscalar(x) &amp;&amp; round(x)==x &amp;&amp; x&gt;=1);p.addParamValue(<span class="string">'rho'</span>, 3, @(x)isscalar(x) &amp;&amp; isfloat(x) &amp;&amp; x&gt;=0);p.addParamValue(<span class="string">'sig'</span>, 1, @(x)isscalar(x) &amp;&amp; isfloat(x) &amp;&amp; x&gt;=0);p.addParamValue(<span class="string">'der'</span>, <span class="string">'fast'</span>, @(x)islogical(x) || (ischar(x) &amp;&amp; <spanclass="keyword">...</span>    any(strcmpi(x,{<span class="string">'matlab'</span>,<span class="string">'vista'</span>,<spanclass="string">'fast'</span>,<spanclass="string">'conv'</span>,<spanclass="string">'fleck'</span>, <spanclass="keyword">...</span>    <span class="string">'tap5'</span>,<span class="string">'tap7'</span>,<spanclass="string">'sob'</span>,<spanclass="string">'opt'</span>,<spanclass="string">'ana'</span>}))));p.addParamValue(<span class="string">'int'</span>, <span class="string">'fast'</span>, @(x)islogical(x) || (ischar(x) &amp;&amp; <spanclass="keyword">...</span>    any(strcmpi(x,{<span class="string">'matlab'</span>,<span class="string">'conv'</span>,<spanclass="string">'fast'</span>,<spanclass="string">'ani'</span>}))));p.addParamValue(<span class="string">'samp'</span>, 1, @(x)isscalar(x) &amp;&amp; round(x)==x &amp;&amp; x&gt;=1 &amp;&amp; x&lt;=5);p.addParamValue(<span class="string">'eign'</span>,<span class="string">'l1'</span>,@(x)ischar(x) &amp;&amp; <spanclass="keyword">...</span>    any(strcmpi(x,{<span class="string">'abs'</span>,<span class="string">'zen'</span>,<spanclass="string">'l1'</span>,<spanclass="string">'sap'</span>,<spanclass="string">'sum'</span>,<spanclass="string">'ndi'</span>,<spanclass="string">'dif'</span>,<spanclass="string">'koe'</span>})));p.addParamValue(<span class="string">'a'</span>, [1 1], @(x)isscalar(x) || <spanclass="keyword">...</span>    (isvector(x) &amp;&amp; length(x)==2));<span class="comment">% parse and validate all input arguments</span>p.parse(varargin{:});p = getvarParser(p);</pre>      <p>checking/setting parameters</p>      <pre class="codeinput"><span class="keyword">if</span> strcmp(p.method,<spanclass="string">'anisotropic'</span>),    p.method = <spanclass="string">'ani'</span>;<span class="keyword">elseif</span> strcmp(p.method,<span class="string">'isotropic'</span>),  p.method = <spanclass="string">'iso'</span>;<span class="keyword">end</span><span class="keyword">if</span> ischar(p.wei)    <span class="keyword">if</span> strcmpi(p.wei,<span class="string">'gauss'</span>),      p.wei =  1; <spanclass="comment">% weighting gaussian with alpha=1</span>    <span class="keyword">elseif</span> strcmpi(p.wei,<span class="string">'scale'</span>),  p.wei = -1; <spanclass="comment">% 1/D weighting function</span>    <span class="keyword">else</span>                            p.wei =  0; <spanclass="comment">% median</span>    <span class="keyword">end</span><span class="keyword">end</span><span class="comment">% set some default</span><span class="keyword">if</span> any(strcmpi(p.method,{<span class="string">'gstnorm1'</span>,<spanclass="string">'gstnorm2'</span>,<spanclass="string">'gstnorm3'</span>}))    <span class="keyword">if</span> isempty(p.a),  p.a = [1 2];    <span class="keyword">elseif</span> length(p.a)==1,  p.a = [p.a p.a+eps];    <span class="keyword">end</span><span class="keyword">end</span><span class="keyword">if</span> isempty(p.a),  p.a = 1;  <span class="keyword">end</span></pre>      <p>main calculation</p>      <pre class="codeinput">F = geodesicfilt_base(I, p.method, p.iter, p.wei, p.winsize, p.a, <spanclass="keyword">...</span>    p.rho, p.sig, p.der, p.int, p.samp, p.eign);</pre>      <p>display</p>      <pre class="codeinput"><span class="keyword">if</span> p.disp    figure, imagesc(rescale(F,0,1)), axis <span class="string">image</span> <spanclass="string">off</span>,    title([<span class="string">'geo-filtered image - method '</span> p.method]);    <span class="keyword">if</span> size(F,3)==1;  colormap <span class="string">gray</span>;  <spanclass="keyword">end</span><span class="keyword">end</span></pre>      <pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of geodesicfilt</span></pre></div>    <!--##### SOURCE BEGIN #####%% GEODESICFILT - Multispectral edge-preserving smoothing filter.%%% Description% Matlab (slow) implementation of the Sigma-filter for edge-preserving smoothing% of multispectral images using local geodesic similarity measures, as% described in [GS09a,GS09b] in its isotropic version and in [GSD10] in its% generalized anisotropic version.%%% Syntax%     F = GEODESICFILT(I);%     F = GEODESICFILT(I, method, wei, winsize, ...%                      'Property', propertyvalue, ... );%%% Inputs% *|I|* : input image, possibly multispectral.%% *|method|* : method used for selecting the geodesic iso- or aniso-tropic %     filtering; it derives a cost function from the input image which%     defines how distances are propagated from the center of the local %     anylizing window (see |IM2POTENTIAL_BASE|); the potential function is%     based on the gradient structure tensor (GST) of the image, and its%     expression depends on the chosen method:%% * |'iso'| for a scalar potential set to the inverse of the GST norm,% * |'ani'| (or 'gstnorm') for a tensorial tensor set to the orthogonal%           of the GST and scaled by the GST norm (scaled eigenvalues, %           orthogonal eigenvector),% * |'gstcoh'| for a tensorial tensor set to the orthogonal of the GST and%          scaled by the coherence (see |GSTFEATURE|); note that |'gstcoh'| %          also performs anisotropic filtering;% % default: |method='iso'|.%% *|wei|* : (optional) scalar or string defining the (monotically decreasing)%     function used for defining the geodesic kernel by weighting the geodesic %     distances inside local windows (wee Eq.(7) of [GS09b]); the weighting%     function can be either:%% * the inverse scaled function: $x\rightarrow x^r$ (the potential is therefore %         the inverse geodesic distance to the central pixel) when |wei='scale'|%         (then |r=2|) or |wei| is a scalar <0 (then |r=abs(wei)|),% * the gaussian function $x\rightarrow \exp(-r \cdot x)$ when |wei='gauss'|%         (then |r=1|) or when is a scalar >0 (then r=wei); in the latter case,%         |wei| is assimilated to alpha/sigma^2 (note that |r| stands for the%         $\alpha$ in Eq.(7) of [CG09b] as sigma was chosen to be 1 for %         consistency),% * the weighted median function $x\rightarrow \mbox{wmedian}(x)$ when%         |wei='median'| or |wei=0|;%% default: |wei=1|.%% *|winsize|* : (optional) size of the local analyzing window (should be odd,%     otherwise adjusted); default: |winsize=11|, i.e a window with radius 5%     is chosen.%%% Property [propertyname  propertyvalues]% *|'iter'|* : (optional) number of iterations; default: |iter=1|.%% *|'a'|* : exponent(s) |(1,n)| with |n={1,2}| used for amplyfying the strenght%     of the cost function (see |IM2POTENTIAL_BASE|); default: |a=[1 1]|.%% *|'rho', 'sig'|* : pre- and post- smoothing standard deviations used for GST%     estimation (see |GRD2GST|); default: |rho=3, sig=1|.%% *|'der', 'int', 'samp', 'eign'|* : additional options for computing the GST%     (see functions |GRD2GST| and |GSTSMOOTH)|; default: |der='fast', int='fast', %     samp=1| and |eign='l1'|.% %% Output% *|F|* : filtered image, with same dimension as the input image.%%% References% [GS09a]  J. Grazzini and P. Soille: "Image filtering based on locally%      estimated geodesic functions", In Proc. VISIGRAPP, CCIS, vol. 24, %      pp. 123-124, 2009.%      <http://www.springerlink.com/content/v264v11754004500/>%% [GS09b]  J. Grazzini and P. Soille: "Edge-preserving smoothing using a %      similarity measure in adaptive geodesic neighbourhoods", Pattern%      Recognition, 42(10):2306-2316, 2009.%      <http://www.sciencedirect.com/science/article/pii/S003132030800469X>%% [GSD10]  J. Grazzini, S. Dillard and P. Soille: "Multichannel image %      regularisation using anisotropic geodesic filtering", Proc. ICPR,%      pp. 2664-2667, 2010.%      <http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=5596008&tag=1>%%% Credit% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)% %% See also% Related:% <ADAPTIVEFILT.html |ADAPTIVEFILT|>,% <TENSANIFILT.html |TENSANIFILT|>,% <TENSCALEDIRFILT.html |TENSCALEDIRFILT|>,% <MDLFILT.html |MDLFILT|>,% <../../derive/html/GSTSMOOTH.html |GSTSMOOTH|>,% <../../derive/html/GRD2GST.html |GRD2GST|>,% <../../propagation/html/FMMISOPROPAGATION.html |FMMISOPROPAGATION|>,% <../../propagation/html/FMMANISOPROPAGATION.html |FMMANISOPROPAGATION|>,% <../../propagation/html/POTENTIAL2FRONT.html |POTENTIAL2FRONT|>,% <../../propagation/html/IM2POTENTIAL.html |IM2POTENTIAL|>,% <../../propagation/html/FMM_BASE.html |FMM_BASE|>,% <../../pdem/html/PDEM.html |PDEM|>.% Called:% <GEODESICFILT_BASE.html |GEODESICFILT_BASE|>.% note: you can 'play' with the parameter method as other methods are% accepted (see function IM2POTENTIAL_BASE) but not mentioned here%% Function implementationfunction F = geodesicfilt(I,varargin)%%% parsing parameterserror(nargchk(1, 25, nargin, 'struct'));error(nargoutchk(1, 2, nargout, 'struct'));% mandatory parameterif ~isnumeric(I)    error('geodesicfilt:inputerror','a matrix is required in input'); end% optional parametersp = createParser('GEODESICFILT');   % create an instance of the inputParser class.p.addOptional('method', 'iso', @(x)ischar(x) && ...    any(strcmpi(x,{'iso','isotropic','ani','anisotropic', ...    'gstninv','gst','gstorth','gstn','gstn1','gstn2','gstn3','gstcoh'})));p.addOptional('wei', 2, @(x) (isscalar(x) && x>=-5) || ...     (ischar(x) && any(strcmpi(x,{'scale','gauss','median'}))));p.addOptional('winsize', 11, @(x)isscalar(x) && isfloat(x) && x>=3);% additional optional parametersp.addParamValue('iter', 1, @(x)isscalar(x) && round(x)==x && x>=1);p.addParamValue('rho', 3, @(x)isscalar(x) && isfloat(x) && x>=0);p.addParamValue('sig', 1, @(x)isscalar(x) && isfloat(x) && x>=0);p.addParamValue('der', 'fast', @(x)islogical(x) || (ischar(x) && ...    any(strcmpi(x,{'matlab','vista','fast','conv','fleck', ...    'tap5','tap7','sob','opt','ana'}))));p.addParamValue('int', 'fast', @(x)islogical(x) || (ischar(x) && ...    any(strcmpi(x,{'matlab','conv','fast','ani'}))));p.addParamValue('samp', 1, @(x)isscalar(x) && round(x)==x && x>=1 && x<=5);p.addParamValue('eign','l1',@(x)ischar(x) && ...    any(strcmpi(x,{'abs','zen','l1','sap','sum','ndi','dif','koe'})));p.addParamValue('a', [1 1], @(x)isscalar(x) || ...    (isvector(x) && length(x)==2));% parse and validate all input argumentsp.parse(varargin{:}); p = getvarParser(p);                                                            %%% checking/setting parametersif strcmp(p.method,'anisotropic'),    p.method = 'ani';elseif strcmp(p.method,'isotropic'),  p.method = 'iso';end        if ischar(p.wei)    if strcmpi(p.wei,'gauss'),      p.wei =  1; % weighting gaussian with alpha=1    elseif strcmpi(p.wei,'scale'),  p.wei = -1; % 1/D weighting function    else                            p.wei =  0; % median    endend% set some defaultif any(strcmpi(p.method,{'gstnorm1','gstnorm2','gstnorm3'}))    if isempty(p.a),  p.a = [1 2];     elseif length(p.a)==1,  p.a = [p.a p.a+eps];      endendif isempty(p.a),  p.a = 1;  end%%% main calculationF = geodesicfilt_base(I, p.method, p.iter, p.wei, p.winsize, p.a, ...    p.rho, p.sig, p.der, p.int, p.samp, p.eign);%%% displayif p.disp    figure, imagesc(rescale(F,0,1)), axis image off,    title(['geo-filtered image - method ' p.method]);    if size(F,3)==1;  colormap gray;  endendend % end of geodesicfilt##### SOURCE END #####-->  </body></html>

@@ -1,186 +1,1 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>LEGENDGROUP
-      - Provide legends for groups of plot handles.</title>
-    <meta name="generator" content="MATLAB 7.11">
-    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-    <meta name="DC.date" content="2011-05-10">
-    <meta name="DC.source" content="legendgroup.m">
-    <style type="text/css">
-
-body {
-  background-color: white;
-  margin:10px;
-}
-
-h1 {
-  color: #990000; 
-  font-size: x-large;
-}
-
-h2 {
-  color: #990000;
-  font-size: medium;
-}
-
-/* Make the text shrink to fit narrow windows, but not stretch too far in 
-wide windows. */ 
-p,h1,h2,div.content div {
-  max-width: 600px;
-  /* Hack for IE6 */
-  width: auto !important; width: 600px;
-}
-
-pre.codeinput {
-  background: #EEEEEE;
-  padding: 10px;
-}
-@media print {
-  pre.codeinput {word-wrap:break-word; width:100%;}
-} 
-
-span.keyword {color: #0000FF}
-span.comment {color: #228B22}
-span.string {color: #A020F0}
-span.untermstring {color: #B20000}
-span.syscmd {color: #B28C00}
-
-pre.codeoutput {
-  color: #666666;
-  padding: 10px;
-}
-
-pre.error {
-  color: red;
-}
-
-p.footer {
-  text-align: right;
-  font-size: xx-small;
-  font-weight: lighter;
-  font-style: italic;
-  color: gray;
-}
-
-  </style>
-  </head>
-  <body>
-    <div class="content">
-      <h1>LEGENDGROUP - Provide legends for groups of plot
-        handles.</h1>
-      <!--introduction--><!--/introduction-->
-      <h2>Contents</h2>
-      <div>
-        <ul>
-          <li><a href="#1">Syntax</a></li>
-          <li><a href="#2">Inputs</a></li>
-          <li><a href="#3">Credit</a></li>
-          <li><a href="#4">See also</a></li>
-          <li><a href="#5">Function implementation</a></li>
-        </ul>
-      </div>
-      <h2>Syntax<a name="1"></a></h2>
-      <pre> LEGENDGROUP(handle_plot, legend_plot);
- [l_h, o_h, p_h, t_s] = LEGENDGROUP(handle_p, legend_p, location, interpreter);</pre>
-      <h2>Inputs<a name="2"></a></h2>
-      <p><b><tt>handle_p</tt></b> : cell (or array) of graphics objects'
-        handles.</p>
-      <p><b><tt>legend_p</tt></b> : cell of strings; each string in <tt>legend_p{i}</tt>
-        is associated with the group of handles in <tt>handle_p{i}</tt>.</p>
-      <p><b><tt>location, interpreter</tt></b> : see <tt>LEGEND</tt>
-        options; default: <tt>location='Best'</tt> and <tt>interpreter='latex'</tt>.</p>
-      <h2>See also<a name="4"></a></h2>
-      <p>Related: <a href="matlab:webpub%28whichpath%28%27FIGURE%27%29%29"><tt>FIGURE</tt></a>,
-        <a href="matlab:webpub%28whichpath%28%27LEGEND%27%29%29"><tt>LEGEND</tt></a>.
-        Called: <a href="matlab:webpub%28whichpath%28%27LEGEND%27%29%29"><tt>LEGEND</tt></a>,
-        <a href="matlab:webpub%28whichpath%28%27HGGROUP%27%29%29"><tt>HGGROUP</tt></a>,
-        <a href="matlab:webpub%28whichpath%28%27SET%27%29%29"><tt>SET</tt></a>,
-        <a href="matlab:webpub%28whichpath%28%27GET%27%29%29"><tt>GET</tt></a>.</p>
-      <h2>Function implementation<a name="5"></a></h2>
-      <pre class="codeinput"><span class="keyword">function</span> [l_h, o_h, p_h, t_s] = <span
-class="keyword">...</span>
-    legendgroup(handle_plot, legend_plot, location, interpreter)
-
-<span class="keyword">if</span> nargin&lt;4,  interpreter = <span class="string">'tex'</span>;
-    <span class="keyword">if</span> nargin&lt;3,  location = <span class="string">'Best'</span>;  <span
-class="keyword">end</span>
-<span class="keyword">end</span>
-
-<span class="keyword">if</span> ~iscell(handle_plot)
-    <span class="comment">% typically, in the case we have single handle for each group</span>
-    handle_plot = num2cell(handle_plot(:),2);
-<span class="keyword">end</span>
-
-<span class="keyword">if</span> ~iscell(legend_plot)
-    <span class="keyword">if</span> ~ischar(legend_plot)
-        error(<span class="string">'legendgroup:inputerror'</span>, <span
-class="keyword">...</span>
-            <span class="string">'second input must be a string or a cell of strings'</span>);
-    <span class="keyword">end</span>
-    legend_plot = repmat({legend_plot},numel(handle_plot));
-
-<span class="keyword">elseif</span> ~isequal(numel(handle_plot),numel(legend_plot))
-    <span class="comment">% one item for each group of objects</span>
-    error(<span class="string">'legendgroup:inputerror'</span>, <span class="keyword">...</span>
-        <span class="string">'input cells must contain same number of elements'</span>);
-<span class="keyword">end</span>
-
-ng = numel(handle_plot);
-
-handleGroup = cell(1,ng);
-<span class="keyword">for</span> i=1:ng
-    handleGroup{i} = hggroup;
-    set(handle_plot{i},<span class="string">'Parent'</span>,handleGroup{i})
-    <span class="comment">% include these hggroup in the legend</span>
-    set(get(get(handleGroup{i},<span class="string">'Annotation'</span>),<span
-class="string">'LegendInformation'</span>),<span
-class="keyword">...</span>
-        <span class="string">'IconDisplayStyle'</span>,<span class="string">'on'</span>);
-<span class="keyword">end</span>
-
-handleGroup = cell2mat(handleGroup);
-[l_h, o_h, p_h, t_s] = legend(handleGroup, legend_plot, <span class="keyword">...</span>
-    <span class="string">'Location'</span>, location, <span class="string">'Interpreter'</span>, interpreter );
-
-<span class="keyword">end</span> <span class="comment">% end of legendgroup</span>
-</pre>
-    </div>
-    <!--##### SOURCE BEGIN #####
-%% LEGENDGROUP - Provide legends for groups of plot handles. %
-%% Syntax%   LEGENDGROUP(handle_plot, legend_plot);
-%   [l_h, o_h, p_h, t_s] = LEGENDGROUP(handle_p, legend_p, location, interpreter);%
-%% Inputs% *|handle_p|* : cell (or array) of graphics objects' handles.
-%% *|legend_p|* : cell of strings; each string in |legend_p{i}| is associated
-%     with the group of handles in |handle_p{i}|.%
-% *|location, interpreter|* : see |LEGEND| options; default: |location='Best'|%     and |interpreter='latex'|.
-%%% Credit
-% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)% 
-%% See also  % Related: 
-% <matlab:webpub(whichpath('FIGURE')) |FIGURE|>,% <matlab:webpub(whichpath('LEGEND')) |LEGEND|>.
-% Called: % <matlab:webpub(whichpath('LEGEND')) |LEGEND|>,
-% <matlab:webpub(whichpath('HGGROUP')) |HGGROUP|>,% <matlab:webpub(whichpath('SET')) |SET|>,
-% <matlab:webpub(whichpath('GET')) |GET|>.%% Function implementation
-function [l_h, o_h, p_h, t_s] = ...    legendgroup(handle_plot, legend_plot, location, interpreter)
-if nargin<4,  interpreter = 'tex';
-    if nargin<3,  location = 'Best';  endend
-if ~iscell(handle_plot)
-    % typically, in the case we have single handle for each group    handle_plot = num2cell(handle_plot(:),2);
-endif ~iscell(legend_plot)
-    if ~ischar(legend_plot)        error('legendgroup:inputerror', ...
-            'second input must be a string or a cell of strings');    end
-    legend_plot = repmat({legend_plot},numel(handle_plot));    
-elseif ~isequal(numel(handle_plot),numel(legend_plot))    % one item for each group of objects
-    error('legendgroup:inputerror', ...        'input cells must contain same number of elements');
-endng = numel(handle_plot);
-handleGroup = cell(1,ng);
-for i=1:ng    handleGroup{i} = hggroup;
-    set(handle_plot{i},'Parent',handleGroup{i})    % include these hggroup in the legend
-    set(get(get(handleGroup{i},'Annotation'),'LegendInformation'),...        'IconDisplayStyle','on');
-endhandleGroup = cell2mat(handleGroup);
-[l_h, o_h, p_h, t_s] = legend(handleGroup, legend_plot, ...    'Location', location, 'Interpreter', interpreter );
-end % end of legendgroup
-##### SOURCE END #####-->
-  </body>
-</html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>  <head>    <meta content="text/html; charset=UTF-8" http-equiv="content-type">    <title>LEGENDGROUP - Provide legends for groups of plot handles.</title>    <meta name="generator" content="MATLAB 7.11">    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">    <meta name="DC.date" content="2011-05-10">    <meta name="DC.source" content="legendgroup.m">    <style type="text/css">body {  background-color: white;  margin:10px;}h1 {  color: #990000;   font-size: x-large;}h2 {  color: #990000;  font-size: medium;}/* Make the text shrink to fit narrow windows, but not stretch too far in wide windows. */ p,h1,h2,div.content div {  max-width: 600px;  /* Hack for IE6 */  width: auto !important; width: 600px;}pre.codeinput {  background: #EEEEEE;  padding: 10px;}@media print {  pre.codeinput {word-wrap:break-word; width:100%;}} span.keyword {color: #0000FF}span.comment {color: #228B22}span.string {color: #A020F0}span.untermstring {color: #B20000}span.syscmd {color: #B28C00}pre.codeoutput {  color: #666666;  padding: 10px;}pre.error {  color: red;}p.footer {  text-align: right;  font-size: xx-small;  font-weight: lighter;  font-style: italic;  color: gray;}  </style>  </head>  <body>    <div class="content">      <h1>LEGENDGROUP - Provide legends for groups of plot handles.</h1>      <!--introduction--><!--/introduction-->      <h2>Contents</h2>      <div>        <ul>          <li><a href="#1">Syntax</a></li>          <li><a href="#2">Inputs</a></li>          <li><a href="#4">See also</a></li>          <li><a href="#5">Function implementation</a></li>        </ul>      </div>      <h2>Syntax<a name="1"></a></h2>      <pre> LEGENDGROUP(handle_plot, legend_plot); [l_h, o_h, p_h, t_s] = LEGENDGROUP(handle_p, legend_p, location, interpreter);</pre>      <h2>Inputs<a name="2"></a></h2>      <p><b><tt>handle_p</tt></b> : cell (or array) of graphics objects'        handles.</p>      <p><b><tt>legend_p</tt></b> : cell of strings; each string in <tt>legend_p{i}</tt>        is associated with the group of handles in <tt>handle_p{i}</tt>.</p>      <p><b><tt>location, interpreter</tt></b> : see <tt>LEGEND</tt> options;        default: <tt>location='Best'</tt> and <tt>interpreter='latex'</tt>.</p>      <h2>See also<a name="4"></a></h2>      <p>Related: <a href="matlab:webpub%28whichpath%28%27FIGURE%27%29%29"><tt>FIGURE</tt></a>,        <a href="matlab:webpub%28whichpath%28%27LEGEND%27%29%29"><tt>LEGEND</tt></a>.        Called: <a href="matlab:webpub%28whichpath%28%27LEGEND%27%29%29"><tt>LEGEND</tt></a>,        <a href="matlab:webpub%28whichpath%28%27HGGROUP%27%29%29"><tt>HGGROUP</tt></a>,        <a href="matlab:webpub%28whichpath%28%27SET%27%29%29"><tt>SET</tt></a>,        <a href="matlab:webpub%28whichpath%28%27GET%27%29%29"><tt>GET</tt></a>.</p>      <h2>Function implementation<a name="5"></a></h2>      <pre class="codeinput"><span class="keyword">function</span> [l_h, o_h, p_h, t_s] = <spanclass="keyword">...</span>    legendgroup(handle_plot, legend_plot, location, interpreter)<span class="keyword">if</span> nargin&lt;4,  interpreter = <span class="string">'tex'</span>;    <span class="keyword">if</span> nargin&lt;3,  location = <span class="string">'Best'</span>;  <spanclass="keyword">end</span><span class="keyword">end</span><span class="keyword">if</span> ~iscell(handle_plot)    <span class="comment">% typically, in the case we have single handle for each group</span>    handle_plot = num2cell(handle_plot(:),2);<span class="keyword">end</span><span class="keyword">if</span> ~iscell(legend_plot)    <span class="keyword">if</span> ~ischar(legend_plot)        error(<span class="string">'legendgroup:inputerror'</span>, <span class="keyword">...</span>            <span class="string">'second input must be a string or a cell of strings'</span>);    <span class="keyword">end</span>    legend_plot = repmat({legend_plot},numel(handle_plot));<span class="keyword">elseif</span> ~isequal(numel(handle_plot),numel(legend_plot))    <span class="comment">% one item for each group of objects</span>    error(<span class="string">'legendgroup:inputerror'</span>, <span class="keyword">...</span>        <span class="string">'input cells must contain same number of elements'</span>);<span class="keyword">end</span>ng = numel(handle_plot);handleGroup = cell(1,ng);<span class="keyword">for</span> i=1:ng    handleGroup{i} = hggroup;    set(handle_plot{i},<span class="string">'Parent'</span>,handleGroup{i})    <span class="comment">% include these hggroup in the legend</span>    set(get(get(handleGroup{i},<span class="string">'Annotation'</span>),<span class="string">'LegendInformation'</span>),<spanclass="keyword">...</span>        <span class="string">'IconDisplayStyle'</span>,<span class="string">'on'</span>);<span class="keyword">end</span>handleGroup = cell2mat(handleGroup);[l_h, o_h, p_h, t_s] = legend(handleGroup, legend_plot, <span class="keyword">...</span>    <span class="string">'Location'</span>, location, <span class="string">'Interpreter'</span>, interpreter );<span class="keyword">end</span> <span class="comment">% end of legendgroup</span></pre> </div>    <!--##### SOURCE BEGIN #####%% LEGENDGROUP - Provide legends for groups of plot handles. %%% Syntax%   LEGENDGROUP(handle_plot, legend_plot);%   [l_h, o_h, p_h, t_s] = LEGENDGROUP(handle_p, legend_p, location, interpreter);%%% Inputs% *|handle_p|* : cell (or array) of graphics objects' handles.%% *|legend_p|* : cell of strings; each string in |legend_p{i}| is associated%     with the group of handles in |handle_p{i}|.%% *|location, interpreter|* : see |LEGEND| options; default: |location='Best'|%     and |interpreter='latex'|.%%% Credit% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)% %% See also  % Related: % <matlab:webpub(whichpath('FIGURE')) |FIGURE|>,% <matlab:webpub(whichpath('LEGEND')) |LEGEND|>.% Called: % <matlab:webpub(whichpath('LEGEND')) |LEGEND|>,% <matlab:webpub(whichpath('HGGROUP')) |HGGROUP|>,% <matlab:webpub(whichpath('SET')) |SET|>,% <matlab:webpub(whichpath('GET')) |GET|>.%% Function implementationfunction [l_h, o_h, p_h, t_s] = ...    legendgroup(handle_plot, legend_plot, location, interpreter)if nargin<4,  interpreter = 'tex';    if nargin<3,  location = 'Best';  endendif ~iscell(handle_plot)    % typically, in the case we have single handle for each group    handle_plot = num2cell(handle_plot(:),2);endif ~iscell(legend_plot)    if ~ischar(legend_plot)        error('legendgroup:inputerror', ...            'second input must be a string or a cell of strings');    end    legend_plot = repmat({legend_plot},numel(handle_plot));    elseif ~isequal(numel(handle_plot),numel(legend_plot))    % one item for each group of objects    error('legendgroup:inputerror', ...        'input cells must contain same number of elements');endng = numel(handle_plot);handleGroup = cell(1,ng);for i=1:ng    handleGroup{i} = hggroup;    set(handle_plot{i},'Parent',handleGroup{i})    % include these hggroup in the legend    set(get(get(handleGroup{i},'Annotation'),'LegendInformation'),...        'IconDisplayStyle','on');endhandleGroup = cell2mat(handleGroup);[l_h, o_h, p_h, t_s] = legend(handleGroup, legend_plot, ...    'Location', location, 'Interpreter', interpreter );end % end of legendgroup##### SOURCE END #####-->  </body></html>

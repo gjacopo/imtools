@@ -1,223 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>CATSTRUCT - Concatenate structures.</title>
-    <meta name="generator" content="MATLAB 7.11">
-    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-    <meta name="DC.date" content="2011-05-10">
-    <meta name="DC.source" content="catstruct.m">
-    <style type="text/css">
-
-body {
-  background-color: white;
-  margin:10px;
-}
-
-h1 {
-  color: #990000; 
-  font-size: x-large;
-}
-
-h2 {
-  color: #990000;
-  font-size: medium;
-}
-
-/* Make the text shrink to fit narrow windows, but not stretch too far in 
-wide windows. */ 
-p,h1,h2,div.content div {
-  max-width: 600px;
-  /* Hack for IE6 */
-  width: auto !important; width: 600px;
-}
-
-pre.codeinput {
-  background: #EEEEEE;
-  padding: 10px;
-}
-@media print {
-  pre.codeinput {word-wrap:break-word; width:100%;}
-} 
-
-span.keyword {color: #0000FF}
-span.comment {color: #228B22}
-span.string {color: #A020F0}
-span.untermstring {color: #B20000}
-span.syscmd {color: #B28C00}
-
-pre.codeoutput {
-  color: #666666;
-  padding: 10px;
-}
-
-pre.error {
-  color: red;
-}
-
-p.footer {
-  text-align: right;
-  font-size: xx-small;
-  font-weight: lighter;
-  font-style: italic;
-  color: gray;
-}
-
-  </style>
-  </head>
-  <body>
-    <div class="content">
-      <h1>CATSTRUCT - Concatenate structures.</h1>
-      <!--introduction--><!--/introduction-->
-      <h2>Contents</h2>
-      <div>
-        <ul>
-          <li><a href="#1">Syntax <i>(i)</i></a></li>
-          <li><a href="#2">Syntax <i>(ii)</i></a></li>
-          <li><a href="#3">Remarks</a></li>
-          <li><a href="#4">Example:</a></li>
-          <li><a href="#5">Acknowledgment</a></li>
-          <li><a href="#6">Contact</a></li>
-          <li><a href="#7">See also</a></li>
-          <li><a href="#8">Function implementation</a></li>
-        </ul>
-      </div>
-      <h2>Syntax <i>(i)</i><a name="1"></a></h2>
-      <pre>   X = CATSTRUCT(S1,S2,S3,...)</pre>
-      <p>Concate the structures <tt>S1</tt>, <tt>S2</tt>, ... into one
-        structure <tt>X</tt>.</p>
-      <h2>Syntax <i>(ii)</i><a name="2"></a></h2>
-      <pre>   CATSTRUCT(S1,S2,'sorted')</pre>
-      <p>Sort the fieldnames alphabetically.</p>
-      <h2>Remarks<a name="3"></a></h2>
-      <div>
-        <ul>
-          <li>If a fieldname occurs more than once in the argument list,
-            only the last occurence is used, and the fields are
-            alphabetically sorted.</li>
-        </ul>
-      </div>
-      <div>
-        <ul>
-          <li>To sort the fieldnames of a structure <tt>A</tt> use:</li>
-        </ul>
-      </div>
-      <pre>   A = CATSTRUCT(A,'sorted') ;</pre>
-      <div>
-        <ul>
-          <li>To concatenate two similar array of structs use simple
-            concatenation:</li>
-        </ul>
-      </div>
-      <pre>   A = dir('*.mat') ; B = dir('*.m') ; C = [A ; B] ;</pre>
-      <div>
-        <ul>
-          <li>When there is nothing to concatenate, the result will be
-            an empty struct (<tt>(0,0)</tt> struct array with no
-            fields).</li>
-        </ul>
-      </div>
-      <h2>Example:<a name="4"></a></h2>
-      <pre>   A.name = 'Me' ; B.income = 99999 ;
-   X = CATSTRUCT(A,B)
-   % -&gt; X.name = 'Me';  X.income = 99999 ;</pre>
-      <h2>Acknowledgment<a name="5"></a></h2>
-      <p>for Matlab R13 and up - version 2.2 (oct 2008) © <a href="mailto:jos@jasen.nl">Jos
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>  <head>    <meta content="text/html; charset=UTF-8" http-equiv="content-type">    <title>CATSTRUCT - Concatenate structures.</title>    <meta name="generator" content="MATLAB 7.11">    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">    <meta name="DC.date" content="2011-05-10">    <meta name="DC.source" content="catstruct.m">    <style type="text/css">body {  background-color: white;  margin:10px;}h1 {  color: #990000;   font-size: x-large;}h2 {  color: #990000;  font-size: medium;}/* Make the text shrink to fit narrow windows, but not stretch too far in wide windows. */ p,h1,h2,div.content div {  max-width: 600px;  /* Hack for IE6 */  width: auto !important; width: 600px;}pre.codeinput {  background: #EEEEEE;  padding: 10px;}@media print {  pre.codeinput {word-wrap:break-word; width:100%;}} span.keyword {color: #0000FF}span.comment {color: #228B22}span.string {color: #A020F0}span.untermstring {color: #B20000}span.syscmd {color: #B28C00}pre.codeoutput {  color: #666666;  padding: 10px;}pre.error {  color: red;}p.footer {  text-align: right;  font-size: xx-small;  font-weight: lighter;  font-style: italic;  color: gray;}  </style>  </head>  <body>    <div class="content">      <h1>CATSTRUCT - Concatenate structures.</h1>      <!--introduction--><!--/introduction-->      <h2>Contents</h2>      <div>        <ul>          <li><a href="#1">Syntax <i>(i)</i></a></li>          <li><a href="#2">Syntax <i>(ii)</i></a></li>          <li><a href="#3">Remarks</a></li>          <li><a href="#4">Example:</a></li>          <li><a href="#5">Acknowledgment</a></li>          <li><a href="#7">See also</a></li>          <li><a href="#8">Function implementation</a></li>        </ul>      </div>      <h2>Syntax <i>(i)</i><a name="1"></a></h2>      <pre>   X = CATSTRUCT(S1,S2,S3,...)</pre>      <p>Concate the structures <tt>S1</tt>, <tt>S2</tt>, ... into one        structure <tt>X</tt>.</p>      <h2>Syntax <i>(ii)</i><a name="2"></a></h2>      <pre>   CATSTRUCT(S1,S2,'sorted')</pre>      <p>Sort the fieldnames alphabetically.</p>      <h2>Remarks<a name="3"></a></h2>      <div>        <ul>          <li>If a fieldname occurs more than once in the argument list, only            the last occurence is used, and the fields are alphabetically            sorted.</li>        </ul>      </div>      <div>        <ul>          <li>To sort the fieldnames of a structure <tt>A</tt> use:</li>        </ul>      </div>      <pre>   A = CATSTRUCT(A,'sorted') ;</pre>      <div>        <ul>          <li>To concatenate two similar array of structs use simple            concatenation:</li>        </ul>      </div>      <pre>   A = dir('*.mat') ; B = dir('*.m') ; C = [A ; B] ;</pre>      <div>        <ul>          <li>When there is nothing to concatenate, the result will be an empty            struct (<tt>(0,0)</tt> struct array with no fields).</li>        </ul>      </div>      <h2>Example:<a name="4"></a></h2>      <pre>   A.name = 'Me' ; B.income = 99999 ;   X = CATSTRUCT(A,B)   % -&gt; X.name = 'Me';  X.income = 99999 ;</pre>      <h2>Acknowledgment<a name="5"></a></h2>      <p>for Matlab R13 and up - version 2.2 (oct 2008) © <a href="mailto:jos@jasen.nl">Jos
 
 
-          van der Geest</a></p>
-      <h2>See also<a name="7"></a></h2>
-      <p>Related: <a href="MERGESTRUCT.html"><tt>MERGESTRUCT</tt></a>.
-        Called: <a href="matlab:webpub%28whichpath%28%27CAT%27%29%29"><tt>CAT</tt></a>,
-        <a href="matlab:webpub%28whichpath%28%27STRUCT%27%29%29"><tt>STRUCT</tt></a>,
-        <a href="matlab:webpub%28whichpath%28%27FIELDNAMES%27%29%29"><tt>FIELDNAMES</tt></a>,
-        <a href="matlab:webpub%28whichpath%28%27STRUCT2CELL%27%29%29"><tt>STRUCT2CELL</tt></a>.</p>
-      <pre class="codeinput"><span class="comment">% History</span>
-<span class="comment">% Created:  2005</span>
-<span class="comment">% Revisions</span>
-<span class="comment">%   2.0 (sep 2007) removed bug when dealing with fields containing cell</span>
-<span class="comment">%                  arrays (Thanks to Rene Willemink)</span>
-<span class="comment">%   2.1 (sep 2008) added warning and error identifiers</span>
-<span class="comment">%   2.2 (oct 2008) fixed error when dealing with empty structs (Thanks to</span>
-<span class="comment">%                  Lars Barring)</span>
-</pre>
-      <h2>Function implementation<a name="8"></a></h2>
-      <pre class="codeinput"><span class="keyword">function</span> A = catstruct(varargin)
-
-N = nargin ;
-
-error(nargchk(1,Inf,N)) ;
-
-<span class="keyword">if</span> ~isstruct(varargin{end}),
-    <span class="keyword">if</span> isequal(varargin{end},<span class="string">'sorted'</span>),
-        sorted = 1 ;
-        N = N-1 ;
-        <span class="keyword">if</span> N &lt; 1,
-            A = struct([]) ;
-            <span class="keyword">return</span>
-        <span class="keyword">end</span>
-    <span class="keyword">else</span>
-        error(<span class="string">'catstruct:InvalidArgument'</span>,<span
-class="string">'Last argument should be a structure, or the string "sorted".'</span>) ;
-    <span class="keyword">end</span>
-<span class="keyword">else</span>
-    sorted = 0 ;
-<span class="keyword">end</span>
-
-FN = cell(N,1) ;
-VAL = cell(N,1) ;
-
-<span class="keyword">for</span> ii=1:N,
-    X = varargin{ii} ;
-    <span class="keyword">if</span> ~isstruct(X),
-        error(<span class="string">'catstruct:InvalidArgument'</span>,[<span
-class="string">'Argument #'</span> num2str(ii) <span
-class="string">' is not a structure.'</span>]) ;
-    <span class="keyword">end</span>
-    <span class="keyword">if</span> ~isempty(X),
-        <span class="comment">% empty structs are ignored</span>
-        FN{ii} = fieldnames(X) ;
-        VAL{ii} = struct2cell(X) ;
-    <span class="keyword">end</span>
-<span class="keyword">end</span>
-
-FN = cat(1,FN{:}) ;
-VAL = cat(1,VAL{:}) ;
-[UFN,ind] = unique(FN) ;
-
-<span class="keyword">if</span> numel(UFN) ~= numel(FN),
-    warning(<span class="string">'catstruct:DuplicatesFound'</span>,<span
-class="string">'Duplicate fieldnames found. Last value is used and fields are sorted'</span>) ;
-    sorted = 1 ;
-<span class="keyword">end</span>
-
-<span class="keyword">if</span> sorted,
-    VAL = VAL(ind) ;
-    FN = FN(ind) ;
-<span class="keyword">end</span>
-
-<span class="keyword">if</span> ~isempty(FN),
-    <span class="comment">% This deals correctly with cell arrays</span>
-    A = cell2struct(VAL, FN);
-<span class="keyword">else</span>
-    A = struct([]) ;
-<span class="keyword">end</span> <span class="comment">% end of catstruct</span>
-</pre> </div>
-    <!--##### SOURCE BEGIN #####
-%% CATSTRUCT - Concatenate structures.%%% Syntax _(i)_%     X = CATSTRUCT(S1,S2,S3,...) %% Concate the structures |S1|, |S2|, ... into one structure |X|. %%% Syntax _(ii)_ 
-%     CATSTRUCT(S1,S2,'sorted') %% Sort the fieldnames alphabetically.%%% Remarks% * If a fieldname occurs more than once in the argument list, only the last%   occurence is used, and the fields are alphabetically sorted.%
-% * To sort the fieldnames of a structure |A| use:%%     A = CATSTRUCT(A,'sorted') ;%% * To concatenate two similar array of structs use simple concatenation:%%     A = dir('*.mat') ; B = dir('*.m') ; C = [A ; B] ;%
-% * When there is nothing to concatenate, the result will be an empty%   struct (|(0,0)| struct array with no fields). %%% Example:%     A.name = 'Me' ; B.income = 99999 ; %     X = CATSTRUCT(A,B) %     % -> X.name = 'Me';  X.income = 99999 ;%
-%% Acknowledgment% for Matlab R13 and up - version 2.2 (oct 2008)% © <mailto:jos@jasen.nl Jos van der Geest>%%% Contact% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)%%% See also
-% Related:% <MERGESTRUCT.html |MERGESTRUCT|>.% Called:% <matlab:webpub(whichpath('CAT')) |CAT|>,% <matlab:webpub(whichpath('STRUCT')) |STRUCT|>,% <matlab:webpub(whichpath('FIELDNAMES')) |FIELDNAMES|>,% <matlab:webpub(whichpath('STRUCT2CELL')) |STRUCT2CELL|>.% History
-% Created:  2005% Revisions%   2.0 (sep 2007) removed bug when dealing with fields containing cell%                  arrays (Thanks to Rene Willemink) %   2.1 (sep 2008) added warning and error identifiers%   2.2 (oct 2008) fixed error when dealing with empty structs (Thanks to%                  Lars Barring)%% Function implementation
-function A = catstruct(varargin)N = nargin ;error(nargchk(1,Inf,N)) ;if ~isstruct(varargin{end}),    if isequal(varargin{end},'sorted'),        sorted = 1 ;
-        N = N-1 ;        if N < 1,            A = struct([]) ;            return        end    else        error('catstruct:InvalidArgument','Last argument should be a structure, or the string "sorted".') ;    end
-else    sorted = 0 ;endFN = cell(N,1) ;VAL = cell(N,1) ;for ii=1:N,    X = varargin{ii} ;    if ~isstruct(X),
-        error('catstruct:InvalidArgument',['Argument #' num2str(ii) ' is not a structure.']) ;    end    if ~isempty(X),        % empty structs are ignored        FN{ii} = fieldnames(X) ;        VAL{ii} = struct2cell(X) ;     endend
-FN = cat(1,FN{:}) ;VAL = cat(1,VAL{:}) ;[UFN,ind] = unique(FN) ;if numel(UFN) ~= numel(FN),    warning('catstruct:DuplicatesFound','Duplicate fieldnames found. Last value is used and fields are sorted') ;    sorted = 1 ;
-endif sorted,    VAL = VAL(ind) ;    FN = FN(ind) ;endif ~isempty(FN),    % This deals correctly with cell arrays    A = cell2struct(VAL, FN);
-else    A = struct([]) ;end % end of catstruct##### SOURCE END #####-->
-    
-  </body>
-</html>
+          van der Geest</a></p>      <h2>See also<a name="7"></a></h2>      <p>Related: <a href="MERGESTRUCT.html"><tt>MERGESTRUCT</tt></a>. Called:        <a href="matlab:webpub%28whichpath%28%27CAT%27%29%29"><tt>CAT</tt></a>,        <a href="matlab:webpub%28whichpath%28%27STRUCT%27%29%29"><tt>STRUCT</tt></a>,        <a href="matlab:webpub%28whichpath%28%27FIELDNAMES%27%29%29"><tt>FIELDNAMES</tt></a>,        <a href="matlab:webpub%28whichpath%28%27STRUCT2CELL%27%29%29"><tt>STRUCT2CELL</tt></a>.</p>      <pre class="codeinput"><span class="comment">% History</span><span class="comment">% Created:  2005</span><span class="comment">% Revisions</span><span class="comment">%   2.0 (sep 2007) removed bug when dealing with fields containing cell</span><span class="comment">%                  arrays (Thanks to Rene Willemink)</span><span class="comment">%   2.1 (sep 2008) added warning and error identifiers</span><span class="comment">%   2.2 (oct 2008) fixed error when dealing with empty structs (Thanks to</span><span class="comment">%                  Lars Barring)</span></pre>      <h2>Function implementation<a name="8"></a></h2>      <pre class="codeinput"><span class="keyword">function</span> A = catstruct(varargin)N = nargin ;error(nargchk(1,Inf,N)) ;<span class="keyword">if</span> ~isstruct(varargin{end}),    <span class="keyword">if</span> isequal(varargin{end},<span class="string">'sorted'</span>),        sorted = 1 ;        N = N-1 ;        <span class="keyword">if</span> N &lt; 1,            A = struct([]) ;            <span class="keyword">return</span>        <span class="keyword">end</span>    <span class="keyword">else</span>        error(<span class="string">'catstruct:InvalidArgument'</span>,<span class="string">'Last argument should be a structure, or the string "sorted".'</span>) ;    <span class="keyword">end</span><span class="keyword">else</span>    sorted = 0 ;<span class="keyword">end</span>FN = cell(N,1) ;VAL = cell(N,1) ;<span class="keyword">for</span> ii=1:N,    X = varargin{ii} ;    <span class="keyword">if</span> ~isstruct(X),        error(<span class="string">'catstruct:InvalidArgument'</span>,[<span class="string">'Argument #'</span> num2str(ii) <spanclass="string">' is not a structure.'</span>]) ;    <span class="keyword">end</span>    <span class="keyword">if</span> ~isempty(X),        <span class="comment">% empty structs are ignored</span>        FN{ii} = fieldnames(X) ;        VAL{ii} = struct2cell(X) ;    <span class="keyword">end</span><span class="keyword">end</span>FN = cat(1,FN{:}) ;VAL = cat(1,VAL{:}) ;[UFN,ind] = unique(FN) ;<span class="keyword">if</span> numel(UFN) ~= numel(FN),    warning(<span class="string">'catstruct:DuplicatesFound'</span>,<span class="string">'Duplicate fieldnames found. Last value is used and fields are sorted'</span>) ;    sorted = 1 ;<span class="keyword">end</span><span class="keyword">if</span> sorted,    VAL = VAL(ind) ;    FN = FN(ind) ;<span class="keyword">end</span><span class="keyword">if</span> ~isempty(FN),    <span class="comment">% This deals correctly with cell arrays</span>    A = cell2struct(VAL, FN);<span class="keyword">else</span>    A = struct([]) ;<span class="keyword">end</span> <span class="comment">% end of catstruct</span></pre> </div>    <!--##### SOURCE BEGIN #####%% CATSTRUCT - Concatenate structures.%%% Syntax _(i)_%     X = CATSTRUCT(S1,S2,S3,...) %% Concate the structures |S1|, |S2|, ... into one structure |X|. %%% Syntax _(ii)_ %     CATSTRUCT(S1,S2,'sorted') %% Sort the fieldnames alphabetically.%%% Remarks% * If a fieldname occurs more than once in the argument list, only the last%   occurence is used, and the fields are alphabetically sorted.%% * To sort the fieldnames of a structure |A| use:%%     A = CATSTRUCT(A,'sorted') ;%% * To concatenate two similar array of structs use simple concatenation:%%     A = dir('*.mat') ; B = dir('*.m') ; C = [A ; B] ;%% * When there is nothing to concatenate, the result will be an empty%   struct (|(0,0)| struct array with no fields). %%% Example:%     A.name = 'Me' ; B.income = 99999 ; %     X = CATSTRUCT(A,B) %     % -> X.name = 'Me';  X.income = 99999 ;%%% Acknowledgment% for Matlab R13 and up - version 2.2 (oct 2008)% © <mailto:jos@jasen.nl Jos van der Geest>%%% Contact% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)%%% See also% Related:% <MERGESTRUCT.html |MERGESTRUCT|>.% Called:% <matlab:webpub(whichpath('CAT')) |CAT|>,% <matlab:webpub(whichpath('STRUCT')) |STRUCT|>,% <matlab:webpub(whichpath('FIELDNAMES')) |FIELDNAMES|>,% <matlab:webpub(whichpath('STRUCT2CELL')) |STRUCT2CELL|>.% History% Created:  2005% Revisions%   2.0 (sep 2007) removed bug when dealing with fields containing cell%                  arrays (Thanks to Rene Willemink) %   2.1 (sep 2008) added warning and error identifiers%   2.2 (oct 2008) fixed error when dealing with empty structs (Thanks to%                  Lars Barring)%% Function implementationfunction A = catstruct(varargin)N = nargin ;error(nargchk(1,Inf,N)) ;if ~isstruct(varargin{end}),    if isequal(varargin{end},'sorted'),        sorted = 1 ;        N = N-1 ;        if N < 1,            A = struct([]) ;            return        end    else        error('catstruct:InvalidArgument','Last argument should be a structure, or the string "sorted".') ;    endelse    sorted = 0 ;endFN = cell(N,1) ;VAL = cell(N,1) ;for ii=1:N,    X = varargin{ii} ;    if ~isstruct(X),        error('catstruct:InvalidArgument',['Argument #' num2str(ii) ' is not a structure.']) ;    end    if ~isempty(X),        % empty structs are ignored        FN{ii} = fieldnames(X) ;        VAL{ii} = struct2cell(X) ;     endendFN = cat(1,FN{:}) ;VAL = cat(1,VAL{:}) ;[UFN,ind] = unique(FN) ;if numel(UFN) ~= numel(FN),    warning('catstruct:DuplicatesFound','Duplicate fieldnames found. Last value is used and fields are sorted') ;    sorted = 1 ;endif sorted,    VAL = VAL(ind) ;    FN = FN(ind) ;endif ~isempty(FN),    % This deals correctly with cell arrays    A = cell2struct(VAL, FN);else    A = struct([]) ;end % end of catstruct##### SOURCE END #####-->  </body></html>

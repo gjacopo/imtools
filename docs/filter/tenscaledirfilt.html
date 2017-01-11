@@ -1,189 +1,1 @@
-
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   <!--
-This HTML was auto-generated from MATLAB code.
-To make changes, update the MATLAB code and republish this document.
-      --><title>TENSCALEDIRFILT - Scale adaptive directional Gaussian filtering.</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-14"><meta name="DC.source" content="tenscaledirfilt.m"><style type="text/css">
-html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
-
-html { min-height:100%; margin-bottom:1px; }
-html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
-html body td { vertical-align:top; text-align:left; }
-
-h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
-h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
-h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
-
-a { color:#005fce; text-decoration:none; }
-a:hover { color:#005fce; text-decoration:underline; }
-a:visited { color:#004aa0; text-decoration:none; }
-
-p { padding:0px; margin:0px 0px 20px; }
-img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
-
-ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
-ul li { padding:0px; margin:0px 0px 7px 0px; }
-ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
-ul li ol li { list-style:decimal; }
-ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
-ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
-ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
-ol li ol li { list-style-type:lower-alpha; }
-ol li ul { padding-top:7px; }
-ol li ul li { list-style:square; }
-
-.content { font-size:1.2em; line-height:140%; padding: 20px; }
-
-pre, tt, code { font-size:12px; }
-pre { margin:0px 0px 20px; }
-pre.error { color:red; }
-pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
-pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
-
-@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
-
-span.keyword { color:#0000FF }
-span.comment { color:#228B22 }
-span.string { color:#A020F0 }
-span.untermstring { color:#B20000 }
-span.syscmd { color:#B28C00 }
-
-.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
-.footer p { margin:0px; }
-
-  </style></head><body><div class="content"><h1>TENSCALEDIRFILT - Scale adaptive directional Gaussian filtering.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Syntax</a></li><li><a href="#3">Inputs</a></li><li><a href="#4">Property [propertyname  propertyvalues]</a></li><li><a href="#5">Output</a></li><li><a href="#6">Reference</a></li><li><a href="#7">Credit</a></li><li><a href="#8">See also</a></li><li><a href="#9">Function implementation</a></li></ul></div><h2>Description<a name="1"></a></h2><p>Perform Gaussian adaptive directional filtering along some tensor field using a local adaptive scale as in [PVS06].</p><h2>Syntax<a name="2"></a></h2><pre>   F = TENSCALEDIRFILT(I, T);
-   F = TENSCALEDIRFILT(I, T, S);
-   F = TENSCALEDIRFILT(I, T, 'Property', propertyvalue, ...);</pre><h2>Inputs<a name="3"></a></h2><p><b><tt>T</tt></b> : either a vector field (matrix of size <tt>(n,n,2)</tt>) or a tensor field     (matrix of size <tt>(n,n,2,2)</tt>).</p><h2>Property [propertyname  propertyvalues]<a name="4"></a></h2><p><b><tt>aecc</tt></b> : tuning parameter &gt;0 setting an upper-bound on the eccentricity     of the filtering; default: <tt>aecc=0.5</tt> for a maximum eccentricity of 3     when the anisotropy of the tensor field is 1.</p><p><b><tt>sig1, sig2</tt></b> : when <tt>T</tt> is a vector (and not tensor) field, these parameters     parse the (locally constant) directional scales of the anisotropic     Gaussian kernel: <tt>sig1</tt> is the (fixed) scale along the elongated     orientation and is greater than or equal to <tt>sig2</tt>; default: <tt>sig1=8</tt>     and <tt>sig2=3</tt> when <tt>T</tt> is a vector field; otherwise, note that when <tt>T</tt>     is a tensor, the same variables are estimated (locally) from the eigen-     values of <tt>T</tt>.</p><h2>Output<a name="5"></a></h2><p><b><tt>F</tt></b> : image filtered using the tensor field given in input.</p><h2>Reference<a name="6"></a></h2><p>[PVS06]  T.Q. Pham, L.J. van Vliet, and K. Schutte: "Robust fusion of      irregularly sampled data using adaptive normalized convolution",      EURASIP Journal on Applied Signal Processing, 2006(1:12), ID 83268,      2006.      <a href="http://www.hindawi.com/journals/asp/2006/083268/abs/">http://www.hindawi.com/journals/asp/2006/083268/abs/</a></p><h2>Credit<a name="7"></a></h2><p><a href="mailto:grazzja@lanl.gov">J.Grazzini</a> (ISR-2/LANL)</p><h2>See also<a name="8"></a></h2><p>Related: <a href="CONVOLUTION.html"><tt>CONVOLUTION</tt></a>, <a href="TENSANIFILT.html"><tt>TENSANIFILT</tt></a>, <a href="ADAPTIVEFILT.html"><tt>ADAPTIVEFILT</tt></a>, <a href="GEODESICFILT.html"><tt>GEODESICFILT</tt></a>, <a href="MDLFILT.html"><tt>MDLFILT</tt></a>. Called: <a href="TENSCALEDIRFILT_BASE.html"><tt>TENSCALEDIRFILT_BASE</tt></a>.</p><h2>Function implementation<a name="9"></a></h2><pre class="codeinput"><span class="keyword">function</span> F = tenscaledirfilt(I,T,varargin)
-</pre><p>parsing and checking parameters</p><pre class="codeinput">error(nargchk(2, 13, nargin, <span class="string">'struct'</span>));
-error(nargoutchk(1, 1, nargout, <span class="string">'struct'</span>));
-
-<span class="keyword">if</span> ~isnumeric(I)
-    error(<span class="string">'tenscaledirfilt:errorinput'</span>,<span class="string">'a matrix is required in input'</span>);
-<span class="keyword">elseif</span> size(T,4)&gt;2
-    error(<span class="string">'tenscaledirfilt:errorinput'</span>,<span class="string">'T must be a tensor field or a vector field'</span>);
-<span class="keyword">end</span>
-
-p = createParser(<span class="string">'TENSCALEDIRFILT'</span>);
-p.addOptional(<span class="string">'S'</span>,[], @(x)isnumeric(x) &amp;&amp; all(x(:)&gt;0));
-p.addParamValue(<span class="string">'sig1'</span>,8, @(x)isscalar(x) &amp;&amp; x&gt;0);
-p.addParamValue(<span class="string">'sig2'</span>,3, @(x)isscalar(x) &amp;&amp; x&gt;0);
-p.addParamValue(<span class="string">'nthe'</span>, 12, @(x)isscalar(x) &amp;&amp; round(x)==x);
-p.addParamValue(<span class="string">'nsig'</span>, 5, @(x)isscalar(x) &amp;&amp; round(x)==x);
-p.addParamValue(<span class="string">'nani'</span>, 4, @(x)isscalar(x) &amp;&amp; round(x)==x);
-p.addParamValue(<span class="string">'aecc'</span>, 0.5, @(x)isscalar(x) &amp;&amp; round(x)==x);
-p.addParamValue(<span class="string">'ani'</span>, false, @(x)islogical(x));
-
-<span class="comment">% parse and validate all input arguments</span>
-p.parse(varargin{:});
-p = getvarParser(p);
-</pre><p>main computation</p><pre class="codeinput">F = tenscaledirfilt_base(I, T, p.S, p.sig1, p.sig2, <span class="keyword">...</span>
-    p.nsig, p.nthe, p.nani, p.aecc, p.ani);
-
-<span class="keyword">if</span> p.disp
-    figure, imagesc(rescale(F,0,1)), axis <span class="string">image</span> <span class="string">off</span>;
-    <span class="keyword">if</span> size(F,3)==1, colormap <span class="string">gray</span>; <span class="keyword">end</span>;
-    title(<span class="string">'adaptively filtered image'</span>);
-<span class="keyword">end</span>
-</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of tenscaledirfilt</span>
-</pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.14<br></p></div><!--
-##### SOURCE BEGIN #####
-%% TENSCALEDIRFILT - Scale adaptive directional Gaussian filtering.
-%
-%% Description
-% Perform Gaussian adaptive directional filtering along some tensor field
-% using a local adaptive scale as in [PVS06].
-%
-%% Syntax
-%     F = TENSCALEDIRFILT(I, T);
-%     F = TENSCALEDIRFILT(I, T, S);
-%     F = TENSCALEDIRFILT(I, T, 'Property', propertyvalue, ...);
-%
-%% Inputs
-% *|T|* : either a vector field (matrix of size |(n,n,2)|) or a tensor field 
-%     (matrix of size |(n,n,2,2)|).
-%  
-%% Property [propertyname  propertyvalues]
-% *|aecc|* : tuning parameter >0 setting an upper-bound on the eccentricity
-%     of the filtering; default: |aecc=0.5| for a maximum eccentricity of 3 
-%     when the anisotropy of the tensor field is 1.
-%
-% *|sig1, sig2|* : when |T| is a vector (and not tensor) field, these parameters
-%     parse the (locally constant) directional scales of the anisotropic
-%     Gaussian kernel: |sig1| is the (fixed) scale along the elongated 
-%     orientation and is greater than or equal to |sig2|; default: |sig1=8|
-%     and |sig2=3| when |T| is a vector field; otherwise, note that when |T|
-%     is a tensor, the same variables are estimated (locally) from the eigen-
-%     values of |T|. 
-%
-%% Output
-% *|F|* : image filtered using the tensor field given in input.
-%
-%% Reference
-% [PVS06]  T.Q. Pham, L.J. van Vliet, and K. Schutte: "Robust fusion of 
-%      irregularly sampled data using adaptive normalized convolution",  
-%      EURASIP Journal on Applied Signal Processing, 2006(1:12), ID 83268,
-%      2006.
-%      <http://www.hindawi.com/journals/asp/2006/083268/abs/>
-%
-%% Credit
-% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)
-% 
-%% See also
-% Related:
-% <CONVOLUTION.html |CONVOLUTION|>,
-% <TENSANIFILT.html |TENSANIFILT|>,
-% <ADAPTIVEFILT.html |ADAPTIVEFILT|>,
-% <GEODESICFILT.html |GEODESICFILT|>,
-% <MDLFILT.html |MDLFILT|>.
-% Called:
-% <TENSCALEDIRFILT_BASE.html |TENSCALEDIRFILT_BASE|>.
-
-%% Function implementation
-function F = tenscaledirfilt(I,T,varargin)
-
-%%
-% parsing and checking parameters
-error(nargchk(2, 13, nargin, 'struct'));
-error(nargoutchk(1, 1, nargout, 'struct'));
-
-if ~isnumeric(I)
-    error('tenscaledirfilt:errorinput','a matrix is required in input'); 
-elseif size(T,4)>2
-    error('tenscaledirfilt:errorinput','T must be a tensor field or a vector field');
-end
-
-p = createParser('TENSCALEDIRFILT');   
-p.addOptional('S',[], @(x)isnumeric(x) && all(x(:)>0)); 
-p.addParamValue('sig1',8, @(x)isscalar(x) && x>0); 
-p.addParamValue('sig2',3, @(x)isscalar(x) && x>0); 
-p.addParamValue('nthe', 12, @(x)isscalar(x) && round(x)==x);
-p.addParamValue('nsig', 5, @(x)isscalar(x) && round(x)==x);
-p.addParamValue('nani', 4, @(x)isscalar(x) && round(x)==x);
-p.addParamValue('aecc', 0.5, @(x)isscalar(x) && round(x)==x);
-p.addParamValue('ani', false, @(x)islogical(x));
-
-% parse and validate all input arguments
-p.parse(varargin{:}); 
-p = getvarParser(p);                                                            
-
-%%
-% main computation
-
-F = tenscaledirfilt_base(I, T, p.S, p.sig1, p.sig2, ...
-    p.nsig, p.nthe, p.nani, p.aecc, p.ani);
-
-if p.disp
-    figure, imagesc(rescale(F,0,1)), axis image off;
-    if size(F,3)==1, colormap gray; end;
-    title('adaptively filtered image');
-end
-
-end % end of tenscaledirfilt
-
-##### SOURCE END #####
---></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>  <head>    <meta content="text/html; charset=utf-8" http-equiv="content-type">    <!--This HTML was auto-generated from MATLAB code.To make changes, update the MATLAB code and republish this document.      -->    <title>TENSCALEDIRFILT - Scale adaptive directional Gaussian filtering.</title>    <meta name="generator" content="MATLAB 7.14">    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">    <meta name="DC.date" content="2012-11-14">    <meta name="DC.source" content="tenscaledirfilt.m">    <style type="text/css">html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}html { min-height:100%; margin-bottom:1px; }html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }html body td { vertical-align:top; text-align:left; }h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }a { color:#005fce; text-decoration:none; }a:hover { color:#005fce; text-decoration:underline; }a:visited { color:#004aa0; text-decoration:none; }p { padding:0px; margin:0px 0px 20px; }img { padding:0px; margin:0px 0px 20px; border:none; }p img, pre img, tt img, li img { margin-bottom:0px; } ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }ul li { padding:0px; margin:0px 0px 7px 0px; }ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }ul li ol li { list-style:decimal; }ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }ol li ol li { list-style-type:lower-alpha; }ol li ul { padding-top:7px; }ol li ul li { list-style:square; }.content { font-size:1.2em; line-height:140%; padding: 20px; }pre, tt, code { font-size:12px; }pre { margin:0px 0px 20px; }pre.error { color:red; }pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }span.keyword { color:#0000FF }span.comment { color:#228B22 }span.string { color:#A020F0 }span.untermstring { color:#B20000 }span.syscmd { color:#B28C00 }.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }.footer p { margin:0px; }  </style>  </head>  <body>    <div class="content">      <h1>TENSCALEDIRFILT - Scale adaptive directional Gaussian filtering.</h1>      <!--introduction--><!--/introduction-->      <h2>Contents</h2>      <div>        <ul>          <li><a href="#1">Description</a></li>          <li><a href="#2">Syntax</a></li>          <li><a href="#3">Inputs</a></li>          <li><a href="#4">Property [propertyname propertyvalues]</a></li>          <li><a href="#5">Output</a></li>          <li><a href="#6">Reference</a></li>          <li><a href="#8">See also</a></li>          <li><a href="#9">Function implementation</a></li>        </ul>      </div>      <h2>Description<a name="1"></a></h2>      <p>Perform Gaussian adaptive directional filtering along some tensor field        using a local adaptive scale as in [PVS06].</p>      <h2>Syntax<a name="2"></a></h2>      <pre>   F = TENSCALEDIRFILT(I, T);   F = TENSCALEDIRFILT(I, T, S);   F = TENSCALEDIRFILT(I, T, 'Property', propertyvalue, ...);</pre>      <h2>Inputs<a name="3"></a></h2>      <p><b><tt>T</tt></b> : either a vector field (matrix of size <tt>(n,n,2)</tt>)        or a tensor field (matrix of size <tt>(n,n,2,2)</tt>).</p>      <h2>Property [propertyname propertyvalues]<a name="4"></a></h2>      <p><b><tt>aecc</tt></b> : tuning parameter &gt;0 setting an upper-bound on        the eccentricity of the filtering; default: <tt>aecc=0.5</tt> for a        maximum eccentricity of 3 when the anisotropy of the tensor field is 1.</p>      <p><b><tt>sig1, sig2</tt></b> : when <tt>T</tt> is a vector (and not        tensor) field, these parameters parse the (locally constant) directional        scales of the anisotropic Gaussian kernel: <tt>sig1</tt> is the (fixed)        scale along the elongated orientation and is greater than or equal to <tt>sig2</tt>;        default: <tt>sig1=8</tt> and <tt>sig2=3</tt> when <tt>T</tt> is a        vector field; otherwise, note that when <tt>T</tt> is a tensor, the        same variables are estimated (locally) from the eigen- values of <tt>T</tt>.</p>      <h2>Output<a name="5"></a></h2>      <p><b><tt>F</tt></b> : image filtered using the tensor field given in        input.</p>      <h2>Reference<a name="6"></a></h2>      <p>[PVS06] T.Q. Pham, L.J. van Vliet, and K. Schutte: "Robust fusion of        irregularly sampled data using adaptive normalized convolution", EURASIP        Journal on Applied Signal Processing, 2006(1:12), ID 83268, 2006. <a href="http://www.hindawi.com/journals/asp/2006/083268/abs/">http://www.hindawi.com/journals/asp/2006/083268/abs/</a></p>      <h2>See also<a name="8"></a></h2>      <p>Related: <a href="CONVOLUTION.html"><tt>CONVOLUTION</tt></a>, <a href="TENSANIFILT.html"><tt>TENSANIFILT</tt></a>,        <a href="ADAPTIVEFILT.html"><tt>ADAPTIVEFILT</tt></a>, <a href="GEODESICFILT.html"><tt>GEODESICFILT</tt></a>,        <a href="MDLFILT.html"><tt>MDLFILT</tt></a>. Called: <a href="TENSCALEDIRFILT_BASE.html"><tt>TENSCALEDIRFILT_BASE</tt></a>.</p>      <h2>Function implementation<a name="9"></a></h2>      <pre class="codeinput"><span class="keyword">function</span> F = tenscaledirfilt(I,T,varargin)</pre>      <p>parsing and checking parameters</p>      <pre class="codeinput">error(nargchk(2, 13, nargin, <span class="string">'struct'</span>));error(nargoutchk(1, 1, nargout, <span class="string">'struct'</span>));<span class="keyword">if</span> ~isnumeric(I)    error(<span class="string">'tenscaledirfilt:errorinput'</span>,<span class="string">'a matrix is required in input'</span>);<span class="keyword">elseif</span> size(T,4)&gt;2    error(<span class="string">'tenscaledirfilt:errorinput'</span>,<span class="string">'T must be a tensor field or a vector field'</span>);<span class="keyword">end</span>p = createParser(<span class="string">'TENSCALEDIRFILT'</span>);p.addOptional(<span class="string">'S'</span>,[], @(x)isnumeric(x) &amp;&amp; all(x(:)&gt;0));p.addParamValue(<span class="string">'sig1'</span>,8, @(x)isscalar(x) &amp;&amp; x&gt;0);p.addParamValue(<span class="string">'sig2'</span>,3, @(x)isscalar(x) &amp;&amp; x&gt;0);p.addParamValue(<span class="string">'nthe'</span>, 12, @(x)isscalar(x) &amp;&amp; round(x)==x);p.addParamValue(<span class="string">'nsig'</span>, 5, @(x)isscalar(x) &amp;&amp; round(x)==x);p.addParamValue(<span class="string">'nani'</span>, 4, @(x)isscalar(x) &amp;&amp; round(x)==x);p.addParamValue(<span class="string">'aecc'</span>, 0.5, @(x)isscalar(x) &amp;&amp; round(x)==x);p.addParamValue(<span class="string">'ani'</span>, false, @(x)islogical(x));<span class="comment">% parse and validate all input arguments</span>p.parse(varargin{:});p = getvarParser(p);</pre>      <p>main computation</p>      <pre class="codeinput">F = tenscaledirfilt_base(I, T, p.S, p.sig1, p.sig2, <spanclass="keyword">...</span>    p.nsig, p.nthe, p.nani, p.aecc, p.ani);<span class="keyword">if</span> p.disp    figure, imagesc(rescale(F,0,1)), axis <span class="string">image</span> <spanclass="string">off</span>;    <span class="keyword">if</span> size(F,3)==1, colormap <span class="string">gray</span>; <spanclass="keyword">end</span>;    title(<span class="string">'adaptively filtered image'</span>);<span class="keyword">end</span></pre>      <pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of tenscaledirfilt</span></pre></div>    <!--##### SOURCE BEGIN #####%% TENSCALEDIRFILT - Scale adaptive directional Gaussian filtering.%%% Description% Perform Gaussian adaptive directional filtering along some tensor field% using a local adaptive scale as in [PVS06].%%% Syntax%     F = TENSCALEDIRFILT(I, T);%     F = TENSCALEDIRFILT(I, T, S);%     F = TENSCALEDIRFILT(I, T, 'Property', propertyvalue, ...);%%% Inputs% *|T|* : either a vector field (matrix of size |(n,n,2)|) or a tensor field %     (matrix of size |(n,n,2,2)|).%  %% Property [propertyname  propertyvalues]% *|aecc|* : tuning parameter >0 setting an upper-bound on the eccentricity%     of the filtering; default: |aecc=0.5| for a maximum eccentricity of 3 %     when the anisotropy of the tensor field is 1.%% *|sig1, sig2|* : when |T| is a vector (and not tensor) field, these parameters%     parse the (locally constant) directional scales of the anisotropic%     Gaussian kernel: |sig1| is the (fixed) scale along the elongated %     orientation and is greater than or equal to |sig2|; default: |sig1=8|%     and |sig2=3| when |T| is a vector field; otherwise, note that when |T|%     is a tensor, the same variables are estimated (locally) from the eigen-%     values of |T|. %%% Output% *|F|* : image filtered using the tensor field given in input.%%% Reference% [PVS06]  T.Q. Pham, L.J. van Vliet, and K. Schutte: "Robust fusion of %      irregularly sampled data using adaptive normalized convolution",  %      EURASIP Journal on Applied Signal Processing, 2006(1:12), ID 83268,%      2006.%      <http://www.hindawi.com/journals/asp/2006/083268/abs/>%%% Credit% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)% %% See also% Related:% <CONVOLUTION.html |CONVOLUTION|>,% <TENSANIFILT.html |TENSANIFILT|>,% <ADAPTIVEFILT.html |ADAPTIVEFILT|>,% <GEODESICFILT.html |GEODESICFILT|>,% <MDLFILT.html |MDLFILT|>.% Called:% <TENSCALEDIRFILT_BASE.html |TENSCALEDIRFILT_BASE|>.%% Function implementationfunction F = tenscaledirfilt(I,T,varargin)%%% parsing and checking parameterserror(nargchk(2, 13, nargin, 'struct'));error(nargoutchk(1, 1, nargout, 'struct'));if ~isnumeric(I)    error('tenscaledirfilt:errorinput','a matrix is required in input'); elseif size(T,4)>2    error('tenscaledirfilt:errorinput','T must be a tensor field or a vector field');endp = createParser('TENSCALEDIRFILT');   p.addOptional('S',[], @(x)isnumeric(x) && all(x(:)>0)); p.addParamValue('sig1',8, @(x)isscalar(x) && x>0); p.addParamValue('sig2',3, @(x)isscalar(x) && x>0); p.addParamValue('nthe', 12, @(x)isscalar(x) && round(x)==x);p.addParamValue('nsig', 5, @(x)isscalar(x) && round(x)==x);p.addParamValue('nani', 4, @(x)isscalar(x) && round(x)==x);p.addParamValue('aecc', 0.5, @(x)isscalar(x) && round(x)==x);p.addParamValue('ani', false, @(x)islogical(x));% parse and validate all input argumentsp.parse(varargin{:}); p = getvarParser(p);                                                            %%% main computationF = tenscaledirfilt_base(I, T, p.S, p.sig1, p.sig2, ...    p.nsig, p.nthe, p.nani, p.aecc, p.ani);if p.disp    figure, imagesc(rescale(F,0,1)), axis image off;    if size(F,3)==1, colormap gray; end;    title('adaptively filtered image');endend % end of tenscaledirfilt##### SOURCE END #####-->  </body></html>

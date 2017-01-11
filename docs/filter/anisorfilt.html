@@ -1,244 +1,1 @@
-
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   <!--
-This HTML was auto-generated from MATLAB code.
-To make changes, update the MATLAB code and republish this document.
-      --><title>ANISORFILT - Morphological anisotropic diffusion.</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-14"><meta name="DC.source" content="anisorfilt.m"><style type="text/css">
-html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
-
-html { min-height:100%; margin-bottom:1px; }
-html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
-html body td { vertical-align:top; text-align:left; }
-
-h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
-h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
-h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
-
-a { color:#005fce; text-decoration:none; }
-a:hover { color:#005fce; text-decoration:underline; }
-a:visited { color:#004aa0; text-decoration:none; }
-
-p { padding:0px; margin:0px 0px 20px; }
-img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
-
-ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
-ul li { padding:0px; margin:0px 0px 7px 0px; }
-ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
-ul li ol li { list-style:decimal; }
-ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
-ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
-ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
-ol li ol li { list-style-type:lower-alpha; }
-ol li ul { padding-top:7px; }
-ol li ul li { list-style:square; }
-
-.content { font-size:1.2em; line-height:140%; padding: 20px; }
-
-pre, tt, code { font-size:12px; }
-pre { margin:0px 0px 20px; }
-pre.error { color:red; }
-pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
-pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
-
-@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
-
-span.keyword { color:#0000FF }
-span.comment { color:#228B22 }
-span.string { color:#A020F0 }
-span.untermstring { color:#B20000 }
-span.syscmd { color:#B28C00 }
-
-.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
-.footer p { margin:0px; }
-
-  </style></head><body><div class="content"><h1>ANISORFILT - Morphological anisotropic diffusion.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Syntax</a></li><li><a href="#3">Inputs</a></li><li><a href="#4">Property [propertyname  propertyvalues]</a></li><li><a href="#5">Output</a></li><li><a href="#6">Examples</a></li><li><a href="#7">Reference</a></li><li><a href="#8">Credit</a></li><li><a href="#9">See also</a></li><li><a href="#10">Function implementation</a></li></ul></div><h2>Description<a name="1"></a></h2><p>Perform the morphological anisotropic diffusion (erosion or dilation) using the orientation information derived from the anisotropic continous scale model of [BBW07] and numerical scheme therein.</p><h2>Syntax<a name="2"></a></h2><pre>   u = ANISORFILT(I);
-   u = ANISORFILT(I, method, niter, delta, nu, ...
-                         'Property', propertyvalue, ...);</pre><h2>Inputs<a name="3"></a></h2><p><b><tt>I</tt></b> : an input image with size <tt>(X,Y,C)</tt>, where <tt>C&gt;1</tt> when <tt>I</tt> is multichannel.</p><p><b><tt>method</tt></b> : (optional) string setting the morphological operation applied;     it is either:</p><div><ul><li><tt>'dil'</tt> for anisotropic dilation (typically when one wants to  continue/         prolong bright structures on a dark background, like edge map         continuation),</li><li><tt>'ero'</tt> for anisotropic erosion (when continuing dark structures on a         dark background);</li></ul></div><p>default: <tt>method='dil'</tt>.</p><p><b><tt>niter</tt></b> : (optional) number of iterations; default: <tt>niter=10</tt>.</p><p><b><tt>delta</tt></b> : (optional) <img src="anisorfilt_eq71031.png" alt="$\delta$"> of the numerical scheme; default: <tt>delta=0.5</tt>.</p><p><b><tt>nu</tt></b> : (optional) nonegative integer <img src="anisorfilt_eq69196.png" alt="$\nu$"> which influences the propagation     of the structures in the normal to the gradient direction; default:     <tt>nu=4</tt>.</p><h2>Property [propertyname  propertyvalues]<a name="4"></a></h2><p><b><tt>'rho', 'sig', 'der', 'int', 'samp'</tt></b> : see <tt>GSTSMOOTH</tt> and <tt>ANISOR</tt> for     the description of these variables; default: <tt>rho=3, sig=1, der='fast',     int='fast'</tt> and <tt>samp=1</tt>.</p><h2>Output<a name="5"></a></h2><p><b><tt>u</tt></b> : output of the anisotropic diffusion scheme.</p><h2>Examples<a name="6"></a></h2><pre class="language-matlab">a=zeros(50,50); a(25,10:20)=1;  a(25,30:40)=1; <span class="comment">% input</span>
-method=<span class="string">'dil'</span>; delta=.5; niter=5; nu=5; <span class="comment">%orientation diffusion parameters</span>
-rho=3; sigma=1; der=<span class="string">'sob'</span>; int=<span class="string">'fast'</span>; samp=1; <span class="comment">%derivation parameters</span>
-u=anisorfilt(a, method, niter, delta, nu, <span class="string">'rho'</span>, rho, <span class="string">'sig'</span>, sigma, <span class="keyword">...</span>
-             <span class="string">'der'</span>, der, <span class="string">'int'</span>, int, <span class="string">'samp'</span>, samp);
-figure, imagesc(u), colormap <span class="string">gray</span>;
-</pre><pre class="language-matlab">[x,y,a] = createleakcircle(60,<span class="string">'grid'</span>,20,5,128);  imshow(a);
-method=<span class="string">'dil'</span>; delta=.5; niter=20; nu=5; <span class="comment">%orientation diffusion parameters</span>
-rho=3; sigma=1; der=<span class="string">'fast'</span>; int=<span class="string">'fast'</span>; samp=1; <span class="comment">%derivation parameters</span>
-u=anisorfilt(a, method, niter, delta, nu, <span class="string">'rho'</span>, rho, <span class="string">'sig'</span>, sigma, <span class="keyword">...</span>
-             <span class="string">'der'</span>, der, <span class="string">'int'</span>, int, <span class="string">'samp'</span>, samp);
-figure, imshow(u);
-u = bwmorph(u&gt;0.8,<span class="string">'thin'</span>,Inf);
-figure, imshow(u);
-</pre><h2>Reference<a name="7"></a></h2><p>[BBW07]  M. Breu&szlig;, B. Burgeth and J. Weickert: "Anisotropic continuous-scale      morphology", Proc. IbPRIA, LNCS 4478, pp. 515-522, Springer, 2007.      <a href="http://www.springerlink.com/content/1hm264w86111m148/">http://www.springerlink.com/content/1hm264w86111m148/</a></p><h2>Credit<a name="8"></a></h2><p><a href="mailto:grazzja@lanl.gov">J.Grazzini</a> &amp; <a href="mailto:prasad@lanl.gov">L.Prasad</a> (ISR-2/LANL)</p><h2>See also<a name="9"></a></h2><p>Related: <a href="../../derive/html/GSTSMOOTH.html"><tt>GSTSMOOTH</tt></a>, <a href="ANISOR.html"><tt>ANISOR</tt></a>. Called: <a href="ANISORFILT_BASE.html"><tt>ANISORFILT_BASE</tt></a>.</p><h2>Function implementation<a name="10"></a></h2><pre class="codeinput"><span class="keyword">function</span> u = anisorfilt(I,varargin)
-</pre><p>parsing parameters</p><pre class="codeinput">error(nargchk(1, 23, nargin, <span class="string">'struct'</span>));
-error(nargoutchk(1, 1, nargout, <span class="string">'struct'</span>));
-
-<span class="comment">% mandatory parameter</span>
-<span class="keyword">if</span> ~(isnumeric(I) || islogical(I))
-    error(<span class="string">'anisorfilt:inputerror'</span>,<span class="string">'a matrix is required in input'</span>);
-<span class="keyword">end</span>
-
-<span class="comment">% optional parameters</span>
-p = createParser(<span class="string">'ANISORFILT'</span>);
-<span class="comment">% principal optional parameters</span>
-p.addOptional(<span class="string">'method'</span>, <span class="string">'dil'</span>, @(x)ischar(x) &amp;&amp; any(strcmpi(x,{<span class="string">'dil'</span>,<span class="string">'ero'</span>})));
-p.addOptional(<span class="string">'niter'</span>, 10, @(x)isscalar(x) &amp;&amp; x&gt;0);
-p.addOptional(<span class="string">'delta'</span>, 0.5, @(x)isscalar(x) &amp;&amp; x&gt;0);
-p.addOptional(<span class="string">'nu'</span>, 4, @(x)isscalar(x) &amp;&amp; x&gt;=0);
-p.addParamValue(<span class="string">'rho'</span>, 3, @(x)isscalar(x) &amp;&amp; isfloat(x) &amp;&amp; x&gt;=0);
-p.addParamValue(<span class="string">'sig'</span>, 1, @(x)isscalar(x) &amp;&amp; isfloat(x) &amp;&amp; x&gt;=0);
-p.addParamValue(<span class="string">'der'</span>, <span class="string">'fast'</span>, @(x)islogical(x) || (ischar(x) &amp;&amp; <span class="keyword">...</span>
-    any(strcmpi(x,{<span class="string">'matlab'</span>,<span class="string">'vista'</span>,<span class="string">'fast'</span>,<span class="string">'conv'</span>,<span class="string">'diag'</span>, <span class="keyword">...</span>
-    <span class="string">'tap5'</span>,<span class="string">'sob'</span>,<span class="string">'opt'</span>,<span class="string">'ana'</span>}))));
-p.addParamValue(<span class="string">'int'</span>, <span class="string">'fast'</span>, @(x)islogical(x) || (ischar(x) &amp;&amp; <span class="keyword">...</span>
-    any(strcmpi(x,{<span class="string">'matlab'</span>,<span class="string">'conv'</span>,<span class="string">'fast'</span>,<span class="string">'ani'</span>}))));
-p.addParamValue(<span class="string">'samp'</span>, 2, @(x)isscalar(x) &amp;&amp; round(x)==x &amp;&amp; x&gt;=1 &amp;&amp; x&lt;=5);
-
-<span class="comment">% parse and validate all input arguments</span>
-p.parse(varargin{:});
-p = getvarParser(p);
-</pre><p>checking/setting parameter</p><pre class="codeinput"><span class="comment">% the sign of delta defines if the morphological operation is a dilation ('+'</span>
-<span class="comment">% sign) or an erosion ('-' sign)</span>
-<span class="keyword">if</span> strcmpi(p.method,<span class="string">'ero'</span>),  p.delta = -p.delta;    <span class="keyword">end</span>
-</pre><p>perform the anisotropic diffusion</p><pre class="codeinput">u = anisorfilt_base(I, p.niter, p.delta, p.nu, p.rho, p.sig, <span class="keyword">...</span>
-    p.der, p.int, p.samp);
-
-<span class="keyword">if</span> p.disp
-    figure, imagesc(rescale(u,0,1)), colormap <span class="string">gray</span>, axis <span class="string">image</span> <span class="string">off</span>;
-    title(<span class="string">'continuous-scale anisotropic diffusion'</span>)
-<span class="keyword">end</span>
-</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of anisorfilt</span>
-</pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.14<br></p></div><!--
-##### SOURCE BEGIN #####
-%% ANISORFILT - Morphological anisotropic diffusion. 
-%
-%% Description
-% Perform the morphological anisotropic diffusion (erosion or dilation) 
-% using the orientation information derived from the anisotropic continous
-% scale model of [BBW07] and numerical scheme therein.
-%
-%% Syntax
-%     u = ANISORFILT(I);
-%     u = ANISORFILT(I, method, niter, delta, nu, ...
-%                           'Property', propertyvalue, ...);
-%
-%% Inputs
-% *|I|* : an input image with size |(X,Y,C)|, where |C>1| when |I| is multichannel.
-%
-% *|method|* : (optional) string setting the morphological operation applied;
-%     it is either:
-%
-% * |'dil'| for anisotropic dilation (typically when one wants to  continue/
-%         prolong bright structures on a dark background, like edge map
-%         continuation),
-% * |'ero'| for anisotropic erosion (when continuing dark structures on a
-%         dark background);
-%
-% default: |method='dil'|.
-%
-% *|niter|* : (optional) number of iterations; default: |niter=10|.
-%
-% *|delta|* : (optional) $\delta$ of the numerical scheme; default: |delta=0.5|.
-%
-% *|nu|* : (optional) nonegative integer $\nu$ which influences the propagation
-%     of the structures in the normal to the gradient direction; default: 
-%     |nu=4|.
-%
-%% Property [propertyname  propertyvalues]
-% *|'rho', 'sig', 'der', 'int', 'samp'|* : see |GSTSMOOTH| and |ANISOR| for
-%     the description of these variables; default: |rho=3, sig=1, der='fast',
-%     int='fast'| and |samp=1|.
-%
-%% Output
-% *|u|* : output of the anisotropic diffusion scheme.
-%
-%% Examples
-%   a=zeros(50,50); a(25,10:20)=1;  a(25,30:40)=1; % input
-%   method='dil'; delta=.5; niter=5; nu=5; %orientation diffusion parameters
-%   rho=3; sigma=1; der='sob'; int='fast'; samp=1; %derivation parameters
-%   u=anisorfilt(a, method, niter, delta, nu, 'rho', rho, 'sig', sigma, ...
-%                'der', der, 'int', int, 'samp', samp);
-%   figure, imagesc(u), colormap gray;
-%
-%   [x,y,a] = createleakcircle(60,'grid',20,5,128);  imshow(a);
-%   method='dil'; delta=.5; niter=20; nu=5; %orientation diffusion parameters
-%   rho=3; sigma=1; der='fast'; int='fast'; samp=1; %derivation parameters
-%   u=anisorfilt(a, method, niter, delta, nu, 'rho', rho, 'sig', sigma, ...
-%                'der', der, 'int', int, 'samp', samp); 
-%   figure, imshow(u);
-%   u = bwmorph(u>0.8,'thin',Inf);
-%   figure, imshow(u);
-% 
-%% Reference
-% [BBW07]  M. Breuß, B. Burgeth and J. Weickert: "Anisotropic continuous-scale
-%      morphology", Proc. IbPRIA, LNCS 4478, pp. 515-522, Springer, 2007.	
-%      <http://www.springerlink.com/content/1hm264w86111m148/>
-%
-%% Credit
-% <mailto:grazzja@lanl.gov J.Grazzini> & <mailto:prasad@lanl.gov L.Prasad> (ISR-2/LANL)
-%
-%% See also
-% Related:
-% <../../derive/html/GSTSMOOTH.html |GSTSMOOTH|>,
-% <ANISOR.html |ANISOR|>.
-% Called:
-% <ANISORFILT_BASE.html |ANISORFILT_BASE|>.
-
-%% Function implementation
-function u = anisorfilt(I,varargin)
-
-%%
-% parsing parameters
-
-error(nargchk(1, 23, nargin, 'struct'));
-error(nargoutchk(1, 1, nargout, 'struct'));
-
-% mandatory parameter
-if ~(isnumeric(I) || islogical(I))
-    error('anisorfilt:inputerror','a matrix is required in input'); 
-end
-
-% optional parameters
-p = createParser('ANISORFILT');   
-% principal optional parameters
-p.addOptional('method', 'dil', @(x)ischar(x) && any(strcmpi(x,{'dil','ero'})));
-p.addOptional('niter', 10, @(x)isscalar(x) && x>0);
-p.addOptional('delta', 0.5, @(x)isscalar(x) && x>0);
-p.addOptional('nu', 4, @(x)isscalar(x) && x>=0);
-p.addParamValue('rho', 3, @(x)isscalar(x) && isfloat(x) && x>=0);
-p.addParamValue('sig', 1, @(x)isscalar(x) && isfloat(x) && x>=0);
-p.addParamValue('der', 'fast', @(x)islogical(x) || (ischar(x) && ...
-    any(strcmpi(x,{'matlab','vista','fast','conv','diag', ...
-    'tap5','sob','opt','ana'}))));
-p.addParamValue('int', 'fast', @(x)islogical(x) || (ischar(x) && ...
-    any(strcmpi(x,{'matlab','conv','fast','ani'}))));
-p.addParamValue('samp', 2, @(x)isscalar(x) && round(x)==x && x>=1 && x<=5);
-
-% parse and validate all input arguments
-p.parse(varargin{:}); 
-p = getvarParser(p);                                                            
-
-%% 
-% checking/setting parameter
-
-% the sign of delta defines if the morphological operation is a dilation ('+' 
-% sign) or an erosion ('-' sign)
-if strcmpi(p.method,'ero'),  p.delta = -p.delta;    end
-
-%%
-% perform the anisotropic diffusion
-u = anisorfilt_base(I, p.niter, p.delta, p.nu, p.rho, p.sig, ...
-    p.der, p.int, p.samp);
-
-if p.disp
-    figure, imagesc(rescale(u,0,1)), colormap gray, axis image off;
-    title('continuous-scale anisotropic diffusion')
-end
-
-end % end of anisorfilt
-
-##### SOURCE END #####
---></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>  <head>    <meta content="text/html; charset=utf-8" http-equiv="content-type">    <!--This HTML was auto-generated from MATLAB code.To make changes, update the MATLAB code and republish this document.      -->    <title>ANISORFILT - Morphological anisotropic diffusion.</title>    <meta name="generator" content="MATLAB 7.14">    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">    <meta name="DC.date" content="2012-11-14">    <meta name="DC.source" content="anisorfilt.m">    <style type="text/css">html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}html { min-height:100%; margin-bottom:1px; }html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }html body td { vertical-align:top; text-align:left; }h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }a { color:#005fce; text-decoration:none; }a:hover { color:#005fce; text-decoration:underline; }a:visited { color:#004aa0; text-decoration:none; }p { padding:0px; margin:0px 0px 20px; }img { padding:0px; margin:0px 0px 20px; border:none; }p img, pre img, tt img, li img { margin-bottom:0px; } ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }ul li { padding:0px; margin:0px 0px 7px 0px; }ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }ul li ol li { list-style:decimal; }ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }ol li ol li { list-style-type:lower-alpha; }ol li ul { padding-top:7px; }ol li ul li { list-style:square; }.content { font-size:1.2em; line-height:140%; padding: 20px; }pre, tt, code { font-size:12px; }pre { margin:0px 0px 20px; }pre.error { color:red; }pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }span.keyword { color:#0000FF }span.comment { color:#228B22 }span.string { color:#A020F0 }span.untermstring { color:#B20000 }span.syscmd { color:#B28C00 }.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }.footer p { margin:0px; }  </style>  </head>  <body>    <div class="content">      <h1>ANISORFILT - Morphological anisotropic diffusion.</h1>      <!--introduction--><!--/introduction-->      <h2>Contents</h2>      <div>        <ul>          <li><a href="#1">Description</a></li>          <li><a href="#2">Syntax</a></li>          <li><a href="#3">Inputs</a></li>          <li><a href="#4">Property [propertyname propertyvalues]</a></li>          <li><a href="#5">Output</a></li>          <li><a href="#6">Examples</a></li>          <li><a href="#7">Reference</a></li>          <li><a href="#9">See also</a></li>          <li><a href="#10">Function implementation</a></li>        </ul>      </div>      <h2>Description<a name="1"></a></h2>      <p>Perform the morphological anisotropic diffusion (erosion or dilation)        using the orientation information derived from the anisotropic continous        scale model of [BBW07] and numerical scheme therein.</p>      <h2>Syntax<a name="2"></a></h2>      <pre>   u = ANISORFILT(I);   u = ANISORFILT(I, method, niter, delta, nu, ...                         'Property', propertyvalue, ...);</pre>      <h2>Inputs<a name="3"></a></h2>      <p><b><tt>I</tt></b> : an input image with size <tt>(X,Y,C)</tt>, where <tt>C&gt;1</tt>        when <tt>I</tt> is multichannel.</p>      <p><b><tt>method</tt></b> : (optional) string setting the morphological        operation applied; it is either:</p>      <div>        <ul>          <li><tt>'dil'</tt> for anisotropic dilation (typically when one wants            to continue/ prolong bright structures on a dark background, like            edge map continuation),</li>          <li><tt>'ero'</tt> for anisotropic erosion (when continuing dark            structures on a dark background);</li>        </ul>      </div>      <p>default: <tt>method='dil'</tt>.</p>      <p><b><tt>niter</tt></b> : (optional) number of iterations; default: <tt>niter=10</tt>.</p>      <p><b><tt>delta</tt></b> : (optional) <img src="anisorfilt_eq71031.png" alt="$\delta$">        of the numerical scheme; default: <tt>delta=0.5</tt>.</p>      <p><b><tt>nu</tt></b> : (optional) nonegative integer <img src="anisorfilt_eq69196.png"          alt="$\nu$">        which influences the propagation of the structures in the normal to the        gradient direction; default: <tt>nu=4</tt>.</p>      <h2>Property [propertyname propertyvalues]<a name="4"></a></h2>      <p><b><tt>'rho', 'sig', 'der', 'int', 'samp'</tt></b> : see <tt>GSTSMOOTH</tt>        and <tt>ANISOR</tt> for the description of these variables; default: <tt>rho=3,          sig=1, der='fast', int='fast'</tt> and <tt>samp=1</tt>.</p>      <h2>Output<a name="5"></a></h2>      <p><b><tt>u</tt></b> : output of the anisotropic diffusion scheme.</p>      <h2>Examples<a name="6"></a></h2>      <pre class="language-matlab">a=zeros(50,50); a(25,10:20)=1;  a(25,30:40)=1; <spanclass="comment">% input</span>method=<span class="string">'dil'</span>; delta=.5; niter=5; nu=5; <span class="comment">%orientation diffusion parameters</span>rho=3; sigma=1; der=<span class="string">'sob'</span>; int=<span class="string">'fast'</span>; samp=1; <spanclass="comment">%derivation parameters</span>u=anisorfilt(a, method, niter, delta, nu, <span class="string">'rho'</span>, rho, <spanclass="string">'sig'</span>, sigma, <spanclass="keyword">...</span>             <span class="string">'der'</span>, der, <span class="string">'int'</span>, int, <spanclass="string">'samp'</span>, samp);figure, imagesc(u), colormap <span class="string">gray</span>;</pre>      <pre class="language-matlab">[x,y,a] = createleakcircle(60,<span class="string">'grid'</span>,20,5,128);  imshow(a);method=<span class="string">'dil'</span>; delta=.5; niter=20; nu=5; <span class="comment">%orientation diffusion parameters</span>rho=3; sigma=1; der=<span class="string">'fast'</span>; int=<span class="string">'fast'</span>; samp=1; <spanclass="comment">%derivation parameters</span>u=anisorfilt(a, method, niter, delta, nu, <span class="string">'rho'</span>, rho, <spanclass="string">'sig'</span>, sigma, <spanclass="keyword">...</span>             <span class="string">'der'</span>, der, <span class="string">'int'</span>, int, <spanclass="string">'samp'</span>, samp);figure, imshow(u);u = bwmorph(u&gt;0.8,<span class="string">'thin'</span>,Inf);figure, imshow(u);</pre>      <h2>Reference<a name="7"></a></h2>      <p>[BBW07] M. Breuß, B. Burgeth and J. Weickert: "Anisotropic        continuous-scale morphology", Proc. IbPRIA, LNCS 4478, pp. 515-522,        Springer, 2007. <a href="http://www.springerlink.com/content/1hm264w86111m148/">http://www.springerlink.com/content/1hm264w86111m148/</a></p>      <h2>See also<a name="9"></a></h2>      <p>Related: <a href="../../derive/html/GSTSMOOTH.html"><tt>GSTSMOOTH</tt></a>,        <a href="ANISOR.html"><tt>ANISOR</tt></a>. Called: <a href="ANISORFILT_BASE.html"><tt>ANISORFILT_BASE</tt></a>.</p>      <h2>Function implementation<a name="10"></a></h2>      <pre class="codeinput"><span class="keyword">function</span> u = anisorfilt(I,varargin)</pre>      <p>parsing parameters</p>      <pre class="codeinput">error(nargchk(1, 23, nargin, <span class="string">'struct'</span>));error(nargoutchk(1, 1, nargout, <span class="string">'struct'</span>));<span class="comment">% mandatory parameter</span><span class="keyword">if</span> ~(isnumeric(I) || islogical(I))    error(<span class="string">'anisorfilt:inputerror'</span>,<span class="string">'a matrix is required in input'</span>);<span class="keyword">end</span><span class="comment">% optional parameters</span>p = createParser(<span class="string">'ANISORFILT'</span>);<span class="comment">% principal optional parameters</span>p.addOptional(<span class="string">'method'</span>, <span class="string">'dil'</span>, @(x)ischar(x) &amp;&amp; any(strcmpi(x,{<spanclass="string">'dil'</span>,<spanclass="string">'ero'</span>})));p.addOptional(<span class="string">'niter'</span>, 10, @(x)isscalar(x) &amp;&amp; x&gt;0);p.addOptional(<span class="string">'delta'</span>, 0.5, @(x)isscalar(x) &amp;&amp; x&gt;0);p.addOptional(<span class="string">'nu'</span>, 4, @(x)isscalar(x) &amp;&amp; x&gt;=0);p.addParamValue(<span class="string">'rho'</span>, 3, @(x)isscalar(x) &amp;&amp; isfloat(x) &amp;&amp; x&gt;=0);p.addParamValue(<span class="string">'sig'</span>, 1, @(x)isscalar(x) &amp;&amp; isfloat(x) &amp;&amp; x&gt;=0);p.addParamValue(<span class="string">'der'</span>, <span class="string">'fast'</span>, @(x)islogical(x) || (ischar(x) &amp;&amp; <spanclass="keyword">...</span>    any(strcmpi(x,{<span class="string">'matlab'</span>,<span class="string">'vista'</span>,<spanclass="string">'fast'</span>,<spanclass="string">'conv'</span>,<spanclass="string">'diag'</span>, <spanclass="keyword">...</span>    <span class="string">'tap5'</span>,<span class="string">'sob'</span>,<span class="string">'opt'</span>,<spanclass="string">'ana'</span>}))));p.addParamValue(<span class="string">'int'</span>, <span class="string">'fast'</span>, @(x)islogical(x) || (ischar(x) &amp;&amp; <spanclass="keyword">...</span>    any(strcmpi(x,{<span class="string">'matlab'</span>,<span class="string">'conv'</span>,<spanclass="string">'fast'</span>,<spanclass="string">'ani'</span>}))));p.addParamValue(<span class="string">'samp'</span>, 2, @(x)isscalar(x) &amp;&amp; round(x)==x &amp;&amp; x&gt;=1 &amp;&amp; x&lt;=5);<span class="comment">% parse and validate all input arguments</span>p.parse(varargin{:});p = getvarParser(p);</pre>      <p>checking/setting parameter</p>      <pre class="codeinput"><span class="comment">% the sign of delta defines if the morphological operation is a dilation ('+'</span><span class="comment">% sign) or an erosion ('-' sign)</span><span class="keyword">if</span> strcmpi(p.method,<span class="string">'ero'</span>),  p.delta = -p.delta;    <spanclass="keyword">end</span></pre>      <p>perform the anisotropic diffusion</p>      <pre class="codeinput">u = anisorfilt_base(I, p.niter, p.delta, p.nu, p.rho, p.sig, <spanclass="keyword">...</span>    p.der, p.int, p.samp);<span class="keyword">if</span> p.disp    figure, imagesc(rescale(u,0,1)), colormap <span class="string">gray</span>, axis <spanclass="string">image</span> <spanclass="string">off</span>;    title(<span class="string">'continuous-scale anisotropic diffusion'</span>)<span class="keyword">end</span></pre>      <pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of anisorfilt</span></pre>      <p class="footer"><br>        Published with MATLAB® 7.14</p>    </div>    <!--##### SOURCE BEGIN #####%% ANISORFILT - Morphological anisotropic diffusion. %%% Description% Perform the morphological anisotropic diffusion (erosion or dilation) % using the orientation information derived from the anisotropic continous% scale model of [BBW07] and numerical scheme therein.%%% Syntax%     u = ANISORFILT(I);%     u = ANISORFILT(I, method, niter, delta, nu, ...%                           'Property', propertyvalue, ...);%%% Inputs% *|I|* : an input image with size |(X,Y,C)|, where |C>1| when |I| is multichannel.%% *|method|* : (optional) string setting the morphological operation applied;%     it is either:%% * |'dil'| for anisotropic dilation (typically when one wants to  continue/%         prolong bright structures on a dark background, like edge map%         continuation),% * |'ero'| for anisotropic erosion (when continuing dark structures on a%         dark background);%% default: |method='dil'|.%% *|niter|* : (optional) number of iterations; default: |niter=10|.%% *|delta|* : (optional) $\delta$ of the numerical scheme; default: |delta=0.5|.%% *|nu|* : (optional) nonegative integer $\nu$ which influences the propagation%     of the structures in the normal to the gradient direction; default: %     |nu=4|.%%% Property [propertyname  propertyvalues]% *|'rho', 'sig', 'der', 'int', 'samp'|* : see |GSTSMOOTH| and |ANISOR| for%     the description of these variables; default: |rho=3, sig=1, der='fast',%     int='fast'| and |samp=1|.%%% Output% *|u|* : output of the anisotropic diffusion scheme.%%% Examples%   a=zeros(50,50); a(25,10:20)=1;  a(25,30:40)=1; % input%   method='dil'; delta=.5; niter=5; nu=5; %orientation diffusion parameters%   rho=3; sigma=1; der='sob'; int='fast'; samp=1; %derivation parameters%   u=anisorfilt(a, method, niter, delta, nu, 'rho', rho, 'sig', sigma, ...%                'der', der, 'int', int, 'samp', samp);%   figure, imagesc(u), colormap gray;%%   [x,y,a] = createleakcircle(60,'grid',20,5,128);  imshow(a);%   method='dil'; delta=.5; niter=20; nu=5; %orientation diffusion parameters%   rho=3; sigma=1; der='fast'; int='fast'; samp=1; %derivation parameters%   u=anisorfilt(a, method, niter, delta, nu, 'rho', rho, 'sig', sigma, ...%                'der', der, 'int', int, 'samp', samp); %   figure, imshow(u);%   u = bwmorph(u>0.8,'thin',Inf);%   figure, imshow(u);% %% Reference% [BBW07]  M. Breuß, B. Burgeth and J. Weickert: "Anisotropic continuous-scale%      morphology", Proc. IbPRIA, LNCS 4478, pp. 515-522, Springer, 2007.	%      <http://www.springerlink.com/content/1hm264w86111m148/>%%% Credit% <mailto:grazzja@lanl.gov J.Grazzini> & <mailto:prasad@lanl.gov L.Prasad> (ISR-2/LANL)%%% See also% Related:% <../../derive/html/GSTSMOOTH.html |GSTSMOOTH|>,% <ANISOR.html |ANISOR|>.% Called:% <ANISORFILT_BASE.html |ANISORFILT_BASE|>.%% Function implementationfunction u = anisorfilt(I,varargin)%%% parsing parameterserror(nargchk(1, 23, nargin, 'struct'));error(nargoutchk(1, 1, nargout, 'struct'));% mandatory parameterif ~(isnumeric(I) || islogical(I))    error('anisorfilt:inputerror','a matrix is required in input'); end% optional parametersp = createParser('ANISORFILT');   % principal optional parametersp.addOptional('method', 'dil', @(x)ischar(x) && any(strcmpi(x,{'dil','ero'})));p.addOptional('niter', 10, @(x)isscalar(x) && x>0);p.addOptional('delta', 0.5, @(x)isscalar(x) && x>0);p.addOptional('nu', 4, @(x)isscalar(x) && x>=0);p.addParamValue('rho', 3, @(x)isscalar(x) && isfloat(x) && x>=0);p.addParamValue('sig', 1, @(x)isscalar(x) && isfloat(x) && x>=0);p.addParamValue('der', 'fast', @(x)islogical(x) || (ischar(x) && ...    any(strcmpi(x,{'matlab','vista','fast','conv','diag', ...    'tap5','sob','opt','ana'}))));p.addParamValue('int', 'fast', @(x)islogical(x) || (ischar(x) && ...    any(strcmpi(x,{'matlab','conv','fast','ani'}))));p.addParamValue('samp', 2, @(x)isscalar(x) && round(x)==x && x>=1 && x<=5);% parse and validate all input argumentsp.parse(varargin{:}); p = getvarParser(p);                                                            %% % checking/setting parameter% the sign of delta defines if the morphological operation is a dilation ('+' % sign) or an erosion ('-' sign)if strcmpi(p.method,'ero'),  p.delta = -p.delta;    end%%% perform the anisotropic diffusionu = anisorfilt_base(I, p.niter, p.delta, p.nu, p.rho, p.sig, ...    p.der, p.int, p.samp);if p.disp    figure, imagesc(rescale(u,0,1)), colormap gray, axis image off;    title('continuous-scale anisotropic diffusion')endend % end of anisorfilt##### SOURCE END #####-->  </body></html>

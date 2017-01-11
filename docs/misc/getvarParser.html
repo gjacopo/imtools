@@ -1,166 +1,1 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>GETVARPARSER
-      - Return an instance of the inputParser class.</title>
-    <meta name="generator" content="MATLAB 7.11">
-    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-    <meta name="DC.date" content="2011-05-04">
-    <meta name="DC.source" content="getvarParser.m">
-    <style type="text/css">
-
-body {
-  background-color: white;
-  margin:10px;
-}
-
-h1 {
-  color: #990000; 
-  font-size: x-large;
-}
-
-h2 {
-  color: #990000;
-  font-size: medium;
-}
-
-/* Make the text shrink to fit narrow windows, but not stretch too far in 
-wide windows. */ 
-p,h1,h2,div.content div {
-  max-width: 600px;
-  /* Hack for IE6 */
-  width: auto !important; width: 600px;
-}
-
-pre.codeinput {
-  background: #EEEEEE;
-  padding: 10px;
-}
-@media print {
-  pre.codeinput {word-wrap:break-word; width:100%;}
-} 
-
-span.keyword {color: #0000FF}
-span.comment {color: #228B22}
-span.string {color: #A020F0}
-span.untermstring {color: #B20000}
-span.syscmd {color: #B28C00}
-
-pre.codeoutput {
-  color: #666666;
-  padding: 10px;
-}
-
-pre.error {
-  color: red;
-}
-
-p.footer {
-  text-align: right;
-  font-size: xx-small;
-  font-weight: lighter;
-  font-style: italic;
-  color: gray;
-}
-
-  </style>
-  </head>
-  <body>
-    <div class="content">
-      <h1>GETVARPARSER - Return an instance of the
-        inputParser class.</h1>
-      <!--introduction--><!--/introduction-->
-      <h2>Contents</h2>
-      <div>
-        <ul>
-          <li><a href="#1">Syntax</a></li>
-          <li><a href="#2">Input</a></li>
-          <li><a href="#3">Output</a></li>
-          <li><a href="#4">Credit</a></li>
-          <li><a href="#5">See also</a></li>
-          <li><a href="#6">Function implementation</a></li>
-        </ul>
-      </div>
-      <h2>Syntax<a name="1"></a></h2>
-      <pre>     param = GETVARPARSER(p);</pre>
-      <h2>Input<a name="2"></a></h2>
-      <pre> p : an instance of the inputParser class.</pre>
-      <h2>Output<a name="3"></a></h2>
-      <pre> param : full list of parameters contained in the input Parser structure.</pre>
-      <h2>See also<a name="5"></a></h2>
-      <pre>Related: CREATEPARSER, INPUTPARSER.</pre>
-      <h2>Function implementation<a name="6"></a></h2>
-      <pre class="codeinput"><span class="keyword">function</span> param = getvarParser(p)
-
-<span class="comment">% get the variables entered with a 'parse' structure (in p.Results.parse)</span>
-param = p.Results.parse;
-
-<span class="comment">% fill unexisting fields with other entered values (in p.Results)</span>
-fields = fieldnames(p.Results);
-<span class="keyword">for</span> ip=1:numel(fields)
-    <span class="keyword">if</span> ~isfield(param,fields{ip})
-        param.(fields{ip}) = p.Results.(fields{ip});
-    <span class="keyword">end</span>
-<span class="keyword">end</span>
-
-<span class="comment">% param.FunctionName = p.FunctionName</span>
-
-<span class="comment">% old approach</span>
-<span class="comment">% p = p.Results;</span>
-<span class="comment">% fields = fieldnames(p)</span>
-<span class="comment">% for ip=1:numel(fields)</span>
-<span class="comment">%     eval([genvarname(fields{ip}) '= p.(fields{ip});']);</span>
-<span class="comment">% end</span>
-<span class="comment">% % possibly overwrite variables when a 'param' variable has been passed,</span>
-<span class="comment">% % while unpassed default values are kept</span>
-<span class="comment">% if ~isempty(param)</span>
-<span class="comment">%     fields = fieldnames(param);</span>
-<span class="comment">%     for ip=1:numel(fields)</span>
-<span class="comment">%         eval([genvarname(fields{ip}) '= param.(fields{ip});']);</span>
-<span class="comment">%     end</span>
-<span class="comment">% end</span>
-<span class="comment">% p=[]; param=[];</span>
-
-<span class="comment">% special case (predefined verbose and debug fields)</span>
-<span class="keyword">if</span> param.debug,  param.verb = true;  param.disp = true;  <span
-class="keyword">end</span>
-
-<span class="keyword">if</span> param.debug,
-    disp([<span class="string">'in '</span> p.FunctionName <span class="string">':'</span>]);
-    disp(param);
-<span class="keyword">end</span>
-
-<span class="keyword">end</span>
-</pre>
-    </div>
-    <!--##### SOURCE BEGIN #####
-%% GETVARPARSER - Return an instance  of the inputParser class.%
-%% Syntax%       param = GETVARPARSER(p);
-%%% Input 
-%   p : an instance of the inputParser class.% 
-%% Output%   param : full list of parameters contained in the input Parser structure.
-%%% Credit
-% J.Grazzini (ISR-2/LANL)%% See also  
-%  Related: CREATEPARSER, INPUTPARSER. %% Function implementation
-function param = getvarParser(p)% get the variables entered with a 'parse' structure (in p.Results.parse)
-param = p.Results.parse;% fill unexisting fields with other entered values (in p.Results)
-fields = fieldnames(p.Results);for ip=1:numel(fields)
-    if ~isfield(param,fields{ip})        param.(fields{ip}) = p.Results.(fields{ip});
-    endend
-% param.FunctionName = p.FunctionName
-% old approach
-% p = p.Results;% fields = fieldnames(p)
-% for ip=1:numel(fields)%     eval([genvarname(fields{ip}) '= p.(fields{ip});']);
-% end% % possibly overwrite variables when a 'param' variable has been passed,
-% % while unpassed default values are kept% if ~isempty(param)                                                   
-%     fields = fieldnames(param);%     for ip=1:numel(fields)
-%         eval([genvarname(fields{ip}) '= param.(fields{ip});']);%     end
-% end% p=[]; param=[];                                                      
-% special case (predefined verbose and debug fields)
-if param.debug,  param.verb = true;  param.disp = true;  endif param.debug,
-    disp(['in ' p.FunctionName ':']);    disp(param);    
-endend
-    ##### SOURCE END #####
---></body>
-</html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>  <head>    <meta content="text/html; charset=UTF-8" http-equiv="content-type">    <title>GETVARPARSER - Return an instance of the inputParser class.</title>    <meta name="generator" content="MATLAB 7.11">    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">    <meta name="DC.date" content="2011-05-04">    <meta name="DC.source" content="getvarParser.m">    <style type="text/css">body {  background-color: white;  margin:10px;}h1 {  color: #990000;   font-size: x-large;}h2 {  color: #990000;  font-size: medium;}/* Make the text shrink to fit narrow windows, but not stretch too far in wide windows. */ p,h1,h2,div.content div {  max-width: 600px;  /* Hack for IE6 */  width: auto !important; width: 600px;}pre.codeinput {  background: #EEEEEE;  padding: 10px;}@media print {  pre.codeinput {word-wrap:break-word; width:100%;}} span.keyword {color: #0000FF}span.comment {color: #228B22}span.string {color: #A020F0}span.untermstring {color: #B20000}span.syscmd {color: #B28C00}pre.codeoutput {  color: #666666;  padding: 10px;}pre.error {  color: red;}p.footer {  text-align: right;  font-size: xx-small;  font-weight: lighter;  font-style: italic;  color: gray;}  </style>  </head>  <body>    <div class="content">      <h1>GETVARPARSER - Return an instance of the inputParser class.</h1>      <!--introduction--><!--/introduction-->      <h2>Contents</h2>      <div>        <ul>          <li><a href="#1">Syntax</a></li>          <li><a href="#2">Input</a></li>          <li><a href="#3">Output</a></li>          <li><a href="#5">See also</a></li>          <li><a href="#6">Function implementation</a></li>        </ul>      </div>      <h2>Syntax<a name="1"></a></h2>      <pre>     param = GETVARPARSER(p);</pre>      <h2>Input<a name="2"></a></h2>      <pre> p : an instance of the inputParser class.</pre>      <h2>Output<a name="3"></a></h2>      <pre> param : full list of parameters contained in the input Parser structure.</pre>      <h2>See also<a name="5"></a></h2>      <pre>Related: CREATEPARSER, INPUTPARSER.</pre>      <h2>Function implementation<a name="6"></a></h2>      <pre class="codeinput"><span class="keyword">function</span> param = getvarParser(p)<span class="comment">% get the variables entered with a 'parse' structure (in p.Results.parse)</span>param = p.Results.parse;<span class="comment">% fill unexisting fields with other entered values (in p.Results)</span>fields = fieldnames(p.Results);<span class="keyword">for</span> ip=1:numel(fields)    <span class="keyword">if</span> ~isfield(param,fields{ip})        param.(fields{ip}) = p.Results.(fields{ip});    <span class="keyword">end</span><span class="keyword">end</span><span class="comment">% param.FunctionName = p.FunctionName</span><span class="comment">% old approach</span><span class="comment">% p = p.Results;</span><span class="comment">% fields = fieldnames(p)</span><span class="comment">% for ip=1:numel(fields)</span><span class="comment">%     eval([genvarname(fields{ip}) '= p.(fields{ip});']);</span><span class="comment">% end</span><span class="comment">% % possibly overwrite variables when a 'param' variable has been passed,</span><span class="comment">% % while unpassed default values are kept</span><span class="comment">% if ~isempty(param)</span><span class="comment">%     fields = fieldnames(param);</span><span class="comment">%     for ip=1:numel(fields)</span><span class="comment">%         eval([genvarname(fields{ip}) '= param.(fields{ip});']);</span><span class="comment">%     end</span><span class="comment">% end</span><span class="comment">% p=[]; param=[];</span><span class="comment">% special case (predefined verbose and debug fields)</span><span class="keyword">if</span> param.debug,  param.verb = true;  param.disp = true;  <spanclass="keyword">end</span><span class="keyword">if</span> param.debug,    disp([<span class="string">'in '</span> p.FunctionName <span class="string">':'</span>]);    disp(param);<span class="keyword">end</span><span class="keyword">end</span></pre> </div>    <!--##### SOURCE BEGIN #####%% GETVARPARSER - Return an instance  of the inputParser class.%%% Syntax%       param = GETVARPARSER(p);%%% Input %   p : an instance of the inputParser class.% %% Output%   param : full list of parameters contained in the input Parser structure.%%% Credit% J.Grazzini (ISR-2/LANL)%% See also  %  Related: CREATEPARSER, INPUTPARSER. %% Function implementationfunction param = getvarParser(p)% get the variables entered with a 'parse' structure (in p.Results.parse)param = p.Results.parse;% fill unexisting fields with other entered values (in p.Results)fields = fieldnames(p.Results);for ip=1:numel(fields)    if ~isfield(param,fields{ip})        param.(fields{ip}) = p.Results.(fields{ip});    endend% param.FunctionName = p.FunctionName% old approach% p = p.Results;% fields = fieldnames(p)% for ip=1:numel(fields)%     eval([genvarname(fields{ip}) '= p.(fields{ip});']);% end% % possibly overwrite variables when a 'param' variable has been passed,% % while unpassed default values are kept% if ~isempty(param)                                                   %     fields = fieldnames(param);%     for ip=1:numel(fields)%         eval([genvarname(fields{ip}) '= param.(fields{ip});']);%     end% end% p=[]; param=[];                                                      % special case (predefined verbose and debug fields)if param.debug,  param.verb = true;  param.disp = true;  endif param.debug,    disp(['in ' p.FunctionName ':']);    disp(param);    endend    ##### SOURCE END #####-->  </body></html>

@@ -1,820 +1,1 @@
-
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   <!--
-This HTML was auto-generated from MATLAB code.
-To make changes, update the MATLAB code and republish this document.
-      --><title>fuzzrampimpulse_base</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-14"><meta name="DC.source" content="fuzzrampimpulse_base.m"><style type="text/css">
-html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
-
-html { min-height:100%; margin-bottom:1px; }
-html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
-html body td { vertical-align:top; text-align:left; }
-
-h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
-h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
-h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
-
-a { color:#005fce; text-decoration:none; }
-a:hover { color:#005fce; text-decoration:underline; }
-a:visited { color:#004aa0; text-decoration:none; }
-
-p { padding:0px; margin:0px 0px 20px; }
-img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
-
-ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
-ul li { padding:0px; margin:0px 0px 7px 0px; }
-ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
-ul li ol li { list-style:decimal; }
-ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
-ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
-ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
-ol li ol li { list-style-type:lower-alpha; }
-ol li ul { padding-top:7px; }
-ol li ul li { list-style:square; }
-
-.content { font-size:1.2em; line-height:140%; padding: 20px; }
-
-pre, tt, code { font-size:12px; }
-pre { margin:0px 0px 20px; }
-pre.error { color:red; }
-pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
-pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
-
-@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
-
-span.keyword { color:#0000FF }
-span.comment { color:#228B22 }
-span.string { color:#A020F0 }
-span.untermstring { color:#B20000 }
-span.syscmd { color:#B28C00 }
-
-.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
-.footer p { margin:0px; }
-
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Parsing parameters</a></li><li><a href="#4">internal parameters (do not modify)</a></li><li><a href="#5">construct beforehand the predefined local 3x3 kernels defined for each</a></li><li><a href="#6">Main computation through iterative filtering</a></li><li><a href="#8">Computation of the directional derivatives through Gaussian smoothing and</a></li><li><a href="#9">local estimation of intensity indices</a></li><li><a href="#10">local estimation and characterization of ramp/transition pixels</a></li><li><a href="#11">local estimation of the gradient indices</a></li><li><a href="#12">Image sharpening</a></li><li><a href="#13">Process for update for next loop in the iteration</a></li><li><a href="#16">adjustment estimation</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> [SH,TH,pl, pch] = <span class="keyword">...</span>
-    fuzzrampimpulse_base(I, niter, pilot, method, grd, gthres, kern, <span class="keyword">...</span>
-    fac, fE, pctch, trans)
-</pre><pre class="codeinput">error(nargchk(1, 11, nargin, <span class="string">'struct'</span>));
-error(nargoutchk(1, 4, nargout, <span class="string">'struct'</span>));
-
-<span class="keyword">if</span> nargin&lt;11,  trans = <span class="string">'indice'</span>;
-    <span class="keyword">if</span> nargin&lt;10,  pctch = 0.01;
-        <span class="comment">%        if nargin&lt;12,  crit = 'one';   % check only if assertion is true on single band</span>
-        <span class="keyword">if</span> nargin&lt;9,  fE     = 1;       <span class="comment">% no correction factor</span>
-            <span class="keyword">if</span> nargin&lt;8,  fac = <span class="string">'f0'</span>;    <span class="comment">% factor used in shifting</span>
-                <span class="keyword">if</span> nargin&lt;7,  kern = <span class="string">'leu'</span>;    <span class="comment">% original weights for computing the indices</span>
-                    <span class="keyword">if</span> nargin&lt;6,  gthres    = 0;
-                        <span class="keyword">if</span> nargin&lt;5,  grd    = <span class="string">'sob'</span>;   <span class="comment">% sobel gradient for estimating the derivatives</span>
-                            <span class="keyword">if</span> nargin&lt;4,  method = <span class="string">'shift'</span>; <span class="comment">% just shift the value, without controlling its extent</span>
-                                <span class="keyword">if</span> nargin&lt;3,  pilot = <span class="string">'ave'</span>;
-                                    <span class="keyword">if</span> nargin&lt;2,   niter = 1;   <span class="keyword">end</span>
-                                <span class="keyword">end</span>
-                            <span class="keyword">end</span>
-                        <span class="keyword">end</span>
-                    <span class="keyword">end</span>
-                <span class="keyword">end</span>
-            <span class="keyword">end</span>
-        <span class="keyword">end</span>
-        <span class="comment">%    end</span>
-    <span class="keyword">end</span>
-<span class="keyword">end</span>
-</pre><h2>Parsing parameters<a name="3"></a></h2><pre class="codeinput"><span class="keyword">if</span> ~isnumeric(I)
-    error(<span class="string">'fuzzrampimpulse_base:errorinput'</span>,<span class="string">'a matrix is required in input'</span>);
-<span class="keyword">end</span>
-
-
-<span class="comment">% check the dimension of the input image:</span>
-nbdims = nb_dims(I); <span class="comment">% instead of ndims</span>
-<span class="keyword">if</span> nbdims&lt;2 || nbdims&gt;3
-    error(<span class="string">'fuzzrampimpulse_base:inputerror'</span>, <span class="keyword">...</span>
-        <span class="string">'matrix or array of matrices are expected as inputs'</span>);
-<span class="keyword">end</span>
-
-<span class="comment">% number of spectral components</span>
-C = size(I,3);
-
-<span class="comment">% possibly overwrite</span>
-
-<span class="keyword">if</span> C~=3 &amp;&amp; strcmp(pilot,<span class="string">'int'</span>)
-    warning(<span class="string">'fuzzrampimpulse_base:inputparameter'</span>,<span class="keyword">...</span>
-        <span class="string">'pilot image as intensity implemented only for RGB images'</span>);
-   pilot = <span class="string">'ave'</span>;
-<span class="keyword">end</span>
-</pre><h2>internal parameters (do not modify)<a name="4"></a></h2><p>Initializing variables</p><pre class="codeinput">pchange = pctch +1;
-
-<span class="comment">% We adopt the following index representation for the directed components</span>
-<span class="comment">% used for the intensity and gradient indices used (matlab indexing)</span>
-<span class="comment">%          ---------------         -------------</span>
-<span class="comment">%          | NW | N | NE |         | 1 | 4 | 7 |</span>
-<span class="comment">%          ---------------         -------------</span>
-<span class="comment">%          | W  |   | E  |    =&gt;   | 2 | 5 | 8 |</span>
-<span class="comment">%          ---------------         -------------</span>
-<span class="comment">%          | SW | S | SE |         | 3 | 6 | 9 |</span>
-<span class="comment">%          ---------------         -------------</span>
-direction_indices = struct(<span class="string">'east'</span>, 8, <span class="string">'northeast'</span>, 7, <span class="string">'north'</span>, 4, <span class="keyword">...</span>
-    <span class="string">'northwest'</span>, 1, <span class="string">'west'</span>, 2, <span class="string">'southwest'</span>, 3, <span class="keyword">...</span>
-    <span class="string">'south'</span>, 6, <span class="string">'southeast'</span>, 9, <span class="string">'central'</span>, 5);                         <span class="comment">%#ok</span>
-<span class="comment">%directions = fieldnames(direction_indices);</span>
-<span class="comment">%ndirections = length(directions);</span>
-<span class="comment">% note: not used in the following</span>
-level_indices = struct( <span class="string">'L'</span>, 1, <span class="string">'M'</span>, 2, <span class="string">'H'</span>, 3);
-L = level_indices.(<span class="string">'L'</span>); M = level_indices.(<span class="string">'M'</span>); H = level_indices.(<span class="string">'H'</span>);
-
-<span class="comment">% Remember: mapping from indexes to subscripts for a 3x3 matrix in matlab</span>
-<span class="comment">%          -------------------         -------------</span>
-<span class="comment">%          | 1,1 | 1,2 | 1,3 |         | 1 | 4 | 7 |</span>
-<span class="comment">%          -------------------         -------------</span>
-<span class="comment">%          | 2,1 | 2,2 | 2,3 |    =&gt;   | 2 | 5 | 8 |</span>
-<span class="comment">%          -------------------         -------------</span>
-<span class="comment">%          | 3,1 | 3,2 | 3,3 |         | 3 | 6 | 9 |</span>
-<span class="comment">%          -------------------         -------------</span>
-<span class="comment">%                (ii,jj)          =&gt;    ii+3*(jj-1)</span>
-</pre><h2>construct beforehand the predefined local 3x3 kernels defined for each<a name="5"></a></h2><p>different zone and level, and used for the estimation of the gradient and intensity indices (used once at the beginning of the code). Intensity and gradient masks are built for both zones 1 and 2, and all the other zones derived by rotation</p><pre class="codeinput"><span class="keyword">switch</span> kern
-    <span class="keyword">case</span> <span class="string">'leu'</span>
-        matI = local3x3kernel(<span class="string">'ker'</span>,<span class="string">'i0'</span>,<span class="string">'norm'</span>,true);
-        matG = local3x3kernel(<span class="string">'ker'</span>,<span class="string">'g0'</span>,<span class="string">'norm'</span>,true);
-    <span class="keyword">case</span> <span class="string">'new'</span>
-        matI = local3x3kernel(<span class="string">'ker'</span>,<span class="string">'i1'</span>,<span class="string">'norm'</span>,true);
-        matG = local3x3kernel(<span class="string">'ker'</span>,<span class="string">'g1'</span>,<span class="string">'norm'</span>,true);
-<span class="keyword">end</span>
-<span class="comment">% mote: matI and matG are indexed by [size(x,y),zone,level]</span>
-</pre><h2>Main computation through iterative filtering<a name="6"></a></h2><pre class="codeinput"><span class="comment">% % possibly resize the input matrix</span>
-<span class="comment">% if interp</span>
-<span class="comment">%     A = upscalexy(I,[2 2],'cubic');</span>
-<span class="comment">% else</span>
-     A = I;
-<span class="comment">% end</span>
-<span class="comment">% initialize the output matrix</span>
-<span class="comment">% SH = A;</span>
-
-<span class="comment">% dimension of the frame</span>
-[X,Y] = size(A(:,:,1));
-XY = X * Y; <span class="comment">% numel(A(:,:,1));</span>
-
-<span class="comment">% index of all pixels in the input image</span>
-<span class="comment">% pixindex = reshape(1:XY,[X Y]);</span>
-<span class="comment">% indexes of the border pixels</span>
-<span class="comment">% pixbord = [1:X, (1:Y-2)*X+1, (2:Y-1)*X, (1+X*(Y-1)):XY]';</span>
-
-<span class="comment">% create the 'pilot' for gradient orientation</span>
-<span class="keyword">if</span> C==3 &amp;&amp; strcmp(pilot,<span class="string">'bright'</span>)
-   pilot = rgb2gray(A); <span class="comment">% pilot will be the brightness image</span>
-<span class="keyword">elseif</span> C&gt;=2
-    pilot = sum(A,3) / C; <span class="comment">% pilot will be the average image</span>
-<span class="keyword">end</span>
-
-<span class="comment">% construct the variation sparse matrices measuring the amount of change</span>
-<span class="comment">% occurring in the image after each of the iterative filtering</span>
-deltaI = zeros(XY,C);
-dirdeltaI = deltaI;
-
-<span class="comment">% index of transition pixels for each step of the iterations</span>
-Itrans = cell(niter);
-
-<span class="comment">% set the number of estimated gradient</span>
-nC = C + (C&gt;1); <span class="comment">% ie: ng=1 if Z==1, ng=Z+1 otherwise</span>
-
-G = zeros(X,Y,nC);
-
-pl = A(110, :);
-pch = [];
-
-TH = zeros(X,Y);
-
-<span class="comment">% proceed iteratively</span>
-<span class="keyword">for</span> iter=1:niter
-</pre><h2>Computation of the directional derivatives through Gaussian smoothing and<a name="8"></a></h2><p>differentiation compute the gradient (gy: vertical, gx: horizontal) for each channel</p><pre class="codeinput">    [gy,gx] = grdmask_base(A, grd, <span class="string">'ij'</span>);
-    <span class="comment">% same as computing first: [gx,gy]=grdsmooth(I,sigma,p.der,hsize,'xy');</span>
-    <span class="comment">% and then take the vector orthogonal to the gradient: tmp=gx; gx=gy; gy=-tmp;</span>
-    gy = -gy;
-
-    <span class="comment">% note that the output directional derivatives have size [X Y C]</span>
-    <span class="keyword">if</span> C&gt;1
-        <span class="comment">% norm channel by channel</span>
-        G(:,:,1:C) = sqrt(gx.^2 + gy.^2);
-        <span class="comment">% update the value of the gradient to set it to the gradient of</span>
-        <span class="comment">% the average image</span>
-        gx = sum(gx,3) / C;
-        gy = sum(gy,3) / C;
-    <span class="keyword">end</span>
-   <span class="comment">% Theta = mod(atan2(gy,gx),pi);</span>
-   Theta = atan2(gy,gx);
-    figure, imagesc(Theta), colorbar
-    G(:,:,nC) = mean(G(:,:,1:C),3);
-    figure, imagesc(rescale(G(:,:,nC))), colormap <span class="string">gray</span>
-
-     <span class="comment">% find the orientation and the interpolation parameters over the image</span>
-    [Zones,Omega] = localorientzone(Theta,8);
-    <span class="comment">% compute the compensation factor</span>
-    S = 1 - (1-sqrt(2.)) * Omega;
-</pre><h2>local estimation of intensity indices<a name="9"></a></h2><pre class="codeinput">    <span class="comment">% prior computation of the intensity indices over the different</span>
-    <span class="comment">% spectral components</span>
-    mI = localorientfeature(A, <span class="string">'filt'</span>, <span class="string">'mean'</span>, <span class="keyword">...</span><span class="comment"> % 'filt','med'</span>
-        <span class="string">'Kernel'</span>,matI,<span class="string">'Zones'</span>,Zones,<span class="string">'Omega'</span>,Omega);
-    <span class="comment">% mI = round(mI);</span>
-</pre><h2>local estimation and characterization of ramp/transition pixels<a name="10"></a></h2><pre class="codeinput">    Iramp = maptransition(mI,trans,<span class="string">'const'</span>,<span class="string">'strong'</span>);
-   figure, imagesc(reshape(Iramp,[X,Y])), colormap <span class="string">gray</span>;
-
-    <span class="comment">% get rid of flat area:</span>
-    <span class="keyword">if</span> gthres &gt; 0
-        m = max(max(G(:,:,nC)));
-    <span class="keyword">else</span>
-        m=0;
-    <span class="keyword">end</span>
-    Iramp = Iramp &amp; reshape(G(:,:,nC),[XY 1])&gt;m*gthres;
-
-    <span class="comment">% if no consideration for this condition:  Iramp = ones(XY,1);</span>
-    <span class="comment">%figure, imagesc(reshape(Iramp(:,:,1),X,Y)), axis image, colormap gray;</span>
-    Iramp = find(Iramp);
-
-    <span class="comment">% proceed only if such pixels have been found</span>
-    <span class="keyword">if</span> isempty(Iramp) <span class="comment">% this is very improbable</span>
-        <span class="keyword">break</span>;
-    <span class="keyword">end</span>
-</pre><h2>local estimation of the gradient indices<a name="11"></a></h2><pre class="codeinput">    <span class="comment">%mG = zeros(lenght(Iramp), nelevels, Z);</span>
-    mG  = localorientfeature(G,<span class="string">'filt'</span>,<span class="string">'mean'</span>, <span class="keyword">...</span>
-        <span class="string">'Kernel'</span>,matG,<span class="string">'Zones'</span>,Zones,<span class="string">'Omega'</span>,Omega);
-
-    <span class="comment">% reduce the problem to potential ramp pixels: restrict the set of</span>
-    <span class="comment">% pixels which are examined to pixels on the ramp</span>
-    mI = mI(Iramp,:,:);
-    mG = mG(Iramp,:,:);
-
-    <span class="keyword">if</span> strcmp(method,<span class="string">'control'</span>)
-        D = deltaI(Iramp,:);
-        ID = dirdeltaI(Iramp,:);
-    <span class="keyword">else</span>
-        D = zeros(length(Iramp),C);
-        ID = [];
-    <span class="keyword">end</span>
-    S = S(Iramp);
-
-    <span class="comment">% extraction of transition pixels (located on a ramp) with the</span>
-    <span class="comment">% criterion GM&gt;GH and GM&gt;GL</span>
-    iR = mG(:,M,nC)&gt;mG(:,H,nC) &amp; mG(:,M,nC)&gt;mG(:,L,nC);
-
-    Itrans{iter} = Iramp(iR); <span class="comment">% a subset of the ramp pixels</span>
-    a = zeros(X,Y);  a(Itrans{iter}) = 1;
-   figure, imagesc(a),colormap <span class="string">gray</span>, title(<span class="string">'ramp'</span>)
-</pre><h2>Image sharpening<a name="12"></a></h2><pre class="codeinput">    <span class="comment">% reshape the input and initialize the output</span>
-    A = reshape(A,[XY C]);
-    SH = A;
-
-    <span class="comment">% extract ramp pixels of type 1:    GL &lt;(or&lt;=) GM &lt;= GH</span>
-    iR = findcase(method, mG(:,H,nC), mG(:,L,nC), mG(:,M,nC));
-    <span class="comment">% note : iR are the  coordinates of the pixels considered in the domain</span>
-    <span class="comment">% of the reduced image and Iramp(iR) are the correponding coordinates in</span>
-    <span class="comment">% the domain of the original image</span>
-    <span class="comment">% possibly update those pixels</span>
-    <span class="keyword">if</span> ~isempty(iR)
-        <span class="keyword">for</span> c=1:C
-            F = factorvalue(fac, mG(iR,H,c), mG(iR,L,c), mG(iR,M,c));
-           <span class="keyword">if</span> strcmp(method,<span class="string">'shift'</span>)
-                R = adjustleu(F, mI(iR,L,c), mI(iR,M,c), S(iR), fE);
-                SH(Iramp(iR),c) = updateleu(A(Iramp(iR),c), R, -1);
-            <span class="keyword">elseif</span> strcmp(method,<span class="string">'control'</span>)
-                R = adjustcontrol(F, mI(iR,L,c), mI(iR,M,c), D(iR,c), ID(iR,c), <span class="keyword">...</span>
-                    S(iR), fE);
-                 SH(Iramp(iR),c) = updatecontrol(A(Iramp(iR),c),R,mI(iR,L,c));
-            <span class="keyword">end</span>
-        <span class="keyword">end</span>
-    <span class="keyword">end</span>
-
-    <span class="comment">% extract ramp pixels of type 2:    GH &lt;(or&lt;=) GM &lt;= GL</span>
-    iR = findcase(method, mG(:,L,nC), mG(:,H,nC), mG(:,M,nC));
-    <span class="keyword">if</span> ~isempty(iR)
-        <span class="keyword">for</span> c=1:C
-            F = factorvalue(fac, mG(iR,L,c), mG(iR,H,c), mG(iR,M,c));
-            <span class="keyword">if</span> strcmp(method,<span class="string">'shift'</span>)
-                R = adjustleu(F, mI(iR,H,c), mI(iR,M,c), S(iR), fE);
-                SH(Iramp(iR),c) = updateleu(A(Iramp(iR),c), R, 1);
-            <span class="keyword">elseif</span> strcmp(method,<span class="string">'control'</span>)
-                R = adjustcontrol(F, mI(iR,H,c), mI(iR,M,c), D(iR,c), ID(iR,c), <span class="keyword">...</span>
-                    S(iR), fE);
-                SH(Iramp(iR),c) = updatecontrol(A(Iramp(iR),c),R,mI(iR,H,c));
-            <span class="keyword">end</span>
-        <span class="keyword">end</span>
-    <span class="keyword">end</span>
-
-    <span class="comment">% SH = round(SH);</span>
-
-    <span class="keyword">if</span> niter&gt;1
-       <span class="comment">% updates:</span>
-        <span class="comment">%  - matrices delta of intensity variation changes</span>
-        delta = A(Iramp,:) - SH(Iramp,:);
-        <span class="comment">%  - matrices dirdelta of change in intensity variation direction</span>
-        <span class="keyword">for</span> c=1:C
-            dirdeltaI(Iramp(delta(:,c) .* deltaI(Iramp,c) &lt; 0),c) = 1; <span class="comment">% sign change</span>
-        <span class="keyword">end</span>
-        deltaI(Iramp,:) = delta;
-        pchange = sum(abs(delta),2)&gt;eps; <span class="comment">% matrix of modified pixels</span>
-        pchange = sum(pchange(:)) / XY;  <span class="comment">% pct of change</span>
-        <span class="comment">% note : the first sum: sum(abs(delta),3) operates over the channnel</span>
-        <span class="comment">% account for pixels modified in any of their channel</span>
-
-    <span class="keyword">end</span>
-</pre><h2>Process for update for next loop in the iteration<a name="13"></a></h2><pre class="codeinput">    A = reshape(SH, [X, Y, C]);
-
-     pl = [pl ; A(110, :)];
-     pch = [pch ; pchange];
-
-    <span class="keyword">if</span> pchange &lt;= pctch
-        pchange
-        pctch
-        <span class="keyword">break</span>;
-    <span class="keyword">end</span>
-
-<span class="comment">% TH: final ramp after the last iteration</span>
-iR = findramp(method, mG(:,L,nC), mG(:,H,nC), mG(:,M,nC));
-TH(Iramp(iR)) = TH(Iramp(iR))+1;
-</pre><pre class="codeinput"><span class="keyword">end</span>
-
-
-<span class="comment">% final output</span>
-SH = A;
-</pre><pre class="codeinput"><span class="keyword">end</span><span class="comment">% end of rampsharp</span>
-</pre><h2>adjustment estimation<a name="16"></a></h2><pre class="codeinput"><span class="comment">% -------------------------------------------------------------------------</span>
-<span class="keyword">function</span> iR = findcase(method, G1, G2, Gm)
-iR = G1&gt;=Gm &amp; Gm&gt;G2; <span class="comment">% standard Leu condition</span>
-<span class="keyword">if</span> ~strcmp(method,<span class="string">'leu'</span>)
-    iR = iR | (G1&gt;=Gm &amp; Gm==G2); <span class="comment">% add flexible condition</span>
-<span class="keyword">end</span>
-<span class="comment">%iR = find(iR);</span>
-<span class="keyword">end</span>
-<span class="comment">% end of findcase</span>
-
-<span class="comment">% -------------------------------------------------------------------------</span>
-<span class="keyword">function</span> iR = findramp(method, G1, G2, Gm)
-iR = Gm&gt;=G1 &amp; Gm&gt;=G2; <span class="comment">%</span>
-<span class="comment">%iR = find(iR);</span>
-<span class="keyword">end</span>
-<span class="comment">% end of findramp</span>
-
-<span class="comment">% -------------------------------------------------------------------------</span>
-<span class="keyword">function</span> SH = updatecontrol(A, R, I1)
-SH =  (A &gt; I1) .* max(A - R, I1) + (A &lt;= I1) .* min(A + R, I1);
-<span class="keyword">end</span>
-<span class="comment">% end of updatecase</span>
-
-
-<span class="comment">% -------------------------------------------------------------------------</span>
-<span class="keyword">function</span> SH = updateleu(A, R, s)
-SH =  A + s * R;
-<span class="keyword">end</span>
-<span class="comment">% end of updateleu</span>
-
-
-<span class="comment">% -------------------------------------------------------------------------</span>
-<span class="keyword">function</span> R = adjustcontrol(F, I1, I2, D, ID, S, fE)
-R = 0.5 + fE .* F .* S .* abs(I1-I2);
-iR0 = D~=0 &amp; ID==1;
-<span class="comment">% control the current correction amount by the previous correction amount</span>
-<span class="keyword">if</span> ~isempty(iR0)
-    R(iR0) = max(min(R(iR0), abs(D(iR0))-1), 0);
-<span class="keyword">end</span>
-<span class="keyword">end</span>
-<span class="comment">% end of adjustcase</span>
-
-
-<span class="comment">% -------------------------------------------------------------------------</span>
-<span class="keyword">function</span> R = adjustleu(F, I1, I2, S, fE)
-R = fE .* S .* abs(I1-I2);
-R = (F &gt;= 0.5) .* R + 2. * (F &lt; 0.5) .* F .* R;
-<span class="keyword">end</span>
-<span class="comment">% end of adjustleu</span>
-
-
-<span class="comment">% -------------------------------------------------------------------------</span>
-<span class="keyword">function</span> F = factorvalue(alpha, G1, G2, Gm)
-<span class="comment">% compute the correction factor based on the estimated gradient indices</span>
-<span class="comment">% Gm, Gl (either G1 or G2) and Gh (ibid)</span>
-<span class="comment">% G1 and G2 stand for Gl or Gh depending on the part of the ramp (lower or</span>
-<span class="comment">% higher) the pixel belongs to</span>
-<span class="keyword">switch</span> alpha
-    <span class="keyword">case</span> {<span class="string">'leu'</span>,<span class="string">'f0'</span>}  <span class="comment">% original leu</span>
-        F = (G1 - Gm) ./ (Gm - G2); <span class="comment">% leu-like</span>
-    <span class="keyword">case</span> <span class="string">'f1'</span>  <span class="comment">% default choice</span>
-        F = (G2 + Gm) ./ (1 + 2*Gm);
-    <span class="keyword">case</span> <span class="string">'f2'</span>
-        F = (G1 + G2 - Gm) ./ (1 + 3*Gm);
-    <span class="keyword">case</span> <span class="string">'f3'</span>
-        F = (G1 + G2) ./ (1 + 2*Gm);
-    <span class="keyword">case</span> <span class="string">'f4'</span>
-        F = (G1 + Gm) ./ (1 + 2*Gm);
-    <span class="keyword">case</span> <span class="string">'f5'</span>
-        F = (G1 + G2 + Gm) ./ (1 + 3*Gm);
-<span class="keyword">end</span>
-<span class="keyword">end</span>
-<span class="comment">% end of factorvalue</span>
-</pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.14<br></p></div><!--
-##### SOURCE BEGIN #####
-function [SH,TH,pl, pch] = ...
-    fuzzrampimpulse_base(I, niter, pilot, method, grd, gthres, kern, ...
-    fac, fE, pctch, trans)
-
-error(nargchk(1, 11, nargin, 'struct'));
-error(nargoutchk(1, 4, nargout, 'struct'));
-
-if nargin<11,  trans = 'indice';
-    if nargin<10,  pctch = 0.01;
-        %        if nargin<12,  crit = 'one';   % check only if assertion is true on single band
-        if nargin<9,  fE     = 1;       % no correction factor
-            if nargin<8,  fac = 'f0';    % factor used in shifting
-                if nargin<7,  kern = 'leu';    % original weights for computing the indices
-                    if nargin<6,  gthres    = 0;
-                        if nargin<5,  grd    = 'sob';   % sobel gradient for estimating the derivatives
-                            if nargin<4,  method = 'shift'; % just shift the value, without controlling its extent
-                                if nargin<3,  pilot = 'ave';
-                                    if nargin<2,   niter = 1;   end
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end
-        %    end
-    end
-end
-
-
-%% Parsing parameters
-if ~isnumeric(I)
-    error('fuzzrampimpulse_base:errorinput','a matrix is required in input');
-end
-
-
-% check the dimension of the input image:
-nbdims = nb_dims(I); % instead of ndims
-if nbdims<2 || nbdims>3
-    error('fuzzrampimpulse_base:inputerror', ...
-        'matrix or array of matrices are expected as inputs');
-end
-
-% number of spectral components
-C = size(I,3);
-
-% possibly overwrite
-
-if C~=3 && strcmp(pilot,'int')                                       
-    warning('fuzzrampimpulse_base:inputparameter',...
-        'pilot image as intensity implemented only for RGB images');
-   pilot = 'ave';
-end
-
-%% internal parameters (do not modify)
-% Initializing variables
-
-pchange = pctch +1;
-
-% We adopt the following index representation for the directed components
-% used for the intensity and gradient indices used (matlab indexing)
-%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
-%          | NW | N | NE |         | 1 | 4 | 7 |
-%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
-%          | W  |   | E  |    =>   | 2 | 5 | 8 |
-%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
-%          | SW | S | SE |         | 3 | 6 | 9 |
-%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
-direction_indices = struct('east', 8, 'northeast', 7, 'north', 4, ...
-    'northwest', 1, 'west', 2, 'southwest', 3, ...
-    'south', 6, 'southeast', 9, 'central', 5);                         %#ok
-%directions = fieldnames(direction_indices);
-%ndirections = length(directions);
-% note: not used in the following
-level_indices = struct( 'L', 1, 'M', 2, 'H', 3);
-L = level_indices.('L'); M = level_indices.('M'); H = level_indices.('H');
-
-% Remember: mapping from indexes to subscripts for a 3x3 matrix in matlab
-%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
-%          | 1,1 | 1,2 | 1,3 |         | 1 | 4 | 7 |
-%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
-%          | 2,1 | 2,2 | 2,3 |    =>   | 2 | 5 | 8 |
-%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
-%          | 3,1 | 3,2 | 3,3 |         | 3 | 6 | 9 |
-%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
-%                (ii,jj)          =>    ii+3*(jj-1)
-
-%% construct beforehand the predefined local 3x3 kernels defined for each 
-% different zone and level, and used for the estimation of the gradient and
-% intensity indices (used once at the beginning of the code).
-% Intensity and gradient masks are built for both zones 1 and 2, and all
-% the other zones derived by rotation
-switch kern
-    case 'leu'
-        matI = local3x3kernel('ker','i0','norm',true);
-        matG = local3x3kernel('ker','g0','norm',true);
-    case 'new'
-        matI = local3x3kernel('ker','i1','norm',true);
-        matG = local3x3kernel('ker','g1','norm',true);
-end
-% mote: matI and matG are indexed by [size(x,y),zone,level]
-
-
-%% Main computation through iterative filtering
-
-% % possibly resize the input matrix
-% if interp
-%     A = upscalexy(I,[2 2],'cubic');
-% else
-     A = I;
-% end
-% initialize the output matrix
-% SH = A;
-
-% dimension of the frame
-[X,Y] = size(A(:,:,1)); 
-XY = X * Y; % numel(A(:,:,1));
-
-% index of all pixels in the input image
-% pixindex = reshape(1:XY,[X Y]);
-% indexes of the border pixels
-% pixbord = [1:X, (1:Y-2)*X+1, (2:Y-1)*X, (1+X*(Y-1)):XY]'; 
-
-% create the 'pilot' for gradient orientation
-if C==3 && strcmp(pilot,'bright')
-   pilot = rgb2gray(A); % pilot will be the brightness image
-elseif C>=2
-    pilot = sum(A,3) / C; % pilot will be the average image
-end
-
-% construct the variation sparse matrices measuring the amount of change
-% occurring in the image after each of the iterative filtering
-deltaI = zeros(XY,C);   
-dirdeltaI = deltaI; 
-
-% index of transition pixels for each step of the iterations
-Itrans = cell(niter);
-
-% set the number of estimated gradient
-nC = C + (C>1); % ie: ng=1 if Z==1, ng=Z+1 otherwise
-
-G = zeros(X,Y,nC);
-
-pl = A(110, :);
-pch = [];
-
-TH = zeros(X,Y);
-
-% proceed iteratively
-for iter=1:niter
-        
-    
-    %% Computation of the directional derivatives through Gaussian smoothing and
-    % differentiation
-    % compute the gradient (gy: vertical, gx: horizontal) for each channel
-    [gy,gx] = grdmask_base(A, grd, 'ij');
-    % same as computing first: [gx,gy]=grdsmooth(I,sigma,p.der,hsize,'xy');
-    % and then take the vector orthogonal to the gradient: tmp=gx; gx=gy; gy=-tmp;
-    gy = -gy;   
-    
-    % note that the output directional derivatives have size [X Y C]
-    if C>1
-        % norm channel by channel
-        G(:,:,1:C) = sqrt(gx.^2 + gy.^2);
-        % update the value of the gradient to set it to the gradient of
-        % the average image
-        gx = sum(gx,3) / C;
-        gy = sum(gy,3) / C;
-    end
-   % Theta = mod(atan2(gy,gx),pi);
-   Theta = atan2(gy,gx);
-    figure, imagesc(Theta), colorbar
-    G(:,:,nC) = mean(G(:,:,1:C),3);
-    figure, imagesc(rescale(G(:,:,nC))), colormap gray
-
-     % find the orientation and the interpolation parameters over the image
-    [Zones,Omega] = localorientzone(Theta,8);
-    % compute the compensation factor
-    S = 1 - (1-sqrt(2.)) * Omega;
-
-    
-    %% local estimation of intensity indices
-    
-    % prior computation of the intensity indices over the different
-    % spectral components
-    mI = localorientfeature(A, 'filt', 'mean', ... % 'filt','med'
-        'Kernel',matI,'Zones',Zones,'Omega',Omega);   
-    % mI = round(mI);
-
-   
-    %% local estimation and characterization of ramp/transition pixels
-    
-    Iramp = maptransition(mI,trans,'const','strong');
-   figure, imagesc(reshape(Iramp,[X,Y])), colormap gray;
-   
-    % get rid of flat area:
-    if gthres > 0
-        m = max(max(G(:,:,nC)));
-    else 
-        m=0;
-    end
-    Iramp = Iramp & reshape(G(:,:,nC),[XY 1])>m*gthres;
-            
-    % if no consideration for this condition:  Iramp = ones(XY,1);
-    %figure, imagesc(reshape(Iramp(:,:,1),X,Y)), axis image, colormap gray;
-    Iramp = find(Iramp);
-    
-    % proceed only if such pixels have been found
-    if isempty(Iramp) % this is very improbable
-        break;
-    end
-    
-    %% local estimation of the gradient indices
-    %mG = zeros(lenght(Iramp), nelevels, Z);
-    mG  = localorientfeature(G,'filt','mean', ...
-        'Kernel',matG,'Zones',Zones,'Omega',Omega);
-    
-    % reduce the problem to potential ramp pixels: restrict the set of
-    % pixels which are examined to pixels on the ramp
-    mI = mI(Iramp,:,:);
-    mG = mG(Iramp,:,:);
-    
-    if strcmp(method,'control')
-        D = deltaI(Iramp,:);
-        ID = dirdeltaI(Iramp,:);
-    else
-        D = zeros(length(Iramp),C);
-        ID = [];
-    end
-    S = S(Iramp);
-    
-    % extraction of transition pixels (located on a ramp) with the
-    % criterion GM>GH and GM>GL
-    iR = mG(:,M,nC)>mG(:,H,nC) & mG(:,M,nC)>mG(:,L,nC);
-
-    Itrans{iter} = Iramp(iR); % a subset of the ramp pixels
-    a = zeros(X,Y);  a(Itrans{iter}) = 1;
-   figure, imagesc(a),colormap gray, title('ramp')
-    
-   
-    %% Image sharpening
-    
-    % reshape the input and initialize the output
-    A = reshape(A,[XY C]);
-    SH = A;
-    
-    % extract ramp pixels of type 1:    GL <(or<=) GM <= GH
-    iR = findcase(method, mG(:,H,nC), mG(:,L,nC), mG(:,M,nC));
-    % note : iR are the  coordinates of the pixels considered in the domain
-    % of the reduced image and Iramp(iR) are the correponding coordinates in
-    % the domain of the original image
-    % possibly update those pixels
-    if ~isempty(iR)
-        for c=1:C
-            F = factorvalue(fac, mG(iR,H,c), mG(iR,L,c), mG(iR,M,c));
-           if strcmp(method,'shift')
-                R = adjustleu(F, mI(iR,L,c), mI(iR,M,c), S(iR), fE);
-                SH(Iramp(iR),c) = updateleu(A(Iramp(iR),c), R, -1);
-            elseif strcmp(method,'control')
-                R = adjustcontrol(F, mI(iR,L,c), mI(iR,M,c), D(iR,c), ID(iR,c), ...
-                    S(iR), fE);
-                 SH(Iramp(iR),c) = updatecontrol(A(Iramp(iR),c),R,mI(iR,L,c));
-            end
-        end
-    end
-    
-    % extract ramp pixels of type 2:    GH <(or<=) GM <= GL
-    iR = findcase(method, mG(:,L,nC), mG(:,H,nC), mG(:,M,nC));
-    if ~isempty(iR)
-        for c=1:C
-            F = factorvalue(fac, mG(iR,L,c), mG(iR,H,c), mG(iR,M,c));
-            if strcmp(method,'shift')
-                R = adjustleu(F, mI(iR,H,c), mI(iR,M,c), S(iR), fE);
-                SH(Iramp(iR),c) = updateleu(A(Iramp(iR),c), R, 1);
-            elseif strcmp(method,'control')
-                R = adjustcontrol(F, mI(iR,H,c), mI(iR,M,c), D(iR,c), ID(iR,c), ...
-                    S(iR), fE);                 
-                SH(Iramp(iR),c) = updatecontrol(A(Iramp(iR),c),R,mI(iR,H,c));
-            end
-        end
-    end
-    
-    % SH = round(SH);
-    
-    if niter>1
-       % updates:
-        %  - matrices delta of intensity variation changes
-        delta = A(Iramp,:) - SH(Iramp,:);        
-        %  - matrices dirdelta of change in intensity variation direction
-        for c=1:C
-            dirdeltaI(Iramp(delta(:,c) .* deltaI(Iramp,c) < 0),c) = 1; % sign change
-        end
-        deltaI(Iramp,:) = delta;
-        pchange = sum(abs(delta),2)>eps; % matrix of modified pixels
-        pchange = sum(pchange(:)) / XY;  % pct of change
-        % note : the first sum: sum(abs(delta),3) operates over the channnel
-        % account for pixels modified in any of their channel
-        
-    end
-        
-    %% Process for update for next loop in the iteration
-    A = reshape(SH, [X, Y, C]);
-    
-     pl = [pl ; A(110, :)];
-     pch = [pch ; pchange];
-    
-    if pchange <= pctch
-        pchange
-        pctch
-        break;
-    end
-
-% TH: final ramp after the last iteration
-iR = findramp(method, mG(:,L,nC), mG(:,H,nC), mG(:,M,nC));
-TH(Iramp(iR)) = TH(Iramp(iR))+1;
-    
-end
-
-
-% final output
-SH = A;
-
-end% end of rampsharp
-
-
-%% adjustment estimation
-
-% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
-function iR = findcase(method, G1, G2, Gm)
-iR = G1>=Gm & Gm>G2; % standard Leu condition
-if ~strcmp(method,'leu')
-    iR = iR | (G1>=Gm & Gm==G2); % add flexible condition
-end
-%iR = find(iR);
-end
-% end of findcase
-
-% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
-function iR = findramp(method, G1, G2, Gm)
-iR = Gm>=G1 & Gm>=G2; % 
-%iR = find(iR);
-end
-% end of findramp
-
-% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
-function SH = updatecontrol(A, R, I1)
-SH =  (A > I1) .* max(A - R, I1) + (A <= I1) .* min(A + R, I1);
-end
-% end of updatecase
-
-
-% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
-function SH = updateleu(A, R, s)
-SH =  A + s * R;
-end
-% end of updateleu
-
-
-% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
-function R = adjustcontrol(F, I1, I2, D, ID, S, fE)
-R = 0.5 + fE .* F .* S .* abs(I1-I2);
-iR0 = D~=0 & ID==1;
-% control the current correction amount by the previous correction amount
-if ~isempty(iR0)
-    R(iR0) = max(min(R(iR0), abs(D(iR0))-1), 0);
-end
-end
-% end of adjustcase
-
-
-% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
-function R = adjustleu(F, I1, I2, S, fE)
-R = fE .* S .* abs(I1-I2);
-R = (F >= 0.5) .* R + 2. * (F < 0.5) .* F .* R;
-end
-% end of adjustleu
-
-
-% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
-function F = factorvalue(alpha, G1, G2, Gm)
-% compute the correction factor based on the estimated gradient indices
-% Gm, Gl (either G1 or G2) and Gh (ibid)
-% G1 and G2 stand for Gl or Gh depending on the part of the ramp (lower or
-% higher) the pixel belongs to
-switch alpha
-    case {'leu','f0'}  % original leu
-        F = (G1 - Gm) ./ (Gm - G2); % leu-like
-    case 'f1'  % default choice
-        F = (G2 + Gm) ./ (1 + 2*Gm);
-    case 'f2'
-        F = (G1 + G2 - Gm) ./ (1 + 3*Gm);
-    case 'f3'
-        F = (G1 + G2) ./ (1 + 2*Gm);
-    case 'f4'
-        F = (G1 + Gm) ./ (1 + 2*Gm);
-    case 'f5'   
-        F = (G1 + G2 + Gm) ./ (1 + 3*Gm);
-end
-end
-% end of factorvalue
-
-
-
-##### SOURCE END #####
---></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>  <head>    <meta content="text/html; charset=utf-8" http-equiv="content-type">    <!--This HTML was auto-generated from MATLAB code.To make changes, update the MATLAB code and republish this document.      -->    <title>fuzzrampimpulse_base</title>    <meta name="generator" content="MATLAB 7.14">    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">    <meta name="DC.date" content="2012-11-14">    <meta name="DC.source" content="fuzzrampimpulse_base.m">    <style type="text/css">html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}html { min-height:100%; margin-bottom:1px; }html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }html body td { vertical-align:top; text-align:left; }h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }a { color:#005fce; text-decoration:none; }a:hover { color:#005fce; text-decoration:underline; }a:visited { color:#004aa0; text-decoration:none; }p { padding:0px; margin:0px 0px 20px; }img { padding:0px; margin:0px 0px 20px; border:none; }p img, pre img, tt img, li img { margin-bottom:0px; } ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }ul li { padding:0px; margin:0px 0px 7px 0px; }ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }ul li ol li { list-style:decimal; }ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }ol li ol li { list-style-type:lower-alpha; }ol li ul { padding-top:7px; }ol li ul li { list-style:square; }.content { font-size:1.2em; line-height:140%; padding: 20px; }pre, tt, code { font-size:12px; }pre { margin:0px 0px 20px; }pre.error { color:red; }pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }span.keyword { color:#0000FF }span.comment { color:#228B22 }span.string { color:#A020F0 }span.untermstring { color:#B20000 }span.syscmd { color:#B28C00 }.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }.footer p { margin:0px; }  </style>  </head>  <body>    <div class="content">      <h2>Contents</h2>      <div>        <ul>          <li><a href="#3">Parsing parameters</a></li>          <li><a href="#4">internal parameters (do not modify)</a></li>          <li><a href="#5">construct beforehand the predefined local 3x3 kernels              defined for each</a></li>          <li><a href="#6">Main computation through iterative filtering</a></li>          <li><a href="#8">Computation of the directional derivatives through              Gaussian smoothing and</a></li>          <li><a href="#9">local estimation of intensity indices</a></li>          <li><a href="#10">local estimation and characterization of              ramp/transition pixels</a></li>          <li><a href="#11">local estimation of the gradient indices</a></li>          <li><a href="#12">Image sharpening</a></li>          <li><a href="#13">Process for update for next loop in the iteration</a></li>          <li><a href="#16">adjustment estimation</a></li>        </ul>      </div>      <pre class="codeinput"><span class="keyword">function</span> [SH,TH,pl, pch] = <spanclass="keyword">...</span>    fuzzrampimpulse_base(I, niter, pilot, method, grd, gthres, kern, <span class="keyword">...</span>    fac, fE, pctch, trans)</pre>      <pre class="codeinput">error(nargchk(1, 11, nargin, <span class="string">'struct'</span>));error(nargoutchk(1, 4, nargout, <span class="string">'struct'</span>));<span class="keyword">if</span> nargin&lt;11,  trans = <span class="string">'indice'</span>;    <span class="keyword">if</span> nargin&lt;10,  pctch = 0.01;        <span class="comment">%        if nargin&lt;12,  crit = 'one';   % check only if assertion is true on single band</span>        <span class="keyword">if</span> nargin&lt;9,  fE     = 1;       <span class="comment">% no correction factor</span>            <span class="keyword">if</span> nargin&lt;8,  fac = <span class="string">'f0'</span>;    <spanclass="comment">% factor used in shifting</span>                <span class="keyword">if</span> nargin&lt;7,  kern = <span class="string">'leu'</span>;    <spanclass="comment">% original weights for computing the indices</span>                    <span class="keyword">if</span> nargin&lt;6,  gthres    = 0;                        <span class="keyword">if</span> nargin&lt;5,  grd    = <spanclass="string">'sob'</span>;   <spanclass="comment">% sobel gradient for estimating the derivatives</span>                            <span class="keyword">if</span> nargin&lt;4,  method = <spanclass="string">'shift'</span>; <spanclass="comment">% just shift the value, without controlling its extent</span>                                <span class="keyword">if</span> nargin&lt;3,  pilot = <spanclass="string">'ave'</span>;                                    <span class="keyword">if</span> nargin&lt;2,   niter = 1;   <spanclass="keyword">end</span>                                <span class="keyword">end</span>                            <span class="keyword">end</span>                        <span class="keyword">end</span>                    <span class="keyword">end</span>                <span class="keyword">end</span>            <span class="keyword">end</span>        <span class="keyword">end</span>        <span class="comment">%    end</span>    <span class="keyword">end</span><span class="keyword">end</span></pre>      <h2>Parsing parameters<a name="3"></a></h2>      <pre class="codeinput"><span class="keyword">if</span> ~isnumeric(I)    error(<span class="string">'fuzzrampimpulse_base:errorinput'</span>,<span class="string">'a matrix is required in input'</span>);<span class="keyword">end</span><span class="comment">% check the dimension of the input image:</span>nbdims = nb_dims(I); <span class="comment">% instead of ndims</span><span class="keyword">if</span> nbdims&lt;2 || nbdims&gt;3    error(<span class="string">'fuzzrampimpulse_base:inputerror'</span>, <span class="keyword">...</span>        <span class="string">'matrix or array of matrices are expected as inputs'</span>);<span class="keyword">end</span><span class="comment">% number of spectral components</span>C = size(I,3);<span class="comment">% possibly overwrite</span><span class="keyword">if</span> C~=3 &amp;&amp; strcmp(pilot,<span class="string">'int'</span>)    warning(<span class="string">'fuzzrampimpulse_base:inputparameter'</span>,<spanclass="keyword">...</span>        <span class="string">'pilot image as intensity implemented only for RGB images'</span>);   pilot = <span class="string">'ave'</span>;<span class="keyword">end</span></pre>      <h2>internal parameters (do not modify)<a name="4"></a></h2>      <p>Initializing variables</p>      <pre class="codeinput">pchange = pctch +1;<span class="comment">% We adopt the following index representation for the directed components</span><span class="comment">% used for the intensity and gradient indices used (matlab indexing)</span><span class="comment">%          ---------------         -------------</span><span class="comment">%          | NW | N | NE |         | 1 | 4 | 7 |</span><span class="comment">%          ---------------         -------------</span><span class="comment">%          | W  |   | E  |    =&gt;   | 2 | 5 | 8 |</span><span class="comment">%          ---------------         -------------</span><span class="comment">%          | SW | S | SE |         | 3 | 6 | 9 |</span><span class="comment">%          ---------------         -------------</span>direction_indices = struct(<span class="string">'east'</span>, 8, <span class="string">'northeast'</span>, 7, <spanclass="string">'north'</span>, 4, <spanclass="keyword">...</span>    <span class="string">'northwest'</span>, 1, <span class="string">'west'</span>, 2, <spanclass="string">'southwest'</span>, 3, <spanclass="keyword">...</span>    <span class="string">'south'</span>, 6, <span class="string">'southeast'</span>, 9, <spanclass="string">'central'</span>, 5);                         <spanclass="comment">%#ok</span><span class="comment">%directions = fieldnames(direction_indices);</span><span class="comment">%ndirections = length(directions);</span><span class="comment">% note: not used in the following</span>level_indices = struct( <span class="string">'L'</span>, 1, <span class="string">'M'</span>, 2, <spanclass="string">'H'</span>, 3);L = level_indices.(<span class="string">'L'</span>); M = level_indices.(<span class="string">'M'</span>); H = level_indices.(<spanclass="string">'H'</span>);<span class="comment">% Remember: mapping from indexes to subscripts for a 3x3 matrix in matlab</span><span class="comment">%          -------------------         -------------</span><span class="comment">%          | 1,1 | 1,2 | 1,3 |         | 1 | 4 | 7 |</span><span class="comment">%          -------------------         -------------</span><span class="comment">%          | 2,1 | 2,2 | 2,3 |    =&gt;   | 2 | 5 | 8 |</span><span class="comment">%          -------------------         -------------</span><span class="comment">%          | 3,1 | 3,2 | 3,3 |         | 3 | 6 | 9 |</span><span class="comment">%          -------------------         -------------</span><span class="comment">%                (ii,jj)          =&gt;    ii+3*(jj-1)</span></pre>      <h2>construct beforehand the predefined local 3x3 kernels defined for each<a          name="5"></a></h2>      <p>different zone and level, and used for the estimation of the gradient        and intensity indices (used once at the beginning of the code).        Intensity and gradient masks are built for both zones 1 and 2, and all        the other zones derived by rotation</p>      <pre class="codeinput"><span class="keyword">switch</span> kern    <span class="keyword">case</span> <span class="string">'leu'</span>        matI = local3x3kernel(<span class="string">'ker'</span>,<span class="string">'i0'</span>,<spanclass="string">'norm'</span>,true);        matG = local3x3kernel(<span class="string">'ker'</span>,<span class="string">'g0'</span>,<spanclass="string">'norm'</span>,true);    <span class="keyword">case</span> <span class="string">'new'</span>        matI = local3x3kernel(<span class="string">'ker'</span>,<span class="string">'i1'</span>,<spanclass="string">'norm'</span>,true);        matG = local3x3kernel(<span class="string">'ker'</span>,<span class="string">'g1'</span>,<spanclass="string">'norm'</span>,true);<span class="keyword">end</span><span class="comment">% mote: matI and matG are indexed by [size(x,y),zone,level]</span></pre>      <h2>Main computation through iterative filtering<a name="6"></a></h2>      <pre class="codeinput"><span class="comment">% % possibly resize the input matrix</span><span class="comment">% if interp</span><span class="comment">%     A = upscalexy(I,[2 2],'cubic');</span><span class="comment">% else</span>     A = I;<span class="comment">% end</span><span class="comment">% initialize the output matrix</span><span class="comment">% SH = A;</span><span class="comment">% dimension of the frame</span>[X,Y] = size(A(:,:,1));XY = X * Y; <span class="comment">% numel(A(:,:,1));</span><span class="comment">% index of all pixels in the input image</span><span class="comment">% pixindex = reshape(1:XY,[X Y]);</span><span class="comment">% indexes of the border pixels</span><span class="comment">% pixbord = [1:X, (1:Y-2)*X+1, (2:Y-1)*X, (1+X*(Y-1)):XY]';</span><span class="comment">% create the 'pilot' for gradient orientation</span><span class="keyword">if</span> C==3 &amp;&amp; strcmp(pilot,<span class="string">'bright'</span>)   pilot = rgb2gray(A); <span class="comment">% pilot will be the brightness image</span><span class="keyword">elseif</span> C&gt;=2    pilot = sum(A,3) / C; <span class="comment">% pilot will be the average image</span><span class="keyword">end</span><span class="comment">% construct the variation sparse matrices measuring the amount of change</span><span class="comment">% occurring in the image after each of the iterative filtering</span>deltaI = zeros(XY,C);dirdeltaI = deltaI;<span class="comment">% index of transition pixels for each step of the iterations</span>Itrans = cell(niter);<span class="comment">% set the number of estimated gradient</span>nC = C + (C&gt;1); <span class="comment">% ie: ng=1 if Z==1, ng=Z+1 otherwise</span>G = zeros(X,Y,nC);pl = A(110, :);pch = [];TH = zeros(X,Y);<span class="comment">% proceed iteratively</span><span class="keyword">for</span> iter=1:niter</pre>      <h2>Computation of the directional derivatives through Gaussian smoothing        and<a name="8"></a></h2>      <p>differentiation compute the gradient (gy: vertical, gx: horizontal) for        each channel</p>      <pre class="codeinput">    [gy,gx] = grdmask_base(A, grd, <span class="string">'ij'</span>);    <span class="comment">% same as computing first: [gx,gy]=grdsmooth(I,sigma,p.der,hsize,'xy');</span>    <span class="comment">% and then take the vector orthogonal to the gradient: tmp=gx; gx=gy; gy=-tmp;</span>    gy = -gy;    <span class="comment">% note that the output directional derivatives have size [X Y C]</span>    <span class="keyword">if</span> C&gt;1        <span class="comment">% norm channel by channel</span>        G(:,:,1:C) = sqrt(gx.^2 + gy.^2);        <span class="comment">% update the value of the gradient to set it to the gradient of</span>        <span class="comment">% the average image</span>        gx = sum(gx,3) / C;        gy = sum(gy,3) / C;    <span class="keyword">end</span>   <span class="comment">% Theta = mod(atan2(gy,gx),pi);</span>   Theta = atan2(gy,gx);    figure, imagesc(Theta), colorbar    G(:,:,nC) = mean(G(:,:,1:C),3);    figure, imagesc(rescale(G(:,:,nC))), colormap <span class="string">gray</span>     <span class="comment">% find the orientation and the interpolation parameters over the image</span>    [Zones,Omega] = localorientzone(Theta,8);    <span class="comment">% compute the compensation factor</span>    S = 1 - (1-sqrt(2.)) * Omega;</pre>      <h2>local estimation of intensity indices<a name="9"></a></h2>      <pre class="codeinput">    <span class="comment">% prior computation of the intensity indices over the different</span>    <span class="comment">% spectral components</span>    mI = localorientfeature(A, <span class="string">'filt'</span>, <span class="string">'mean'</span>, <spanclass="keyword">...</span><spanclass="comment"> % 'filt','med'</span>        <span class="string">'Kernel'</span>,matI,<span class="string">'Zones'</span>,Zones,<spanclass="string">'Omega'</span>,Omega);    <span class="comment">% mI = round(mI);</span></pre>      <h2>local estimation and characterization of ramp/transition pixels<a name="10"></a></h2>      <pre class="codeinput">    Iramp = maptransition(mI,trans,<span class="string">'const'</span>,<spanclass="string">'strong'</span>);   figure, imagesc(reshape(Iramp,[X,Y])), colormap <span class="string">gray</span>;    <span class="comment">% get rid of flat area:</span>    <span class="keyword">if</span> gthres &gt; 0        m = max(max(G(:,:,nC)));    <span class="keyword">else</span>        m=0;    <span class="keyword">end</span>    Iramp = Iramp &amp; reshape(G(:,:,nC),[XY 1])&gt;m*gthres;    <span class="comment">% if no consideration for this condition:  Iramp = ones(XY,1);</span>    <span class="comment">%figure, imagesc(reshape(Iramp(:,:,1),X,Y)), axis image, colormap gray;</span>    Iramp = find(Iramp);    <span class="comment">% proceed only if such pixels have been found</span>    <span class="keyword">if</span> isempty(Iramp) <span class="comment">% this is very improbable</span>        <span class="keyword">break</span>;    <span class="keyword">end</span></pre>      <h2>local estimation of the gradient indices<a name="11"></a></h2>      <pre class="codeinput">    <span class="comment">%mG = zeros(lenght(Iramp), nelevels, Z);</span>    mG  = localorientfeature(G,<span class="string">'filt'</span>,<span class="string">'mean'</span>, <spanclass="keyword">...</span>        <span class="string">'Kernel'</span>,matG,<span class="string">'Zones'</span>,Zones,<spanclass="string">'Omega'</span>,Omega);    <span class="comment">% reduce the problem to potential ramp pixels: restrict the set of</span>    <span class="comment">% pixels which are examined to pixels on the ramp</span>    mI = mI(Iramp,:,:);    mG = mG(Iramp,:,:);    <span class="keyword">if</span> strcmp(method,<span class="string">'control'</span>)        D = deltaI(Iramp,:);        ID = dirdeltaI(Iramp,:);    <span class="keyword">else</span>        D = zeros(length(Iramp),C);        ID = [];    <span class="keyword">end</span>    S = S(Iramp);    <span class="comment">% extraction of transition pixels (located on a ramp) with the</span>    <span class="comment">% criterion GM&gt;GH and GM&gt;GL</span>    iR = mG(:,M,nC)&gt;mG(:,H,nC) &amp; mG(:,M,nC)&gt;mG(:,L,nC);    Itrans{iter} = Iramp(iR); <span class="comment">% a subset of the ramp pixels</span>    a = zeros(X,Y);  a(Itrans{iter}) = 1;   figure, imagesc(a),colormap <span class="string">gray</span>, title(<span class="string">'ramp'</span>)</pre>      <h2>Image sharpening<a name="12"></a></h2>      <pre class="codeinput">    <span class="comment">% reshape the input and initialize the output</span>    A = reshape(A,[XY C]);    SH = A;    <span class="comment">% extract ramp pixels of type 1:    GL &lt;(or&lt;=) GM &lt;= GH</span>    iR = findcase(method, mG(:,H,nC), mG(:,L,nC), mG(:,M,nC));    <span class="comment">% note : iR are the  coordinates of the pixels considered in the domain</span>    <span class="comment">% of the reduced image and Iramp(iR) are the correponding coordinates in</span>    <span class="comment">% the domain of the original image</span>    <span class="comment">% possibly update those pixels</span>    <span class="keyword">if</span> ~isempty(iR)        <span class="keyword">for</span> c=1:C            F = factorvalue(fac, mG(iR,H,c), mG(iR,L,c), mG(iR,M,c));           <span class="keyword">if</span> strcmp(method,<span class="string">'shift'</span>)                R = adjustleu(F, mI(iR,L,c), mI(iR,M,c), S(iR), fE);                SH(Iramp(iR),c) = updateleu(A(Iramp(iR),c), R, -1);            <span class="keyword">elseif</span> strcmp(method,<span class="string">'control'</span>)                R = adjustcontrol(F, mI(iR,L,c), mI(iR,M,c), D(iR,c), ID(iR,c), <spanclass="keyword">...</span>                    S(iR), fE);                 SH(Iramp(iR),c) = updatecontrol(A(Iramp(iR),c),R,mI(iR,L,c));            <span class="keyword">end</span>        <span class="keyword">end</span>    <span class="keyword">end</span>    <span class="comment">% extract ramp pixels of type 2:    GH &lt;(or&lt;=) GM &lt;= GL</span>    iR = findcase(method, mG(:,L,nC), mG(:,H,nC), mG(:,M,nC));    <span class="keyword">if</span> ~isempty(iR)        <span class="keyword">for</span> c=1:C            F = factorvalue(fac, mG(iR,L,c), mG(iR,H,c), mG(iR,M,c));            <span class="keyword">if</span> strcmp(method,<span class="string">'shift'</span>)                R = adjustleu(F, mI(iR,H,c), mI(iR,M,c), S(iR), fE);                SH(Iramp(iR),c) = updateleu(A(Iramp(iR),c), R, 1);            <span class="keyword">elseif</span> strcmp(method,<span class="string">'control'</span>)                R = adjustcontrol(F, mI(iR,H,c), mI(iR,M,c), D(iR,c), ID(iR,c), <spanclass="keyword">...</span>                    S(iR), fE);                SH(Iramp(iR),c) = updatecontrol(A(Iramp(iR),c),R,mI(iR,H,c));            <span class="keyword">end</span>        <span class="keyword">end</span>    <span class="keyword">end</span>    <span class="comment">% SH = round(SH);</span>    <span class="keyword">if</span> niter&gt;1       <span class="comment">% updates:</span>        <span class="comment">%  - matrices delta of intensity variation changes</span>        delta = A(Iramp,:) - SH(Iramp,:);        <span class="comment">%  - matrices dirdelta of change in intensity variation direction</span>        <span class="keyword">for</span> c=1:C            dirdeltaI(Iramp(delta(:,c) .* deltaI(Iramp,c) &lt; 0),c) = 1; <spanclass="comment">% sign change</span>        <span class="keyword">end</span>        deltaI(Iramp,:) = delta;        pchange = sum(abs(delta),2)&gt;eps; <span class="comment">% matrix of modified pixels</span>        pchange = sum(pchange(:)) / XY;  <span class="comment">% pct of change</span>        <span class="comment">% note : the first sum: sum(abs(delta),3) operates over the channnel</span>        <span class="comment">% account for pixels modified in any of their channel</span>    <span class="keyword">end</span></pre>      <h2>Process for update for next loop in the iteration<a name="13"></a></h2>      <pre class="codeinput">    A = reshape(SH, [X, Y, C]);     pl = [pl ; A(110, :)];     pch = [pch ; pchange];    <span class="keyword">if</span> pchange &lt;= pctch        pchange        pctch        <span class="keyword">break</span>;    <span class="keyword">end</span><span class="comment">% TH: final ramp after the last iteration</span>iR = findramp(method, mG(:,L,nC), mG(:,H,nC), mG(:,M,nC));TH(Iramp(iR)) = TH(Iramp(iR))+1;</pre>      <pre class="codeinput"><span class="keyword">end</span><span class="comment">% final output</span>SH = A;</pre>      <pre class="codeinput"><span class="keyword">end</span><span class="comment">% end of rampsharp</span></pre>      <h2>adjustment estimation<a name="16"></a></h2>      <pre class="codeinput"><span class="comment">% -------------------------------------------------------------------------</span><span class="keyword">function</span> iR = findcase(method, G1, G2, Gm)iR = G1&gt;=Gm &amp; Gm&gt;G2; <span class="comment">% standard Leu condition</span><span class="keyword">if</span> ~strcmp(method,<span class="string">'leu'</span>)    iR = iR | (G1&gt;=Gm &amp; Gm==G2); <span class="comment">% add flexible condition</span><span class="keyword">end</span><span class="comment">%iR = find(iR);</span><span class="keyword">end</span><span class="comment">% end of findcase</span><span class="comment">% -------------------------------------------------------------------------</span><span class="keyword">function</span> iR = findramp(method, G1, G2, Gm)iR = Gm&gt;=G1 &amp; Gm&gt;=G2; <span class="comment">%</span><span class="comment">%iR = find(iR);</span><span class="keyword">end</span><span class="comment">% end of findramp</span><span class="comment">% -------------------------------------------------------------------------</span><span class="keyword">function</span> SH = updatecontrol(A, R, I1)SH =  (A &gt; I1) .* max(A - R, I1) + (A &lt;= I1) .* min(A + R, I1);<span class="keyword">end</span><span class="comment">% end of updatecase</span><span class="comment">% -------------------------------------------------------------------------</span><span class="keyword">function</span> SH = updateleu(A, R, s)SH =  A + s * R;<span class="keyword">end</span><span class="comment">% end of updateleu</span><span class="comment">% -------------------------------------------------------------------------</span><span class="keyword">function</span> R = adjustcontrol(F, I1, I2, D, ID, S, fE)R = 0.5 + fE .* F .* S .* abs(I1-I2);iR0 = D~=0 &amp; ID==1;<span class="comment">% control the current correction amount by the previous correction amount</span><span class="keyword">if</span> ~isempty(iR0)    R(iR0) = max(min(R(iR0), abs(D(iR0))-1), 0);<span class="keyword">end</span><span class="keyword">end</span><span class="comment">% end of adjustcase</span><span class="comment">% -------------------------------------------------------------------------</span><span class="keyword">function</span> R = adjustleu(F, I1, I2, S, fE)R = fE .* S .* abs(I1-I2);R = (F &gt;= 0.5) .* R + 2. * (F &lt; 0.5) .* F .* R;<span class="keyword">end</span><span class="comment">% end of adjustleu</span><span class="comment">% -------------------------------------------------------------------------</span><span class="keyword">function</span> F = factorvalue(alpha, G1, G2, Gm)<span class="comment">% compute the correction factor based on the estimated gradient indices</span><span class="comment">% Gm, Gl (either G1 or G2) and Gh (ibid)</span><span class="comment">% G1 and G2 stand for Gl or Gh depending on the part of the ramp (lower or</span><span class="comment">% higher) the pixel belongs to</span><span class="keyword">switch</span> alpha    <span class="keyword">case</span> {<span class="string">'leu'</span>,<span class="string">'f0'</span>}  <spanclass="comment">% original leu</span>        F = (G1 - Gm) ./ (Gm - G2); <span class="comment">% leu-like</span>    <span class="keyword">case</span> <span class="string">'f1'</span>  <span class="comment">% default choice</span>        F = (G2 + Gm) ./ (1 + 2*Gm);    <span class="keyword">case</span> <span class="string">'f2'</span>        F = (G1 + G2 - Gm) ./ (1 + 3*Gm);    <span class="keyword">case</span> <span class="string">'f3'</span>        F = (G1 + G2) ./ (1 + 2*Gm);    <span class="keyword">case</span> <span class="string">'f4'</span>        F = (G1 + Gm) ./ (1 + 2*Gm);    <span class="keyword">case</span> <span class="string">'f5'</span>        F = (G1 + G2 + Gm) ./ (1 + 3*Gm);<span class="keyword">end</span><span class="keyword">end</span><span class="comment">% end of factorvalue</span></pre></div>    <!--##### SOURCE BEGIN #####function [SH,TH,pl, pch] = ...    fuzzrampimpulse_base(I, niter, pilot, method, grd, gthres, kern, ...    fac, fE, pctch, trans)error(nargchk(1, 11, nargin, 'struct'));error(nargoutchk(1, 4, nargout, 'struct'));if nargin<11,  trans = 'indice';    if nargin<10,  pctch = 0.01;        %        if nargin<12,  crit = 'one';   % check only if assertion is true on single band        if nargin<9,  fE     = 1;       % no correction factor            if nargin<8,  fac = 'f0';    % factor used in shifting                if nargin<7,  kern = 'leu';    % original weights for computing the indices                    if nargin<6,  gthres    = 0;                        if nargin<5,  grd    = 'sob';   % sobel gradient for estimating the derivatives                            if nargin<4,  method = 'shift'; % just shift the value, without controlling its extent                                if nargin<3,  pilot = 'ave';                                    if nargin<2,   niter = 1;   end                                end                            end                        end                    end                end            end        end        %    end    endend%% Parsing parametersif ~isnumeric(I)    error('fuzzrampimpulse_base:errorinput','a matrix is required in input');end% check the dimension of the input image:nbdims = nb_dims(I); % instead of ndimsif nbdims<2 || nbdims>3    error('fuzzrampimpulse_base:inputerror', ...        'matrix or array of matrices are expected as inputs');end% number of spectral componentsC = size(I,3);% possibly overwriteif C~=3 && strcmp(pilot,'int')                                           warning('fuzzrampimpulse_base:inputparameter',...        'pilot image as intensity implemented only for RGB images');   pilot = 'ave';end%% internal parameters (do not modify)% Initializing variablespchange = pctch +1;% We adopt the following index representation for the directed components% used for the intensity and gradient indices used (matlab indexing)%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-%          | NW | N | NE |         | 1 | 4 | 7 |%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-%          | W  |   | E  |    =>   | 2 | 5 | 8 |%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-%          | SW | S | SE |         | 3 | 6 | 9 |%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-direction_indices = struct('east', 8, 'northeast', 7, 'north', 4, ...    'northwest', 1, 'west', 2, 'southwest', 3, ...    'south', 6, 'southeast', 9, 'central', 5);                         %#ok%directions = fieldnames(direction_indices);%ndirections = length(directions);% note: not used in the followinglevel_indices = struct( 'L', 1, 'M', 2, 'H', 3);L = level_indices.('L'); M = level_indices.('M'); H = level_indices.('H');% Remember: mapping from indexes to subscripts for a 3x3 matrix in matlab%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-%          | 1,1 | 1,2 | 1,3 |         | 1 | 4 | 7 |%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-%          | 2,1 | 2,2 | 2,3 |    =>   | 2 | 5 | 8 |%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-%          | 3,1 | 3,2 | 3,3 |         | 3 | 6 | 9 |%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-%                (ii,jj)          =>    ii+3*(jj-1)%% construct beforehand the predefined local 3x3 kernels defined for each % different zone and level, and used for the estimation of the gradient and% intensity indices (used once at the beginning of the code).% Intensity and gradient masks are built for both zones 1 and 2, and all% the other zones derived by rotationswitch kern    case 'leu'        matI = local3x3kernel('ker','i0','norm',true);        matG = local3x3kernel('ker','g0','norm',true);    case 'new'        matI = local3x3kernel('ker','i1','norm',true);        matG = local3x3kernel('ker','g1','norm',true);end% mote: matI and matG are indexed by [size(x,y),zone,level]%% Main computation through iterative filtering% % possibly resize the input matrix% if interp%     A = upscalexy(I,[2 2],'cubic');% else     A = I;% end% initialize the output matrix% SH = A;% dimension of the frame[X,Y] = size(A(:,:,1)); XY = X * Y; % numel(A(:,:,1));% index of all pixels in the input image% pixindex = reshape(1:XY,[X Y]);% indexes of the border pixels% pixbord = [1:X, (1:Y-2)*X+1, (2:Y-1)*X, (1+X*(Y-1)):XY]'; % create the 'pilot' for gradient orientationif C==3 && strcmp(pilot,'bright')   pilot = rgb2gray(A); % pilot will be the brightness imageelseif C>=2    pilot = sum(A,3) / C; % pilot will be the average imageend% construct the variation sparse matrices measuring the amount of change% occurring in the image after each of the iterative filteringdeltaI = zeros(XY,C);   dirdeltaI = deltaI; % index of transition pixels for each step of the iterationsItrans = cell(niter);% set the number of estimated gradientnC = C + (C>1); % ie: ng=1 if Z==1, ng=Z+1 otherwiseG = zeros(X,Y,nC);pl = A(110, :);pch = [];TH = zeros(X,Y);% proceed iterativelyfor iter=1:niter                %% Computation of the directional derivatives through Gaussian smoothing and    % differentiation    % compute the gradient (gy: vertical, gx: horizontal) for each channel    [gy,gx] = grdmask_base(A, grd, 'ij');    % same as computing first: [gx,gy]=grdsmooth(I,sigma,p.der,hsize,'xy');    % and then take the vector orthogonal to the gradient: tmp=gx; gx=gy; gy=-tmp;    gy = -gy;           % note that the output directional derivatives have size [X Y C]    if C>1        % norm channel by channel        G(:,:,1:C) = sqrt(gx.^2 + gy.^2);        % update the value of the gradient to set it to the gradient of        % the average image        gx = sum(gx,3) / C;        gy = sum(gy,3) / C;    end   % Theta = mod(atan2(gy,gx),pi);   Theta = atan2(gy,gx);    figure, imagesc(Theta), colorbar    G(:,:,nC) = mean(G(:,:,1:C),3);    figure, imagesc(rescale(G(:,:,nC))), colormap gray     % find the orientation and the interpolation parameters over the image    [Zones,Omega] = localorientzone(Theta,8);    % compute the compensation factor    S = 1 - (1-sqrt(2.)) * Omega;        %% local estimation of intensity indices        % prior computation of the intensity indices over the different    % spectral components    mI = localorientfeature(A, 'filt', 'mean', ... % 'filt','med'        'Kernel',matI,'Zones',Zones,'Omega',Omega);       % mI = round(mI);       %% local estimation and characterization of ramp/transition pixels        Iramp = maptransition(mI,trans,'const','strong');   figure, imagesc(reshape(Iramp,[X,Y])), colormap gray;       % get rid of flat area:    if gthres > 0        m = max(max(G(:,:,nC)));    else         m=0;    end    Iramp = Iramp & reshape(G(:,:,nC),[XY 1])>m*gthres;                % if no consideration for this condition:  Iramp = ones(XY,1);    %figure, imagesc(reshape(Iramp(:,:,1),X,Y)), axis image, colormap gray;    Iramp = find(Iramp);        % proceed only if such pixels have been found    if isempty(Iramp) % this is very improbable        break;    end        %% local estimation of the gradient indices    %mG = zeros(lenght(Iramp), nelevels, Z);    mG  = localorientfeature(G,'filt','mean', ...        'Kernel',matG,'Zones',Zones,'Omega',Omega);        % reduce the problem to potential ramp pixels: restrict the set of    % pixels which are examined to pixels on the ramp    mI = mI(Iramp,:,:);    mG = mG(Iramp,:,:);        if strcmp(method,'control')        D = deltaI(Iramp,:);        ID = dirdeltaI(Iramp,:);    else        D = zeros(length(Iramp),C);        ID = [];    end    S = S(Iramp);        % extraction of transition pixels (located on a ramp) with the    % criterion GM>GH and GM>GL    iR = mG(:,M,nC)>mG(:,H,nC) & mG(:,M,nC)>mG(:,L,nC);    Itrans{iter} = Iramp(iR); % a subset of the ramp pixels    a = zeros(X,Y);  a(Itrans{iter}) = 1;   figure, imagesc(a),colormap gray, title('ramp')           %% Image sharpening        % reshape the input and initialize the output    A = reshape(A,[XY C]);    SH = A;        % extract ramp pixels of type 1:    GL <(or<=) GM <= GH    iR = findcase(method, mG(:,H,nC), mG(:,L,nC), mG(:,M,nC));    % note : iR are the  coordinates of the pixels considered in the domain    % of the reduced image and Iramp(iR) are the correponding coordinates in    % the domain of the original image    % possibly update those pixels    if ~isempty(iR)        for c=1:C            F = factorvalue(fac, mG(iR,H,c), mG(iR,L,c), mG(iR,M,c));           if strcmp(method,'shift')                R = adjustleu(F, mI(iR,L,c), mI(iR,M,c), S(iR), fE);                SH(Iramp(iR),c) = updateleu(A(Iramp(iR),c), R, -1);            elseif strcmp(method,'control')                R = adjustcontrol(F, mI(iR,L,c), mI(iR,M,c), D(iR,c), ID(iR,c), ...                    S(iR), fE);                 SH(Iramp(iR),c) = updatecontrol(A(Iramp(iR),c),R,mI(iR,L,c));            end        end    end        % extract ramp pixels of type 2:    GH <(or<=) GM <= GL    iR = findcase(method, mG(:,L,nC), mG(:,H,nC), mG(:,M,nC));    if ~isempty(iR)        for c=1:C            F = factorvalue(fac, mG(iR,L,c), mG(iR,H,c), mG(iR,M,c));            if strcmp(method,'shift')                R = adjustleu(F, mI(iR,H,c), mI(iR,M,c), S(iR), fE);                SH(Iramp(iR),c) = updateleu(A(Iramp(iR),c), R, 1);            elseif strcmp(method,'control')                R = adjustcontrol(F, mI(iR,H,c), mI(iR,M,c), D(iR,c), ID(iR,c), ...                    S(iR), fE);                                 SH(Iramp(iR),c) = updatecontrol(A(Iramp(iR),c),R,mI(iR,H,c));            end        end    end        % SH = round(SH);        if niter>1       % updates:        %  - matrices delta of intensity variation changes        delta = A(Iramp,:) - SH(Iramp,:);                %  - matrices dirdelta of change in intensity variation direction        for c=1:C            dirdeltaI(Iramp(delta(:,c) .* deltaI(Iramp,c) < 0),c) = 1; % sign change        end        deltaI(Iramp,:) = delta;        pchange = sum(abs(delta),2)>eps; % matrix of modified pixels        pchange = sum(pchange(:)) / XY;  % pct of change        % note : the first sum: sum(abs(delta),3) operates over the channnel        % account for pixels modified in any of their channel            end            %% Process for update for next loop in the iteration    A = reshape(SH, [X, Y, C]);         pl = [pl ; A(110, :)];     pch = [pch ; pchange];        if pchange <= pctch        pchange        pctch        break;    end% TH: final ramp after the last iterationiR = findramp(method, mG(:,L,nC), mG(:,H,nC), mG(:,M,nC));TH(Iramp(iR)) = TH(Iramp(iR))+1;    end% final outputSH = A;end% end of rampsharp%% adjustment estimation% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-function iR = findcase(method, G1, G2, Gm)iR = G1>=Gm & Gm>G2; % standard Leu conditionif ~strcmp(method,'leu')    iR = iR | (G1>=Gm & Gm==G2); % add flexible conditionend%iR = find(iR);end% end of findcase% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-function iR = findramp(method, G1, G2, Gm)iR = Gm>=G1 & Gm>=G2; % %iR = find(iR);end% end of findramp% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-function SH = updatecontrol(A, R, I1)SH =  (A > I1) .* max(A - R, I1) + (A <= I1) .* min(A + R, I1);end% end of updatecase% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-function SH = updateleu(A, R, s)SH =  A + s * R;end% end of updateleu% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-function R = adjustcontrol(F, I1, I2, D, ID, S, fE)R = 0.5 + fE .* F .* S .* abs(I1-I2);iR0 = D~=0 & ID==1;% control the current correction amount by the previous correction amountif ~isempty(iR0)    R(iR0) = max(min(R(iR0), abs(D(iR0))-1), 0);endend% end of adjustcase% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-function R = adjustleu(F, I1, I2, S, fE)R = fE .* S .* abs(I1-I2);R = (F >= 0.5) .* R + 2. * (F < 0.5) .* F .* R;end% end of adjustleu% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-function F = factorvalue(alpha, G1, G2, Gm)% compute the correction factor based on the estimated gradient indices% Gm, Gl (either G1 or G2) and Gh (ibid)% G1 and G2 stand for Gl or Gh depending on the part of the ramp (lower or% higher) the pixel belongs toswitch alpha    case {'leu','f0'}  % original leu        F = (G1 - Gm) ./ (Gm - G2); % leu-like    case 'f1'  % default choice        F = (G2 + Gm) ./ (1 + 2*Gm);    case 'f2'        F = (G1 + G2 - Gm) ./ (1 + 3*Gm);    case 'f3'        F = (G1 + G2) ./ (1 + 2*Gm);    case 'f4'        F = (G1 + Gm) ./ (1 + 2*Gm);    case 'f5'           F = (G1 + G2 + Gm) ./ (1 + 3*Gm);endend% end of factorvalue##### SOURCE END #####-->  </body></html>

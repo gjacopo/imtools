@@ -1,154 +1,1 @@
-
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   <!--
-This HTML was auto-generated from MATLAB code.
-To make changes, update the MATLAB code and republish this document.
-      --><title>BLURMAP_BASE - Base function for BLURMAP.</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-14"><meta name="DC.source" content="blurmap_base.m"><style type="text/css">
-html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
-
-html { min-height:100%; margin-bottom:1px; }
-html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
-html body td { vertical-align:top; text-align:left; }
-
-h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
-h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
-h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
-
-a { color:#005fce; text-decoration:none; }
-a:hover { color:#005fce; text-decoration:underline; }
-a:visited { color:#004aa0; text-decoration:none; }
-
-p { padding:0px; margin:0px 0px 20px; }
-img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
-
-ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
-ul li { padding:0px; margin:0px 0px 7px 0px; }
-ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
-ul li ol li { list-style:decimal; }
-ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
-ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
-ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
-ol li ol li { list-style-type:lower-alpha; }
-ol li ul { padding-top:7px; }
-ol li ul li { list-style:square; }
-
-.content { font-size:1.2em; line-height:140%; padding: 20px; }
-
-pre, tt, code { font-size:12px; }
-pre { margin:0px 0px 20px; }
-pre.error { color:red; }
-pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
-pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
-
-@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
-
-span.keyword { color:#0000FF }
-span.comment { color:#228B22 }
-span.string { color:#A020F0 }
-span.untermstring { color:#B20000 }
-span.syscmd { color:#B28C00 }
-
-.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
-.footer p { margin:0px; }
-
-  </style></head><body><div class="content"><h1>BLURMAP_BASE - Base function for BLURMAP.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Credit</a></li><li><a href="#3">See also</a></li><li><a href="#4">Function implementation</a></li></ul></div><h2>Syntax<a name="1"></a></h2><pre>   [Iblur, qmap] = BLURMAP_BASE(I, blur, qstep);</pre><h2>Credit<a name="2"></a></h2><p><a href="mailto:grazzja@lanl.gov">J.Grazzini</a> (ISR-2/LANL)</p><h2>See also<a name="3"></a></h2><p>Related: <a href="BLURMAP.html"><tt>BLURMAP</tt></a>. Called: <a href="matlab:webpub(whichpath('FSPECIAL'))"><tt>FSPECIAL</tt></a>, <a href="matlab:webpub(whichpath('IMFILTER'))"><tt>IMFILTER</tt></a>.</p><h2>Function implementation<a name="4"></a></h2><pre class="codeinput"><span class="keyword">function</span> [Iblur,varargout] = blurmap_base(I, blur, qstep)
-</pre><pre class="codeinput">[X,Y,C] = size(I);
-</pre><p>dealing with multispectral images</p><pre class="codeinput"><span class="keyword">if</span> C&gt;1
-    Iblur = zeros(X, Y, C);
-    <span class="keyword">if</span> nargout==2,  varargout{1} = zeros(X, Y, C);    <span class="keyword">end</span>
-    <span class="keyword">for</span> c=1:C
-        [Iblur(:,:,c) tmp] = blurmap_base(I(:,:,c), blur, qstep);
-    <span class="keyword">end</span>
-    <span class="keyword">if</span> nargout==2,  varargout{1}(:,:,c) = tmp;    <span class="keyword">end</span>
-    <span class="keyword">return</span>;
-<span class="keyword">end</span>
-</pre><p>quantize the bluring map by adjusting the range of blur parameters</p><pre class="codeinput">blur(blur&lt;qstep) = qstep;
-quantblur = qstep * round(blur/qstep);
-</pre><p>get the list of possible blur parameters</p><pre class="codeinput">lblur = unique(quantblur(:));
-nblur = length(lblur); <span class="comment">% no of bluring parameters</span>
-</pre><p>this function corrects for boundary conditions by  reflecting the image at the boundaries before performing the isotropic gaussian filter. This eliminates the "image darkening" at the edges.</p><pre class="codeinput">Iblur = zeros(size(I(:,:,1)));
-
-<span class="keyword">for</span> i=1:nblur
-    sigma = lblur(i);
-    G = fspecial(<span class="string">'gaussian'</span>,fix(6*sigma),sigma);
-    Ifilt = imfilter(I,G,<span class="string">'symmetric'</span>,<span class="string">'same'</span>);
-    imap = quantblur == sigma;
-    Iblur(imap) = Ifilt(imap);
-<span class="keyword">end</span>
-
-<span class="keyword">if</span> nargout==2
-    varargout{1} = quantblur;
-<span class="keyword">end</span>
-</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of blurmap_base</span>
-</pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.14<br></p></div><!--
-##### SOURCE BEGIN #####
-%% BLURMAP_BASE - Base function for BLURMAP.
-%
-%% Syntax
-%     [Iblur, qmap] = BLURMAP_BASE(I, blur, qstep);
-% 
-%% Credit
-% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)
-%
-%% See also
-% Related:
-% <BLURMAP.html |BLURMAP|>.
-% Called: 
-% <matlab:webpub(whichpath('FSPECIAL')) |FSPECIAL|>,
-% <matlab:webpub(whichpath('IMFILTER')) |IMFILTER|>.
-
-%% Function implementation
-function [Iblur,varargout] = blurmap_base(I, blur, qstep)
-
-[X,Y,C] = size(I);
-
-%%
-% dealing with multispectral images
-
-if C>1
-    Iblur = zeros(X, Y, C);
-    if nargout==2,  varargout{1} = zeros(X, Y, C);    end
-    for c=1:C
-        [Iblur(:,:,c) tmp] = blurmap_base(I(:,:,c), blur, qstep);
-    end
-    if nargout==2,  varargout{1}(:,:,c) = tmp;    end
-    return;
-end
-
-%%
-% quantize the bluring map by adjusting the range of blur parameters
-blur(blur<qstep) = qstep;
-quantblur = qstep * round(blur/qstep);
-
-%%
-% get the list of possible blur parameters
-lblur = unique(quantblur(:));
-nblur = length(lblur); % no of bluring parameters
-
-%%
-% this function corrects for boundary conditions by  reflecting the image
-% at the boundaries before performing the isotropic gaussian filter.
-% This eliminates the "image darkening" at the edges.
-Iblur = zeros(size(I(:,:,1)));
-
-for i=1:nblur
-    sigma = lblur(i);
-    G = fspecial('gaussian',fix(6*sigma),sigma);
-    Ifilt = imfilter(I,G,'symmetric','same');
-    imap = quantblur == sigma;
-    Iblur(imap) = Ifilt(imap);
-end
-
-if nargout==2
-    varargout{1} = quantblur;
-end
-
-end % end of blurmap_base
-
-##### SOURCE END #####
---></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>  <head>    <meta content="text/html; charset=utf-8" http-equiv="content-type">    <!--This HTML was auto-generated from MATLAB code.To make changes, update the MATLAB code and republish this document.      -->    <title>BLURMAP_BASE - Base function for BLURMAP.</title>    <meta name="generator" content="MATLAB 7.14">    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">    <meta name="DC.date" content="2012-11-14">    <meta name="DC.source" content="blurmap_base.m">    <style type="text/css">html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}html { min-height:100%; margin-bottom:1px; }html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }html body td { vertical-align:top; text-align:left; }h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }a { color:#005fce; text-decoration:none; }a:hover { color:#005fce; text-decoration:underline; }a:visited { color:#004aa0; text-decoration:none; }p { padding:0px; margin:0px 0px 20px; }img { padding:0px; margin:0px 0px 20px; border:none; }p img, pre img, tt img, li img { margin-bottom:0px; } ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }ul li { padding:0px; margin:0px 0px 7px 0px; }ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }ul li ol li { list-style:decimal; }ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }ol li ol li { list-style-type:lower-alpha; }ol li ul { padding-top:7px; }ol li ul li { list-style:square; }.content { font-size:1.2em; line-height:140%; padding: 20px; }pre, tt, code { font-size:12px; }pre { margin:0px 0px 20px; }pre.error { color:red; }pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }span.keyword { color:#0000FF }span.comment { color:#228B22 }span.string { color:#A020F0 }span.untermstring { color:#B20000 }span.syscmd { color:#B28C00 }.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }.footer p { margin:0px; }  </style>  </head>  <body>    <div class="content">      <h1>BLURMAP_BASE - Base function for BLURMAP.</h1>      <!--introduction--><!--/introduction-->      <h2>Contents</h2>      <div>        <ul>          <li><a href="#1">Syntax</a></li>          <li><a href="#3">See also</a></li>          <li><a href="#4">Function implementation</a></li>        </ul>      </div>      <h2>Syntax<a name="1"></a></h2>      <pre>   [Iblur, qmap] = BLURMAP_BASE(I, blur, qstep);</pre>      <h2>See also<a name="3"></a></h2>      <p>Related: <a href="BLURMAP.html"><tt>BLURMAP</tt></a>. Called: <a href="matlab:webpub%28whichpath%28%27FSPECIAL%27%29%29"><tt>FSPECIAL</tt></a>,        <a href="matlab:webpub%28whichpath%28%27IMFILTER%27%29%29"><tt>IMFILTER</tt></a>.</p>      <h2>Function implementation<a name="4"></a></h2>      <pre class="codeinput"><span class="keyword">function</span> [Iblur,varargout] = blurmap_base(I, blur, qstep)</pre>      <pre class="codeinput">[X,Y,C] = size(I);</pre>      <p>dealing with multispectral images</p>      <pre class="codeinput"><span class="keyword">if</span> C&gt;1    Iblur = zeros(X, Y, C);    <span class="keyword">if</span> nargout==2,  varargout{1} = zeros(X, Y, C);    <spanclass="keyword">end</span>    <span class="keyword">for</span> c=1:C        [Iblur(:,:,c) tmp] = blurmap_base(I(:,:,c), blur, qstep);    <span class="keyword">end</span>    <span class="keyword">if</span> nargout==2,  varargout{1}(:,:,c) = tmp;    <spanclass="keyword">end</span>    <span class="keyword">return</span>;<span class="keyword">end</span></pre>      <p>quantize the bluring map by adjusting the range of blur parameters</p>      <pre class="codeinput">blur(blur&lt;qstep) = qstep;quantblur = qstep * round(blur/qstep);</pre>      <p>get the list of possible blur parameters</p>      <pre class="codeinput">lblur = unique(quantblur(:));nblur = length(lblur); <span class="comment">% no of bluring parameters</span></pre>      <p>this function corrects for boundary conditions by reflecting the image        at the boundaries before performing the isotropic gaussian filter. This        eliminates the "image darkening" at the edges.</p>      <pre class="codeinput">Iblur = zeros(size(I(:,:,1)));<span class="keyword">for</span> i=1:nblur    sigma = lblur(i);    G = fspecial(<span class="string">'gaussian'</span>,fix(6*sigma),sigma);    Ifilt = imfilter(I,G,<span class="string">'symmetric'</span>,<span class="string">'same'</span>);    imap = quantblur == sigma;    Iblur(imap) = Ifilt(imap);<span class="keyword">end</span><span class="keyword">if</span> nargout==2    varargout{1} = quantblur;<span class="keyword">end</span></pre>      <pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of blurmap_base</span></pre></div>    <!--##### SOURCE BEGIN #####%% BLURMAP_BASE - Base function for BLURMAP.%%% Syntax%     [Iblur, qmap] = BLURMAP_BASE(I, blur, qstep);% %% Credit% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)%%% See also% Related:% <BLURMAP.html |BLURMAP|>.% Called: % <matlab:webpub(whichpath('FSPECIAL')) |FSPECIAL|>,% <matlab:webpub(whichpath('IMFILTER')) |IMFILTER|>.%% Function implementationfunction [Iblur,varargout] = blurmap_base(I, blur, qstep)[X,Y,C] = size(I);%%% dealing with multispectral imagesif C>1    Iblur = zeros(X, Y, C);    if nargout==2,  varargout{1} = zeros(X, Y, C);    end    for c=1:C        [Iblur(:,:,c) tmp] = blurmap_base(I(:,:,c), blur, qstep);    end    if nargout==2,  varargout{1}(:,:,c) = tmp;    end    return;end%%% quantize the bluring map by adjusting the range of blur parametersblur(blur<qstep) = qstep;quantblur = qstep * round(blur/qstep);%%% get the list of possible blur parameterslblur = unique(quantblur(:));nblur = length(lblur); % no of bluring parameters%%% this function corrects for boundary conditions by  reflecting the image% at the boundaries before performing the isotropic gaussian filter.% This eliminates the "image darkening" at the edges.Iblur = zeros(size(I(:,:,1)));for i=1:nblur    sigma = lblur(i);    G = fspecial('gaussian',fix(6*sigma),sigma);    Ifilt = imfilter(I,G,'symmetric','same');    imap = quantblur == sigma;    Iblur(imap) = Ifilt(imap);endif nargout==2    varargout{1} = quantblur;endend % end of blurmap_base##### SOURCE END #####-->  </body></html>

@@ -1,157 +1,1 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>MERGESTRUCT
-      - Merge structures with unique fields.</title>
-    <meta name="generator" content="MATLAB 7.11">
-    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-    <meta name="DC.date" content="2011-05-10">
-    <meta name="DC.source" content="mergestruct.m">
-    <style type="text/css">
-
-body {
-  background-color: white;
-  margin:10px;
-}
-
-h1 {
-  color: #990000; 
-  font-size: x-large;
-}
-
-h2 {
-  color: #990000;
-  font-size: medium;
-}
-
-/* Make the text shrink to fit narrow windows, but not stretch too far in 
-wide windows. */ 
-p,h1,h2,div.content div {
-  max-width: 600px;
-  /* Hack for IE6 */
-  width: auto !important; width: 600px;
-}
-
-pre.codeinput {
-  background: #EEEEEE;
-  padding: 10px;
-}
-@media print {
-  pre.codeinput {word-wrap:break-word; width:100%;}
-} 
-
-span.keyword {color: #0000FF}
-span.comment {color: #228B22}
-span.string {color: #A020F0}
-span.untermstring {color: #B20000}
-span.syscmd {color: #B28C00}
-
-pre.codeoutput {
-  color: #666666;
-  padding: 10px;
-}
-
-pre.error {
-  color: red;
-}
-
-p.footer {
-  text-align: right;
-  font-size: xx-small;
-  font-weight: lighter;
-  font-style: italic;
-  color: gray;
-}
-
-  </style>
-  </head>
-  <body>
-    <div class="content">
-      <h1>MERGESTRUCT - Merge structures with unique fields.</h1>
-      <!--introduction--><!--/introduction-->
-      <h2>Contents</h2>
-      <div>
-        <ul>
-          <li><a href="#1">Syntax</a></li>
-          <li><a href="#2">Credit</a></li>
-          <li><a href="#3">See also</a></li>
-          <li><a href="#4">Function implementation</a></li>
-        </ul>
-      </div>
-      <h2>Syntax<a name="1"></a></h2>
-      <pre>   sout = MERGESTRUCT(varargin);</pre>
-      <h2>See also<a name="3"></a></h2>
-      <p>Related: <a href="CATSTRUCT.html"><tt>CATSTRUCT</tt></a>.
-        Called: <a href="matlab:webpub%28whichpath%28%27STRUCT2CELL%27%29%29"><tt>STRUCT2CELL</tt></a>,
-        <a href="matlab:webpub%28whichpath%28%27CELL2STRUCT%27%29%29"><tt>CELL2STRUCT</tt></a>,
-        <a href="matlab:webpub%28whichpath%28%27UNIQUE%27%29%29"><tt>UNIQUE</tt></a>.</p>
-      <h2>Function implementation<a name="4"></a></h2>
-      <pre class="codeinput"><span class="keyword">function</span> sout = mergestruct(varargin)
-</pre>
-      <p>start with collecting fieldnames, checking implicitly that
-        inputs are structures.</p>
-      <pre class="codeinput">fn = [];
-<span class="keyword">for</span> k = 1:nargin
-    <span class="keyword">try</span>
-        fn = [fn ; fieldnames(varargin{k})];                           <span
-class="comment">%#ok</span>
-    <span class="keyword">catch</span> MEstruct
-        throw(MEstruct)
-    <span class="keyword">end</span>
-<span class="keyword">end</span>
-</pre>
-      <p>make sure the field names are unique.</p>
-      <pre class="codeinput"><span class="keyword">if</span> length(fn) ~= length(unique(fn))
-    error(<span class="string">'mergestruct:FieldsNotUnique'</span>,<span
-class="keyword">...</span>
-        <span class="string">'Field names must be unique'</span>);
-<span class="keyword">end</span>
-</pre>
-      <p>now concatenate the data from each struct. Can't use structfun
-        since input structs may not be scalar.</p>
-      <pre class="codeinput">c = [];
-<span class="keyword">for</span> k = 1:nargin
-    <span class="keyword">try</span>
-        c = [c , struct2cell(varargin{k})];                            <span
-class="comment">%#ok</span>
-    <span class="keyword">catch</span> MEdata
-        throw(MEdata);
-    <span class="keyword">end</span>
-<span class="keyword">end</span>
-</pre>
-      <p>construct the output.</p>
-      <pre class="codeinput">sout = cell2struct(c, fn, 1);
-</pre>
-      <pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of mergestruct</span>
-</pre>
-    </div>
-    <!--##### SOURCE BEGIN #####
-%% MERGESTRUCT - Merge structures with unique fields.%
-%% Syntax%     sout = MERGESTRUCT(varargin);
-%%% Credit
-% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)%
-%% See also  % Related:
-% <CATSTRUCT.html |CATSTRUCT|>.% Called: 
-% <matlab:webpub(whichpath('STRUCT2CELL')) |STRUCT2CELL|>,% <matlab:webpub(whichpath('CELL2STRUCT')) |CELL2STRUCT|>,
-% <matlab:webpub(whichpath('UNIQUE')) |UNIQUE|>.%% Function implementation
-function sout = mergestruct(varargin)%%
-% start with collecting fieldnames, checking implicitly% that inputs are structures.
-fn = [];for k = 1:nargin
-    try        fn = [fn ; fieldnames(varargin{k})];                           %#ok 
-    catch MEstruct        throw(MEstruct)
-    endend
-%%
-% make sure the field names are unique.if length(fn) ~= length(unique(fn))
-    error('mergestruct:FieldsNotUnique',...        'Field names must be unique');
-end%%
-% now concatenate the data from each struct.  Can't use% structfun since input structs may not be scalar.
-c = [];for k = 1:nargin
-    try        c = [c , struct2cell(varargin{k})];                            %#ok 
-    catch MEdata        throw(MEdata);
-    endend
-%%
-% construct the output.sout = cell2struct(c, fn, 1);
-end % end of mergestruct##### SOURCE END #####
---></body>
-</html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>  <head>    <meta content="text/html; charset=UTF-8" http-equiv="content-type">    <title>MERGESTRUCT - Merge structures with unique fields.</title>    <meta name="generator" content="MATLAB 7.11">    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">    <meta name="DC.date" content="2011-05-10">    <meta name="DC.source" content="mergestruct.m">    <style type="text/css">body {  background-color: white;  margin:10px;}h1 {  color: #990000;   font-size: x-large;}h2 {  color: #990000;  font-size: medium;}/* Make the text shrink to fit narrow windows, but not stretch too far in wide windows. */ p,h1,h2,div.content div {  max-width: 600px;  /* Hack for IE6 */  width: auto !important; width: 600px;}pre.codeinput {  background: #EEEEEE;  padding: 10px;}@media print {  pre.codeinput {word-wrap:break-word; width:100%;}} span.keyword {color: #0000FF}span.comment {color: #228B22}span.string {color: #A020F0}span.untermstring {color: #B20000}span.syscmd {color: #B28C00}pre.codeoutput {  color: #666666;  padding: 10px;}pre.error {  color: red;}p.footer {  text-align: right;  font-size: xx-small;  font-weight: lighter;  font-style: italic;  color: gray;}  </style>  </head>  <body>    <div class="content">      <h1>MERGESTRUCT - Merge structures with unique fields.</h1>      <!--introduction--><!--/introduction-->      <h2>Contents</h2>      <div>        <ul>          <li><a href="#1">Syntax</a></li>          <li><a href="#3">See also</a></li>          <li><a href="#4">Function implementation</a></li>        </ul>      </div>      <h2>Syntax<a name="1"></a></h2>      <pre>   sout = MERGESTRUCT(varargin);</pre>      <h2>See also<a name="3"></a></h2>      <p>Related: <a href="CATSTRUCT.html"><tt>CATSTRUCT</tt></a>. Called: <a          href="matlab:webpub%28whichpath%28%27STRUCT2CELL%27%29%29"><tt>STRUCT2CELL</tt></a>,        <a href="matlab:webpub%28whichpath%28%27CELL2STRUCT%27%29%29"><tt>CELL2STRUCT</tt></a>,        <a href="matlab:webpub%28whichpath%28%27UNIQUE%27%29%29"><tt>UNIQUE</tt></a>.</p>      <h2>Function implementation<a name="4"></a></h2>      <pre class="codeinput"><span class="keyword">function</span> sout = mergestruct(varargin)</pre>      <p>start with collecting fieldnames, checking implicitly that inputs are        structures.</p>      <pre class="codeinput">fn = [];<span class="keyword">for</span> k = 1:nargin    <span class="keyword">try</span>        fn = [fn ; fieldnames(varargin{k})];                           <span class="comment">%#ok</span>    <span class="keyword">catch</span> MEstruct        throw(MEstruct)    <span class="keyword">end</span><span class="keyword">end</span></pre>      <p>make sure the field names are unique.</p>      <pre class="codeinput"><span class="keyword">if</span> length(fn) ~= length(unique(fn))    error(<span class="string">'mergestruct:FieldsNotUnique'</span>,<span class="keyword">...</span>        <span class="string">'Field names must be unique'</span>);<span class="keyword">end</span></pre>      <p>now concatenate the data from each struct. Can't use structfun since        input structs may not be scalar.</p>      <pre class="codeinput">c = [];<span class="keyword">for</span> k = 1:nargin    <span class="keyword">try</span>        c = [c , struct2cell(varargin{k})];                            <span class="comment">%#ok</span>    <span class="keyword">catch</span> MEdata        throw(MEdata);    <span class="keyword">end</span><span class="keyword">end</span></pre>      <p>construct the output.</p>      <pre class="codeinput">sout = cell2struct(c, fn, 1);</pre>      <pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of mergestruct</span></pre> </div>    <!--##### SOURCE BEGIN #####%% MERGESTRUCT - Merge structures with unique fields.%%% Syntax%     sout = MERGESTRUCT(varargin);%%% Credit% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)%%% See also  % Related:% <CATSTRUCT.html |CATSTRUCT|>.% Called: % <matlab:webpub(whichpath('STRUCT2CELL')) |STRUCT2CELL|>,% <matlab:webpub(whichpath('CELL2STRUCT')) |CELL2STRUCT|>,% <matlab:webpub(whichpath('UNIQUE')) |UNIQUE|>.%% Function implementationfunction sout = mergestruct(varargin)%%% start with collecting fieldnames, checking implicitly% that inputs are structures.fn = [];for k = 1:nargin    try        fn = [fn ; fieldnames(varargin{k})];                           %#ok     catch MEstruct        throw(MEstruct)    endend%%% make sure the field names are unique.if length(fn) ~= length(unique(fn))    error('mergestruct:FieldsNotUnique',...        'Field names must be unique');end%%% now concatenate the data from each struct.  Can't use% structfun since input structs may not be scalar.c = [];for k = 1:nargin    try        c = [c , struct2cell(varargin{k})];                            %#ok     catch MEdata        throw(MEdata);    endend%%% construct the output.sout = cell2struct(c, fn, 1);end % end of mergestruct##### SOURCE END #####-->  </body></html>
