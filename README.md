@@ -10,7 +10,7 @@ Various basic low-level image processing tools used in the experiments/analyses 
 
 *documentation*:  https://gjacopo.github.io/imtools/
 
-*version*:        0.9
+*version*:        1.0
 
 *since*:          2007
 
