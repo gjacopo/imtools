@@ -110,24 +110,27 @@
 %   waveprofile_base - 
 %
 % graph/  Graph and network analysis and representation:
-%   bfs_base       - Compute breadth first search distances, times, and tree
+%   bfs            - Compute breadth first search distances, times, and tree
 %                    of a graph and extracts valid paths.
-%   dfs_base       - Perform a depth-first search (DFS) of a graph.
-%   scomponents_base - Compute the strongly connected components of a graph
-%                    and extracts valid paths.
+%   dfs            - Perform a depth-first search (DFS) of a graph.
+%   dijk           - Implementation of Dijkstra algorithm.
 %   dijkstra       - Implementation of Dijkstra algorithm, allowing for single
 %                    and multiple sources distance calculation. 
-%   dijk_base      - Implementation of Dijkstra algorithm.
 %   dijkadvanced_base - Calculate minimum costs and paths using Dijkstra's 
 %                    algorithm.
-%   graphmap       - Converts binary map to connected graph and reciprocally.
-%   graph2map_base - Converts a spatial unweighted graph into a 2D logical
+%   graphmap       - Convert binary map to connected graph and reciprocally.
+%   pathfinder     - Find paths in a graph.
+%   graphweight    - Convert an unweighted spatial graph into a weighted graph.
+%   graph2map_base - Convert a spatial unweighted graph into a 2D logical
 %                    map.
-%   map2graph_base - Converts a 2D logical map into a weighted graph. 
+%   map2graph_base - Convert a 2D logical map into a weighted graph. 
 %   graphweight_base - Convert an unweighted spatial graph into a weighted
 %                    graph.
-%   graphrepresent - Raster representation (and display) of a weighted graph. 
+%   graphdisplay   - Raster representation (and display) of a weighted graph.
 %   ixneighbours   - Return the indices of neighbour cells in a matrix. 
+%   scomponents    - Compute the strongly connected components of a graph
+%                    and extracts valid paths.
+%   triadjacency   - Construct the adjacency matrix associated to an order-3 graph.
 %
 % pdem/  Pseudo-DEM generation functions:		
 %
