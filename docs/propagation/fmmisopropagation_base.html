@@ -1,0 +1,518 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!--
+This HTML was auto-generated from MATLAB code.To make changes, update the MATLAB code and republish this document.
+      -->
+    <title>fmmisopropagation_base</title>
+    <meta name="generator" content="MATLAB 7.14">
+    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+    <meta name="DC.date" content="2012-05-31">
+    <meta name="DC.source" content="fmmisopropagation_base.m">
+    <style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+
+  </style>
+  </head>
+  <body>
+    <div class="content">
+      <h2>Contents</h2>
+      <div>
+        <ul>
+          <li><a href="#3">Check the input parameters</a></li>
+          <li><a href="#4">Check/set the input is a scalar field used for
+              isotropic propagation</a></li>
+          <li><a href="#5">Call the mex functions or the default matlab</a></li>
+          <li><a href="#7">update the action using Upwind resolution</a></li>
+        </ul>
+      </div>
+      <pre class="codeinput"><span class="keyword">function</span> [D, Q] = <span
+class="keyword">...</span>
+    fmmisopropagation_base(W, start_pts, end_pts, order, L, niter, H, D0 )
+</pre>
+      <pre class="codeinput"><span class="comment">% FMMISOPROPAGATION_BASE - Apply classical [OS88,KS98,SV00] and multistencil</span>
+<span class="comment">% [HF06,HF07] Fast Marching method (FMM) in 2D.</span>
+<span class="comment">%</span>
+<span class="comment">%   D = FMMISOPROPAGATION_BASE(W, start_pts, end_pts, 0);</span>
+<span class="comment">%   D = FMMISOPROPAGATION_BASE(W, start_pts, end_pts, 0, L, niter, H, D0);</span>
+<span class="comment">% Perform regular fast marching [KS98].</span>
+<span class="comment">%</span>
+<span class="comment">%   D = FMMISOPROPAGATION_BASE(W, start_pts, end_pts, 1);</span>
+<span class="comment">%   D = FMMISOPROPAGATION_BASE(W, start_pts, end_pts, 1, L, niter, H, D0);</span>
+<span class="comment">%   D = FMMISOPROPAGATION_BASE(W, start_pts, end_pts, 2);</span>
+<span class="comment">%   D = FMMISOPROPAGATION_BASE(W, start_pts, end_pts, 2, L, niter, H, D0);</span>
+<span class="comment">% Perform multistencil fast marching [HF07] by using cross neighbours and</span>
+<span class="comment">% 1st or 2nd order derivatives.</span>
+<span class="comment">%</span>
+<span class="comment">% Inputs:</span>
+<span class="comment">%	W : the scalar weight matrix (inverse of the speed); the geodesics will</span>
+<span class="comment">%     follow regions where W is large; W must be &gt; 0.</span>
+<span class="comment">%	start_pts : a (2 x n) matrix where n is the number of starting points.</span>
+<span class="comment">%   end_pts : a (2 x k) matrix where k is the number of ending points; the</span>
+<span class="comment">%     FMM propagation stops when these points are reached.</span>
+<span class="comment">%   order : scalar defining the method used to compute Fast Marching; it is</span>
+<span class="comment">%     either:</span>
+<span class="comment">%      - 0 for classical FMM [KS98] with the mex function FMMISOPROPAGATION_MEX</span>
+<span class="comment">%        if it exists, or the Matlab function FMMSLOWPROPAGATION otherwise,</span>
+<span class="comment">%      - 1 or 2 for Multistencil FMM of order 1 or 2 resp. [HF07], using</span>
+<span class="comment">%        the mex function MSFM2D implemented by Kroon [MSFMM].</span>
+<span class="comment">%   L : optional constraint map to reduce the set of explored points, as</span>
+<span class="comment">%     only points with current distance smaller than their values in L will</span>
+<span class="comment">%     be visited; set entries to -Inf in L if you don't want points to be</span>
+<span class="comment">%     visited by FMM; default: L=Inf, ie. all points are visited.</span>
+<span class="comment">%   H : heuristic map; default: H=[].</span>
+<span class="comment">%   D0 : initial distance; default: D0=[], ie. all initial distances are null.</span>
+<span class="comment">%</span>
+<span class="comment">% Outputs:</span>
+<span class="comment">%   D : a 2D array containing the value of the distance function to seed.</span>
+<span class="comment">%   Q : optional variable returned when order=0; index of the closest point</span>
+<span class="comment">%     from the set of starting points (0 for points which have not been</span>
+<span class="comment">%     reached); Q provide a Voronoi decomposition of the domain.</span>
+<span class="comment">%</span>
+<span class="comment">% References:</span>
+<span class="comment">%   [OS88]  S. Osher and J. Sethian: "Fronts propagating with curvature speed:</span>
+<span class="comment">%       Algorithms based on Hamilton-Jacobi formulations", J. Computational</span>
+<span class="comment">%       Physics, 79:12-49, 1988.</span>
+<span class="comment">%   [KS98]  R. Kimmel and J. Sethian: "Computing geodesic paths on manifolds",</span>
+<span class="comment">%       Proc. National Academy of Sciences, 95(15):8431-8435, 1998.</span>
+<span class="comment">%   [SV00]  J. Sethian and A. Vladimirsky: "Fast methods for the eikonal and</span>
+<span class="comment">%       related Hamilton-Jacobi equations on unstructured meshes", Proc.</span>
+<span class="comment">%       National Academy of Sciences, 97(11):5699-5703, 2000.</span>
+<span class="comment">%   [HF06]  M.S. Hassouna and A.A. Farag: "Accurate tracking of monotonically</span>
+<span class="comment">%       advancing fronts," Proc. IEEE CVPR, vol. 1, pp. 355-362, 2006.</span>
+<span class="comment">%   [HF07]  M.S. Hassouna and A.A. Farag: "Multistencils fast marching</span>
+<span class="comment">%       methods: a highly accurate solution to the eikonal equation on</span>
+<span class="comment">%       cartesian domains", IEEE Trans. on Pattern Analysis and Machine</span>
+<span class="comment">%       Intelligence, 29(9):1-12, 2007.</span>
+<span class="comment">%   [MSFMM]  Kroon's toolbox on multistencil FMM available at</span>
+<span class="comment">%       http://www.mathworks.com/matlabcentral/fileexchange/24531-accurate-fast-marching</span>
+<span class="comment">%   [PFMM] Peyre 's toolbox on FMM available at</span>
+<span class="comment">%       https://www.ceremade.dauphine.fr/~peyre/matlab/fast-marching/content.html</span>
+<span class="comment">%</span>
+<span class="comment">% See also</span>
+<span class="comment">% Related: FMM_BASE, FMMANISOPROPAGATION_BASE, DIJKSTRAPROPAGATION_BASE,</span>
+<span class="comment">%   IM2FRONT_BASE, POTENTIAL2FRONT_BASE --</span>
+<span class="comment">% Called: FMMISOPROPAGATION_MEX, FM2DANISO_MEX.</span>
+</pre>
+      <h2>Check the input parameters<a name="3"></a></h2>
+      <pre class="codeinput"><span class="comment">% we allow variable inputs</span>
+<span class="keyword">if</span> nargin&lt;=7,    D0 = [];
+    <span class="keyword">if</span> nargin&lt;=6,        H = [];
+        <span class="keyword">if</span> nargin&lt;=5,  niter = Inf;  <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> nargin==4 || isempty(L),  L = Inf(size(W(:,:,1,1)));   <span
+class="keyword">end</span>
+</pre>
+      <h2>Check/set the input is a scalar field used for isotropic propagation<a
+          name="4"></a></h2>
+      <pre class="codeinput">d = nb_dims(W);
+
+<span class="keyword">if</span> d==3 <span class="comment">% a vector field has been passed: convert to the field magnitude</span>
+    W = sqrt(W(:,:,1).^2 +  W(:,:,1).^2);
+
+<span class="keyword">elseif</span> d==4 <span class="comment">% a tensor field has been passed: compute the tensor norm</span>
+    W = rescale(im2potential_base(W, <span class="string">'iso'</span>, 1));
+    <span class="comment">% gstfeature_base(W(:,:,1,1), W(:,:,2,2), W(:,:,1,2), 'norm', 'zen');</span>
+
+<span class="keyword">end</span>
+d = 2;
+</pre>
+      <h2>Call the mex functions or the default matlab<a name="5"></a></h2>
+      <pre class="codeinput"><span class="keyword">if</span> order==0
+    <span class="keyword">if</span> exist(<span class="string">'fmmisopropagation_mex'</span>,<span
+class="string">'file'</span>)
+        <span class="comment">% d = nb_dims(W);</span>
+        L(L==-Inf) = -1e9;  L(L==Inf) = 1e9;
+        niter = min(niter, 1.2*max(size(W))^d);
+        [D, S, Q] = fmmisopropagation_mex(W, start_pts-1, end_pts-1, niter, H, L, D0 );
+
+    <span class="keyword">else</span>
+        [D, S, Q] = fmmslowpropagation(W, start_pts, end_pts );
+    <span class="keyword">end</span>
+    Q = Q+1;
+
+
+<span class="keyword">elseif</span> ismember(order,[1 2])  <span class="comment">% run Multistencil Fast Marching Method</span>
+    <span class="keyword">if</span> ~exist(<span class="string">'msfm2d'</span>,<span
+class="string">'file'</span>)
+        error(<span class="string">'fmmisopropagation_base:methoderror'</span>, <span
+class="string">'load Kroon''s fast marching library'</span>);
+    <span class="keyword">end</span>
+    usecross = true; <span class="comment">% we by default use cross neighbours</span>
+    <span class="keyword">if</span> order == 2,  usesecond = true;
+    <span class="keyword">else</span>            usesecond = false;
+    <span class="keyword">end</span>
+
+    D = msfm2d(W, start_pts, usesecond, usecross);
+    Q = [];
+
+<span class="keyword">else</span>
+      error(<span class="string">'fmmisopropagation_base:inputerror'</span>, <span
+class="keyword">...</span>
+        <span class="string">'unknown order: should be in {0,1,2}'</span>);
+
+<span class="keyword">end</span>
+
+<span class="comment">% replace C 'Inf' value (1e9) by Matlab Inf value.</span>
+D(D&gt;1e8) = Inf;
+</pre>
+      <pre class="codeinput"><span class="keyword">end</span>
+
+
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="keyword">function</span> [D, S, father] = fmmslowpropagation(W, start_pts, end_pts)
+<span class="comment">% FMMSLOWPROPAGATION - Fast marching propagation method in Matlab.</span>
+<span class="comment">%   [D,S] = fmmslowpropagation(W,start_points,end_points,nb_iter_max,H);</span>
+
+niter = round( 1.2*size(W,1)^2 );
+
+<span class="comment">% dynamic allocation to initialize the data that records the state before/after</span>
+<span class="comment">% different steps of the FMM algorithm.</span>
+
+data.D = Inf(size(W)); <span class="comment">% action</span>
+start_ind = sub2ind(size(W), start_pts(1,:), start_pts(2,:));
+data.D( start_ind ) = 0;
+data.O = start_pts;
+<span class="comment">% S=1 : far,  S=0 : open,  S=-1 : close</span>
+data.S = ones(size(W)); data.S( start_ind ) = 0;
+data.W = W;
+data.father = zeros( [size(W),2] );
+
+<span class="keyword">if</span> ~isempty(end_pts)
+    end_ind = sub2ind(size(W), end_pts(1,:), end_pts(2,:));
+<span class="keyword">else</span>
+    end_ind = [];
+<span class="keyword">end</span>
+
+i = 0;
+<span class="keyword">while</span> i&lt;niter &amp;&amp; ~isempty(data.O) &amp;&amp; isempty(find(data.S(end_ind)==-1,1,<span
+class="string">'first'</span>))
+    i = i+1;
+    data = fastmarching_step(data);
+<span class="keyword">end</span>
+
+D = data.D;
+S = data.S;
+father = data.father;
+<span class="keyword">end</span>
+
+
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="keyword">function</span> data1 = fastmarching_step(data)
+<span class="comment">% FASTMARCHING_STEP - Perform one step in the Fast Marching algorithm.</span>
+<span class="comment">%    data1 = fastmarching_step(data);</span>
+
+<span class="comment">% some constants for the state of (un)visited pixels</span>
+kClose = -1; kOpen = 0; kFar = 1;
+
+D = data.D; <span class="comment">% action, a 2D matrix</span>
+O = data.O; <span class="comment">% open list</span>
+S = data.S; <span class="comment">% state, either 'O' or 'C', a 2D matrix</span>
+W = data.W; <span class="comment">% weight matrix, a 2D array (speed function)</span>
+father = data.father;
+
+[n,p] = size(D);  <span class="comment">% size of the grid</span>
+
+<span class="comment">% step size</span>
+h = 1/n;
+
+<span class="keyword">if</span> isempty(O)
+    data1 = data;
+    <span class="keyword">return</span>;
+<span class="keyword">end</span>
+
+ind_O = sub2ind(size(D), O(1,:), O(2,:));
+
+[dum,I] = min(D(ind_O)); I = I(1);
+<span class="comment">% selected vertex</span>
+i = O(1,I);
+j = O(2,I);
+O(:,I) = [];  <span class="comment">% pop from open</span>
+S(i,j) = kClose; <span class="comment">% now its close</span>
+
+<span class="comment">% its neighbor</span>
+nei = [1,0; 0,1; -1,0; 0,-1 ];
+
+<span class="keyword">for</span> k = 1:4
+
+    ii = i+nei(k,1);
+    jj = j+nei(k,2);
+
+    <span class="keyword">if</span> ii&gt;0 &amp;&amp; jj&gt;0 &amp;&amp; ii&lt;=n &amp;&amp; jj&lt;=p
+
+        f = [0 0];  <span class="comment">% current father</span>
+</pre>
+      <h2>update the action using Upwind resolution<a name="7"></a></h2>
+      <pre class="codeinput">        P = h/W(ii,jj);
+        <span class="comment">% neighbors values</span>
+        a1 = Inf;
+        <span class="keyword">if</span> ii&lt;n
+            a1 = D( ii+1,jj );
+            f(1) = sub2ind(size(W), ii+1,jj);
+        <span class="keyword">end</span>
+        <span class="keyword">if</span> ii&gt;1 &amp;&amp; D( ii-1,jj )&lt;a1
+            a1 = D( ii-1,jj );
+            f(1) = sub2ind(size(W), ii-1,jj);
+        <span class="keyword">end</span>
+        a2 = Inf;
+        <span class="keyword">if</span> jj&lt;n
+            a2 = D( ii,jj+1 );
+            f(2) = sub2ind(size(W), ii,jj+1);
+        <span class="keyword">end</span>
+        <span class="keyword">if</span> jj&gt;1 &amp;&amp; D( ii,jj-1 )&lt;a2
+            a2 = D( ii,jj-1 );
+            f(2) = sub2ind(size(W), ii,jj-1);
+        <span class="keyword">end</span>
+        <span class="keyword">if</span> a1&gt;a2    <span class="comment">% swap to reorder</span>
+            tmp = a1; a1 = a2; a2 = tmp;
+            f = f([2 1]);
+        <span class="keyword">end</span>
+        <span class="comment">% now the equation is   (a-a1)^2+(a-a2)^2 = P, with a &gt;= a2 &gt;= a1.</span>
+        <span class="keyword">if</span> P^2 &gt; (a2-a1)^2
+            delta = 2*P^2-(a2-a1)^2;
+            A1 = (a1+a2+sqrt(delta))/2;
+        <span class="keyword">else</span>
+            A1 = a1 + P;
+            f(2) = 0;
+        <span class="keyword">end</span>
+
+        <span class="keyword">switch</span> S(ii,jj)
+            <span class="keyword">case</span> kClose
+                <span class="comment">% check if action has change. Should not appen for FM</span>
+                <span class="keyword">if</span> A1&lt;D(ii,jj)
+                    <span class="comment">% warning('FastMarching:NonMonotone', 'The update is not monotone');</span>
+                    <span class="comment">% pop from Close and add to Open</span>
+                    <span class="keyword">if</span> false        <span class="comment">% don't reopen close points</span>
+                        O(:,end+1) = [ii;jj];                          <span class="comment">%#ok</span>
+                        S(ii,jj) = kOpen;
+                        D(ii,jj) = A1;
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+            <span class="keyword">case</span> kOpen
+                <span class="comment">% check if action has change.</span>
+                <span class="keyword">if</span> A1&lt;D(ii,jj)
+                    D(ii,jj) = A1;
+                    father(ii,jj,:) = f;
+                <span class="keyword">end</span>
+            <span class="keyword">case</span> kFar
+                <span class="comment">%if D(ii,jj)~=Inf, warning('initialize Action to Inf'); end</span>
+                <span class="comment">% add to open</span>
+                O(:,end+1) = [ii;jj];                                  <span class="comment">%#ok</span>
+                S(ii,jj) = kOpen;
+                <span class="comment">% action must have change.</span>
+                D(ii,jj) = A1;
+                father(ii,jj,:) = f;
+            <span class="keyword">otherwise</span>
+                error(<span class="string">'fastmarching_step:methoderror'</span>,<span
+class="string">'unknown state'</span>);
+        <span class="keyword">end</span>
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+data1.D = D;
+data1.O = O; data1.S = S;
+data1.W = W;
+data1.father = father;
+<span class="keyword">end</span>
+</pre>
+      <p class="footer"><br>
+        Published with MATLAB® 7.14</p>
+    </div>
+    <!--
+##### SOURCE BEGIN #####function [D, Q] = ...
+    fmmisopropagation_base(W, start_pts, end_pts, order, L, niter, H, D0 )% FMMISOPROPAGATION_BASE - Apply classical [OS88,KS98,SV00] and multistencil
+% [HF06,HF07] Fast Marching method (FMM) in 2D.%
+%   D = FMMISOPROPAGATION_BASE(W, start_pts, end_pts, 0);%   D = FMMISOPROPAGATION_BASE(W, start_pts, end_pts, 0, L, niter, H, D0);
+% Perform regular fast marching [KS98].%
+%   D = FMMISOPROPAGATION_BASE(W, start_pts, end_pts, 1);%   D = FMMISOPROPAGATION_BASE(W, start_pts, end_pts, 1, L, niter, H, D0);
+%   D = FMMISOPROPAGATION_BASE(W, start_pts, end_pts, 2);%   D = FMMISOPROPAGATION_BASE(W, start_pts, end_pts, 2, L, niter, H, D0);
+% Perform multistencil fast marching [HF07] by using cross neighbours and% 1st or 2nd order derivatives.
+%% Inputs:
+%	W : the scalar weight matrix (inverse of the speed); the geodesics will%     follow regions where W is large; W must be > 0.
+%	start_pts : a (2 x n) matrix where n is the number of starting points.%   end_pts : a (2 x k) matrix where k is the number of ending points; the
+%     FMM propagation stops when these points are reached.%   order : scalar defining the method used to compute Fast Marching; it is
+%     either:%      - 0 for classical FMM [KS98] with the mex function FMMISOPROPAGATION_MEX 
+%        if it exists, or the Matlab function FMMSLOWPROPAGATION otherwise,%      - 1 or 2 for Multistencil FMM of order 1 or 2 resp. [HF07], using
+%        the mex function MSFM2D implemented by Kroon [MSFMM].%   L : optional constraint map to reduce the set of explored points, as 
+%     only points with current distance smaller than their values in L will%     be visited; set entries to -Inf in L if you don't want points to be 
+%     visited by FMM; default: L=Inf, ie. all points are visited.%   H : heuristic map; default: H=[].
+%   D0 : initial distance; default: D0=[], ie. all initial distances are null. % 
+% Outputs:%   D : a 2D array containing the value of the distance function to seed.
+%   Q : optional variable returned when order=0; index of the closest point%     from the set of starting points (0 for points which have not been 
+%     reached); Q provide a Voronoi decomposition of the domain. %
+% References:%   [OS88]  S. Osher and J. Sethian: "Fronts propagating with curvature speed:
+%       Algorithms based on Hamilton-Jacobi formulations", J. Computational%       Physics, 79:12-49, 1988.
+%   [KS98]  R. Kimmel and J. Sethian: "Computing geodesic paths on manifolds",%       Proc. National Academy of Sciences, 95(15):8431-8435, 1998.
+%   [SV00]  J. Sethian and A. Vladimirsky: "Fast methods for the eikonal and%       related Hamilton-Jacobi equations on unstructured meshes", Proc.
+%       National Academy of Sciences, 97(11):5699-5703, 2000.%   [HF06]  M.S. Hassouna and A.A. Farag: "Accurate tracking of monotonically
+%       advancing fronts," Proc. IEEE CVPR, vol. 1, pp. 355-362, 2006.%   [HF07]  M.S. Hassouna and A.A. Farag: "Multistencils fast marching
+%       methods: a highly accurate solution to the eikonal equation on%       cartesian domains", IEEE Trans. on Pattern Analysis and Machine
+%       Intelligence, 29(9):1-12, 2007.%   [MSFMM]  Kroon's toolbox on multistencil FMM available at
+%       http://www.mathworks.com/matlabcentral/fileexchange/24531-accurate-fast-marching%  
+% credit: J.Grazzini (ISR-2/LANL)%
+% See also % Related: FMM_BASE, FMMANISOPROPAGATION_BASE, DIJKSTRAPROPAGATION_BASE,
+%   IM2FRONT_BASE, POTENTIAL2FRONT_BASE REPLACE_WITH_DASH_DASH% Called: FMMISOPROPAGATION_MEX, FM2DANISO_MEX.
+%% Check the input parameters
+% we allow variable inputs
+if nargin<=7,    D0 = [];    if nargin<=6,        H = [];  
+        if nargin<=5,  niter = Inf;  end    end 
+end
+if nargin==4 || isempty(L),  L = Inf(size(W(:,:,1,1)));   end
+%% Check/set the input is a scalar field used for isotropic propagation
+d = nb_dims(W);
+if d==3 % a vector field has been passed: convert to the field magnitude
+    W = sqrt(W(:,:,1).^2 +  W(:,:,1).^2);     
+elseif d==4 % a tensor field has been passed: compute the tensor norm    W = rescale(im2potential_base(W, 'iso', 1));
+    % gstfeature_base(W(:,:,1,1), W(:,:,2,2), W(:,:,1,2), 'norm', 'zen');    
+endd = 2;
+
+%% Call the mex functions or the default matlab
+if order==0    if exist('fmmisopropagation_mex','file')
+        % d = nb_dims(W);        L(L==-Inf) = -1e9;  L(L==Inf) = 1e9;
+        niter = min(niter, 1.2*max(size(W))^d);        [D, S, Q] = fmmisopropagation_mex(W, start_pts-1, end_pts-1, niter, H, L, D0 );
+            else
+        [D, S, Q] = fmmslowpropagation(W, start_pts, end_pts );    end
+    Q = Q+1;    
+    elseif ismember(order,[1 2])  % run Multistencil Fast Marching Method
+    if ~exist('msfm2d','file')        error('fmmisopropagation_base:methoderror', 'load Kroon''s fast marching library');
+    end    usecross = true; % we by default use cross neighbours 
+    if order == 2,  usesecond = true;    else            usesecond = false;
+    end    
+    D = msfm2d(W, start_pts, usesecond, usecross);    Q = [];
+    else
+      error('fmmisopropagation_base:inputerror', ...        'unknown order: should be in {0,1,2}');   
+end
+% replace C 'Inf' value (1e9) by Matlab Inf value.
+D(D>1e8) = Inf;
+end
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function [D, S, father] = fmmslowpropagation(W, start_pts, end_pts)% FMMSLOWPROPAGATION - Fast marching propagation method in Matlab. 
+%   [D,S] = fmmslowpropagation(W,start_points,end_points,nb_iter_max,H);
+niter = round( 1.2*size(W,1)^2 );
+% dynamic allocation to initialize the data that records the state before/after% different steps of the FMM algorithm.
+data.D = Inf(size(W)); % action
+start_ind = sub2ind(size(W), start_pts(1,:), start_pts(2,:));data.D( start_ind ) = 0;
+data.O = start_pts;% S=1 : far,  S=0 : open,  S=-1 : close
+data.S = ones(size(W)); data.S( start_ind ) = 0;data.W = W;
+data.father = zeros( [size(W),2] );
+if ~isempty(end_pts)    end_ind = sub2ind(size(W), end_pts(1,:), end_pts(2,:));
+else    end_ind = [];
+end
+i = 0; while i<niter && ~isempty(data.O) && isempty(find(data.S(end_ind)==-1,1,'first'))
+    i = i+1;    data = fastmarching_step(data);
+end
+D = data.D;S = data.S;
+father = data.father;end
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHfunction data1 = fastmarching_step(data)
+% FASTMARCHING_STEP - Perform one step in the Fast Marching algorithm.%    data1 = fastmarching_step(data);
+% some constants for the state of (un)visited pixels
+kClose = -1; kOpen = 0; kFar = 1;
+D = data.D; % action, a 2D matrixO = data.O; % open list
+S = data.S; % state, either 'O' or 'C', a 2D matrixW = data.W; % weight matrix, a 2D array (speed function)
+father = data.father;
+[n,p] = size(D);  % size of the grid
+% step sizeh = 1/n;
+if isempty(O)
+    data1 = data;    return;
+end
+ind_O = sub2ind(size(D), O(1,:), O(2,:));
+[dum,I] = min(D(ind_O)); I = I(1);% selected vertex
+i = O(1,I);j = O(2,I);
+O(:,I) = [];  % pop from open S(i,j) = kClose; % now its close
+% its neighbor
+nei = [1,0; 0,1; -1,0; 0,-1 ];
+for k = 1:4    
+    ii = i+nei(k,1);    jj = j+nei(k,2);
+        if ii>0 && jj>0 && ii<=n && jj<=p
+                f = [0 0];  % current father
+                %%% update the action using Upwind resolution
+        P = h/W(ii,jj);        % neighbors values
+        a1 = Inf;        if ii<n
+            a1 = D( ii+1,jj );            f(1) = sub2ind(size(W), ii+1,jj);
+        end        if ii>1 && D( ii-1,jj )<a1
+            a1 = D( ii-1,jj );            f(1) = sub2ind(size(W), ii-1,jj);
+        end        a2 = Inf;
+        if jj<n            a2 = D( ii,jj+1 );
+            f(2) = sub2ind(size(W), ii,jj+1);        end
+        if jj>1 && D( ii,jj-1 )<a2            a2 = D( ii,jj-1 );
+            f(2) = sub2ind(size(W), ii,jj-1);        end
+        if a1>a2    % swap to reorder            tmp = a1; a1 = a2; a2 = tmp;
+            f = f([2 1]);        end
+        % now the equation is   (a-a1)^2+(a-a2)^2 = P, with a >= a2 >= a1.        if P^2 > (a2-a1)^2
+            delta = 2*P^2-(a2-a1)^2;            A1 = (a1+a2+sqrt(delta))/2;
+        else            A1 = a1 + P;
+            f(2) = 0;        end
+                switch S(ii,jj)
+            case kClose                % check if action has change. Should not appen for FM
+                if A1<D(ii,jj)                    % warning('FastMarching:NonMonotone', 'The update is not monotone');
+                    % pop from Close and add to Open                    if false        % don't reopen close points
+                        O(:,end+1) = [ii;jj];                          %#ok                        S(ii,jj) = kOpen;
+                        D(ii,jj) = A1;                    end
+                end            case kOpen
+                % check if action has change.                if A1<D(ii,jj)
+                    D(ii,jj) = A1;                    father(ii,jj,:) = f;
+                end            case kFar
+                %if D(ii,jj)~=Inf, warning('initialize Action to Inf'); end                % add to open
+                O(:,end+1) = [ii;jj];                                  %#ok                S(ii,jj) = kOpen;
+                % action must have change.                D(ii,jj) = A1;
+                father(ii,jj,:) = f;            otherwise
+                error('fastmarching_step:methoderror','unknown state');        end
+            end
+end
+data1.D = D;data1.O = O; data1.S = S;
+data1.W = W;data1.father = father;
+end
+##### SOURCE END #####-->
+  </body>
+</html>
