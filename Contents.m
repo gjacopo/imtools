@@ -133,6 +133,15 @@
 %   triadjacency   - Construct the adjacency matrix associated to an order-3 graph.
 %
 % pdem/  Pseudo-DEM generation functions:		
+%   pdem           - Pseudo DEM generation from a singular optical image.
+%   wflowacc       - Upslope area (flow accumulation) algorithm for Digital 
+%                    Elevation Models.
+%   sflowinf       - Upslope area algorithm for Digital Elevation Models using 
+%                    single flow direction dinf.
+%   sflow8         - Upslope area algorithm for Digital Elevation Models using 
+%                    single flow direction d8 and gd8.
+%   sfdacc  - Upslope area algorithm for Digital Elevation Models using single 
+%                    flow direction.
 %
 % pyramid/  Hierarchical pyramid analysis and decomposition:		
 %   pyrdown        - Top-down pyramidal hierarchical decomposition.
@@ -167,51 +176,48 @@
 %                    positions of the grid pixels of a given square window.
 %
 % morphology/  Mathematical morphology:	
-%   asf            - Apply the Alternate Sequential Filtering and the ASF by
+%   asf            - Apply the Alternate Sequential Filtering and the ASF by 
 %                    reconstruction of an image.
-%   morphprofile   - Compute the morphological profile, the derivative 
-%                    morphological profile by opening and closing and the
-%                    morphological multiscale characteristics.
-%   granulometry   - Compute a granulometry through a series of morphological
-%                    operations.  
-%   fractalmorph   - 
+%   morphprofile   - Compute morphological profiles by opening and closing and 
+%                    the morphological multiscale characteristics.
+%   granulometry   - Compute a granulometry through a series of morphological 
+%                    operations.
+%   fractalmorph   - Fractal morphological decomposition.
 %   imreconstructby - Perform opening- an closing-by-reconstruction.
 %   imrclose       - Wrapping function for closing by reconstruction.
 %   imropen        - Wrapping function for opening by reconstruction.
-%   imeragrad      - Compute the operation consisting of a morphological
-%                    gradient followed by an erosion.
-%   fastcrossdilation - 
-%   imlabel        - Label connected components in 2-D arrays.  
+%   imeragrad      - Compute the operation consisting of a morphological gradient 
+%                    followed by an erosion.
+%   imlabel        - Label connected components in 2-D arrays.
 %   bwisolated     - Extract isolated pixels from a logical image.
-%   bwthinupsample - Perform the upsampled morphological thinning of a binary 
-%                    image.
-%   enhanceline    - 
-%   flatstrel      - Wrapping function for STREL used for creating 2D flat
-%                    structuring elements.
+%   bwshrink1D     - Shrinking of 1D binary signals.
+%   bwthinupsample - Perform the upsampled morphological thinning of a binary image.
+%   flatstrel      - Wrapping function for STREL used for creating 2D flat structuring 
+%                    elements.
 %
 % propagation/  Propagation and Fast Marching methods:	
 %   fmm            - Launch the Fast Marching algorithm in 2D.
-%   fmmisopropagation_base - Apply classical and multistencil Fast Marching
-%                    method in 2D.
-%   fmmanisopropagation_base - Perform anisotropic Fast Marching.
-%   fmmpath_base   - Extract a discrete geodesic path using gradient descent
-%                    or Runge-Kutta method.
-%   dijkstrapropagation_base - Shortest distance from multiple source points
-%                    on graph.
-%   im2front       - Perform a multiple front propagation from a set of seed
-%                    points using a metric derived from the input image.
-%   im2potential_base - Design a metric to be used as a potential function in
-%                    front propagation.
-%   potential2front_base - Propagate a (isotropic or anisotropic) front from
-%                    a set of seed poinrs
+%   fmmisopropagation - Apply classical and multistencil Fast Marching method in 2D.
+%   fmmanisopropagation - Perform anisotropic Fast Marching.
+%   fmmpath   - Extract a discrete geodesic path using gradient descent or 
+%                    Runge-Kutta method.
+%   dijkstrapropagation - Shortest distance from multiple source points on graph.
+%   im2front       - Perform a multiple front propagation from a seed points 
+%                    using a metric derived from the input image.
+%   im2potential - Design a metric to be used as a potential function in front 
+%                    propagation.
+%   potential2front - Propagate a (isotropic or anisotropic) front from a set 
+%                    of seed points.
 %   saddlefront_base - Compute saddle points of an map of influence zones.
+%   im2amoeba - Amoeba-like front propagation over an image.
 %
 % segmentation/  Segmentation functions:	
-%   geodesicwshed  - Perform geodesic based watershed segmentation of an image.
+%   amoebasuperpix - Amoeba-like superpixel segmentation.
 %   slicsuperpix   - Compute superpixels based on the Simple Linear Iterative
 %                    Clustering segmentation technique.
 %   geosuperpix    - Compute geodesic superpixels similarly to the Simple Linear
 %                    Iterative Clustering segmentation technique.
+%   geodesicwshed  - Perform geodesic based watershed segmentation of an image.
 %   lifetimeseg    - Pixelwise life time index computed over a stack of labelled
 %                    images.
 %   regionadjacency - Compute a sparse adjacency matrix for a labelled
@@ -220,63 +226,31 @@
 %                    do not obey certain shape/area criteria.
 %
 % statistics/  Basic statistical tools and operators:	
-%   conv2fft       - FFT based two dimensional convolution.
-%   convfft        - FFT based convolution and polynomial multiplication.
+%   compressrange           - Compress the entries of an image.
+%   findimportantextrema1D - Find important extrema of 1D signals.
 %   findzeroextrema1d - Wrapping function for popular Matlab functions 
 %                    calculating extremas and/or zero-crossings of 1D signals. 
 %   grididw_base   - Perform Inverse Distance Weighting or Simple Moving
 %                    Average of sampled data.
 %   grididwreduced_base - Perform reduced Inverse Distance Weighting.
 %   histoequalization - Perform histogram equalization,.
-%   integralimage_base - Compute the integral image of an image.
-%   histointegral1d_base - Compute the integral histograms in cartesian space
-%                    of an image.
-%   histointegral2d_base - Compute the 2d integral histograms of the joint 
-%                    distribution of a couple of images.
-%   histointegraljoint_base - Compute the joint integral histograms.
-%   rankintegral_base - 
-%   histoslidefunction - Function for computing local statistical features
+%   integralimage - Compute the integral image of an image.
+%   integralhisto1d - Compute the integral histograms in cartesian space of an image.
+%   integralhisto2d - Compute the 2d integral histograms of the joint distribution of a 
+%                    couple of images.
+%   integralhistojoint - Compute the joint integral histograms.
+%   integralrank - Compute rank image.
+
+%   slidehistofun - Function for computing local statistical features
 %                    based on local histograms computed over sliding windows.
 %   localsum - Compute local sum of an image in a square window.
 %   mutualsingfractal_base - Quantify the degree of mutual closeness of two
 %                    singularity spectra.
-%   accumarrayset  - Group elements from a data vector set as they share a
-%                    same index; fast version of ACCUMARRAY(..., @(x){x}).
-%   uniquenosort   - Find unique elements of vector likewise UNIQUE, but,
-%                    contrary to it, without sorting the results.
-%   allcombs       - Returns all 'crossed' combinations of elements in input
-%                    vectors.
-%   rescale        - Rescale data in [a,b].
-%   clamp          - Clamp a value, cell of values or array.
-%   nb_dims        - Debugged version of NDIMS.
-%
-% triangulation/  Triangulation segmentation and superpixel decomposition:
-%   im2poly        - Decompose an image into significant polygons using the
-%                    original VISTA segmentation based on constrained
-%                    triangulation of the input image from edges. 
-%   bound2vert     - Compute the so-called Attributed Contour Traces.
-%   chainconnect_base - Produce contour chains of contiguous edges from a  
-%                    edge map. 
-%   chaincontour_base - Wrapping function for the original VISTA function
-%                    contourchains.
-%   chainlink_base - Links chains of edges using Kovesi's utility functions.
-%   chaintrim_base - Trim the set of 2D points used for the constrained 
-%                    Delaunay triangulation. 
-%   vert2dtri      - Produce a constrained or unconstrained, Euclidean or non-
-%                    Euclidean Delaunay triangulation from a set of vertices.
-%   dtri2triedge   - 
-%   dtriedgesample - Sampling of the underlying grid given a triangulation. 
-%   dtriedgecircle_base - 
-%   dtriedgecolor  - 
-%   dtriedgecue - Simplifies the triangulation using spatial and spectral cues.
-%   dtriedgecuespatial_base - 
-%   dtriedgechord_base - 
-%   dtriedgegestalt_base - 
-%   dtriedgecuespectral_base - 
-%   dtriedgecuetexture_base - 
-%   dtriedge2poly - 
-%   dtriedgepolydisplay - Function for displaying triangulations, trixels, 
-%                    edges or polygons.
+%   mutualspectra - Measure the mutual closeness of singularity spectra.
+%   stats3x3 - Basic 2D statistical operations in local 3x3 neighbourhoods.
+%   pqueue - Implement a priority queues.
+%   nanaverage - Overload NANMEAN.
+%   nansummation - Overload NANSUM.
 %
 % texture/  Texture analysis and representations:		
 %   localglcm2d    - Compute local textural features using the 2D histograms
@@ -285,8 +259,6 @@
 %                    of univariate distribution of greylevels.
 %   localglsdv2d    - Compute local textural features using the 1D histograms
 %                    of univariate distribution of greylevel differences.
-%   integralglcm2d_base - 
-%   integralglov2d_base - 
 %   histfeatures   - Calculate all textural features from (co)occurrences
 %                    matrices.
 %   histcontrast   - Calculate the contrast feature .
