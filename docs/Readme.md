@@ -1,9 +1,3 @@
-imtools
-=======
-
-Tools (Matlab/C) for low-level image processing
----
-
 **About**
 
 Various basic low-level image processing tools used in the experiments/analyses reported in the references listed [below](References).
