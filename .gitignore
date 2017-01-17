@@ -1,3 +1,8 @@
+*~
+*.exe
+*/src/*.exe
+*/.DS_Store
+.DS_Store
 todo/
 triangulation/
 sharpen/rampsharp0.m

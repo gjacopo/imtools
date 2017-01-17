@@ -1,0 +1,607 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>MAPTRANSITION - Transition pixels mapping.</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-29"><meta name="DC.source" content="maptransition.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+
+  </style></head><body><div class="content"><h1>MAPTRANSITION - Transition pixels mapping.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Syntax</a></li><li><a href="#3">Inputs</a></li><li><a href="#4">Property [propertyname  propertyvalues]</a></li><li><a href="#5">Outputs</a></li><li><a href="#6">Remark</a></li><li><a href="#7">References</a></li><li><a href="#8">Credit</a></li><li><a href="#9">Function implementation</a></li><li><a href="#24">Subfunctions</a></li></ul></div><h2>Description<a name="1"></a></h2><p>Criterion for mapping transition ('ramp') pixels in natural (possibly multichannel) images. Given the general low pass filtering nature of imaging systems, ideal step edges are actually transformed (blurred) into ramp discontinuities. Ramp pixels are sometimes called stairs, transition regions, or simply transitions because they establish a path between nearby bright and dark regions.</p><h2>Syntax<a name="2"></a></h2><pre>   [map,slextr] = MAPTRANSITION(I);
+   [map,slextr] = MAPTRANSITION(I, method);
+   [map,slextr] = MAPTRANSITION(I, method, 'Property', propertyvalue, ...);</pre><h2>Inputs<a name="3"></a></h2><p><b><tt>I</tt></b> : depending on the <tt>'method'</tt> (see below), this input matrix can be:</p><div><ul><li>the original image with size <tt>(X,Y,C)</tt> when the method <tt>'morph'</tt> is         invoked,</li><li>the local lower, medium and hight intensity indices (see function,         <tt>RAMPSHARP</tt>) with size <tt>(X*Y,3,C)</tt> computed over an image with size         <tt>(X,Y,C)</tt>, when either of the <tt>'indice'</tt> method is invoked,</li></ul></div><p>where <tt>C&gt;1</tt> when the considered image is multichannel.</p><p><b><tt>method</tt></b> : optional string setting the approach used for defining the     transition (ramp) pixels in the image; it is either:</p><div><ul><li><tt>'morph'</tt>  when the adopted definition is the one presented in         [SG09],</li><li><tt>'indice'</tt> when the adopted definition is derived from that         presented in [Leu00], with possibly stronger constraints.</li></ul></div><h2>Property [propertyname  propertyvalues]<a name="4"></a></h2><p><b><tt>'se'</tt></b> : structuring element used for looking for extrema and transitions;     must be of class <tt>strel</tt>; default: <tt>se=strel('square',3)</tt>.</p><p><b><tt>'nhood'</tt></b> : optional string defining the shape of neighbourhood used for     defining the structuring element (see function <tt>STREL</tt>) when it has     not been passed as an argument; it can be either: <tt>'disk'</tt>, <tt>'square'</tt>,     <tt>'diamond'</tt>, <tt>'line'</tt> or <tt>'octagon'</tt>;  incompatible with <tt>'se'</tt>.</p><p><b><tt>'k'</tt></b> : size of the neighbourhood; it is either a scalar or a <tt>(2,1)</tt>     vector, depending on the shape of the structuring element as defined by     <tt>'nhood'</tt>; incompatible with <tt>'se'</tt>.</p><h2>Outputs<a name="5"></a></h2><p><b><tt>Tmap</tt></b> : transition map of the input image, where the maximal amplitude     of the grey level difference between neighbours of each transition pixel     and over all channels is represented; it is obtained by setting non     transition pixels to 0 and transition pixels to the pointwise maximum     of the morphological gradient computed for each channel.</p><p><b><tt>slextr</tt></b> : local extremum map summing the outputs of the extremum indicator     function applied to each channel of the input image; the values in     <tt>slextr</tt> represent the local extrema of order, ie. <tt>slextr(p)=n</tt> on those     pixels <tt>p</tt> of the image that are local extrema in at least <tt>n</tt> channels     of the input image.</p><h2>Remark<a name="6"></a></h2><p>In the absence of the Image Processing Toolbox, a simple version of this function is available, where the only possible neighbourhoods are 3x3 structuring elements with 4 or 8 connectivity (though, default SE is also the one used in [SG09]: <tt>se=strel('square',3)</tt>). The function <tt>EXTREMA3X3</tt> is called in that case.</p><h2>References<a name="7"></a></h2><p>[Leu00] J.G. Leu: "Edge sharpening through ramd width reduction", Image      and Vision Computing, 18:501-514, 2000.      <a href="http://www.sciencedirect.com/science/article/pii/S0262885699000414">http://www.sciencedirect.com/science/article/pii/S0262885699000414</a></p><p>[SG09]  P. Soille and J. Grazzini: "Constrained connectivity and transition      regions", Proc. of ISMM, LNCS 5720, pp. 59-69, Springer-Verlag, 2009.      <a href="http://www.springerlink.com/content/g6h8mk8447041532/">http://www.springerlink.com/content/g6h8mk8447041532/</a></p><p>[GS10]  J. Grazzini and P. Soille: "Iterative ramp sharpening for      structure/signature-preserving simplification of images", Proc.      ICPR, pp. 4586-4589, 2010.      <a href="http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=5597348">http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=5597348</a></p><p>[Soille11] P. Soille: "Preventing chaining through transitions while      favouring it within homogeneous regions", Proc. of ISMM, LNCS 6671,      pp. 96-107, Springer-Verlag, 2011.      <a href="http://www.springerlink.com/content/r62m9612j786207l/">http://www.springerlink.com/content/r62m9612j786207l/</a></p><h2>Credit<a name="8"></a></h2><p><a href="mailto:grazzja@lanl.gov">J.Grazzini</a> (ISR-2/LANL)</p><h2>Function implementation<a name="9"></a></h2><pre class="codeinput"><span class="keyword">function</span> [Tmap,varargout] = maptransition(I,varargin)
+</pre><pre class="codeinput">narginchk(1, 12);  <span class="comment">% 'struct'</span>
+nargoutchk(1, 2); <span class="comment">% 'struct'</span>
+</pre><p>parsing parameters</p><pre class="codeinput"><span class="keyword">if</span> ~isnumeric(I)
+    error(<span class="string">'maptransition:inputerror'</span>,<span class="string">'a matrix is required in input'</span>);
+<span class="keyword">end</span>
+
+p = createParser(<span class="string">'MAPTRANSITION'</span>);   <span class="comment">% create an instance of the inputParser class.</span>
+p.addOptional(<span class="string">'method'</span>, <span class="string">'morph'</span>, @(x)ischar(x) &amp;&amp; <span class="keyword">...</span>
+    any(strcmpi(x,{<span class="string">'morph'</span>,<span class="string">'indice'</span>})));
+p.addParamValue(<span class="string">'se'</span>, [], @(x)isa(x,<span class="string">'strel'</span>));
+p.addParamValue(<span class="string">'nhood'</span>, <span class="string">'square'</span>, @(x)ischar(x) &amp;&amp; <span class="keyword">...</span>
+    any(strcmp(x,{<span class="string">'disk'</span>,<span class="string">'square'</span>,<span class="string">'diamond'</span>,<span class="string">'line'</span>,<span class="string">'octagon'</span>})));
+p.addParamValue(<span class="string">'k'</span>, 3, @(x)isnumeric(x) &amp;&amp; all(x&gt;0) &amp;&amp; length(x)&lt;=2);
+p.addParamValue(<span class="string">'const'</span>, <span class="string">'weak'</span>, @(x) ischar(x) &amp;&amp; <span class="keyword">...</span>
+    any(strcmp(x,{<span class="string">'weak'</span>,<span class="string">'strong'</span>})));
+p.addParamValue(<span class="string">'comp'</span>, <span class="string">'&lt;'</span>, @(x) ischar(x) &amp;&amp; any(strcmp(x,{<span class="string">'&lt;'</span>,<span class="string">'&gt;'</span>})));
+
+<span class="comment">% parse and validate all input arguments</span>
+p.parse(varargin{:});
+p = getvarParser(p);
+
+<span class="comment">% check</span>
+<span class="keyword">if</span> strcmp(p.nhood,<span class="string">'line'</span>) &amp;&amp; length(p.k)&lt;2
+    error([<span class="string">'2 parameters need to be passed for building a SE '</span><span class="keyword">...</span>
+        <span class="string">'with shape '</span> p.nhood <span class="string">' - use field k'</span>]);
+<span class="keyword">end</span>
+</pre><p>internal variables</p><pre class="codeinput"><span class="keyword">if</span> isempty(ver(<span class="string">'images'</span>))
+    <span class="comment">% in the absence of the IP toolbox, define (force) a simple SE reduced</span>
+    <span class="comment">% to a 3x3 neighbourhood with connectivity 4 or 8.</span>
+    <span class="keyword">if</span> ~isempty(p.se)
+        error(<span class="string">'unknown SE parameter in the absence of IP toolbox'</span>);
+    <span class="keyword">elseif</span> ~any(strcmp(p.nhood,{<span class="string">'diamond'</span>,<span class="string">'disk'</span>,<span class="string">'square'</span>}))
+        error(<span class="string">'only ''diamond'', ''disk'' and ''square'' available for parameter NHOOD'</span>);
+    <span class="keyword">elseif</span> p.k~=3
+        error(<span class="string">'only size=3 available for parameter  K'</span>);
+    <span class="keyword">end</span>
+    p.se = p.nhood;
+<span class="keyword">else</span>
+    <span class="comment">% when the IP toolbox is present, define the structuring element as desired.</span>
+    <span class="keyword">if</span> isempty(p.se)
+       <span class="keyword">if</span> length(p.k)==1,   p.se = strel(p.nhood,p.k);
+       <span class="keyword">else</span>                 p.se = strel(p.nhood,p.k(1),p.k(2));
+       <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% size and dimension of the input image</span>
+C = size(I,3);
+
+<span class="keyword">switch</span> p.method
+    <span class="keyword">case</span> <span class="string">'morph'</span>
+    [x y] = size(I(:,:,1));
+    xy = x*y;
+    <span class="keyword">case</span> <span class="string">'indice'</span>
+    xy = size(I(:,1,1));
+<span class="keyword">end</span>
+
+<span class="comment">% create the output variables</span>
+<span class="comment">% maps for multichannel transitions/extrema</span>
+Slextr = false(xy,1); <span class="comment">% zeros(x,y);</span>
+<span class="comment">% smap = repmat(true,x,y);</span>
+
+Tmap = zeros([xy,1]);
+<span class="keyword">if</span> strcmp(p.const,<span class="string">'strong'</span>)
+    Tmap2 = true([xy,1]);
+<span class="keyword">end</span>
+</pre><p>main computation: proceed channel by channel</p><pre class="codeinput"><span class="keyword">for</span> j = 1:C
+    <span class="comment">% compute the map over a single channel</span>
+    <span class="keyword">if</span> strcmp(p.method,<span class="string">'morph'</span>)
+</pre><p>compute the transition map (values and positions) for the current channel</p><pre class="codeinput">        [gmap, imap] = maptransition_morph(I(:,:,j),p.se);
+</pre><p>a pixel <tt>p</tt> is a transition pixel if and only if, in all channels of the input image, it has at least one lower and one higher neighbours:</p><p><img src="maptransition_eq80318.png" alt="$$&#xA;   \begin{array}{lll}&#xA;     p \quad\mbox{transition pixel of}\quad f &amp;&#xA;     \Leftrightarrow  &amp; p \notin  \mbox{LEXTR}^1(f) \\&#xA;   &amp; \Leftrightarrow  &amp; \vee_{j=1}^{j=m} \mbox{LEXTR}(f_j) = 0&#xA;   \end{array}&#xA;$$"></p><p>ie, a pixel of a multichannel is a transition pixel if and only if it is a transition pixel in each individual channel.</p><pre class="codeinput">        Tmap(imap) = max(gmap,Tmap(imap));
+</pre><p>when considering a multichannel image <img src="maptransition_eq74221.png" alt="$f = (f_1,\cdots,f_m)$">, we define the operator <img src="maptransition_eq70667.png" alt="$\mbox{LEXTR}^\Sigma$"> summing the outputs of the indicator function <img src="maptransition_eq36119.png" alt="$\mbox{LEXTR}$"> (see below) applied to each channel <img src="maptransition_eq41492.png" alt="$f_j$"> of the input image:</p><p><img src="maptransition_eq27264.png" alt="$$&#xA;  \mbox{LEXTR}^\Sigma = \sum_{j=1}^{j=m} \mbox{LEXTR}(f_j)&#xA;$$"></p><p>we then define the local extrema of order <tt>n</tt> as those pixels of the image that are local extrema in at least <tt>n</tt> channels of the input image. They are denoted by <img src="maptransition_eq84760.png" alt="$\mbox{LEXTR}^n$">:</p><p><img src="maptransition_eq58589.png" alt="$$&#xA;  \mbox{LEXTR}^n(f) = \{ p \mid \mbox{LEXTR}^\Sigma(f)(p) \geq n \}&#xA;$$"></p><pre class="codeinput">        Slextr = Slextr - imap; <span class="comment">% considering that imap=~lextr</span>
+</pre><pre class="codeinput">    <span class="keyword">elseif</span> strcmp(p.method,<span class="string">'indice'</span>)
+        imap = maptransition_indice(I(:,:,j),p.comp);
+        <span class="comment">% for each pixel, we first check if it exists at least one band where</span>
+        <span class="comment">% its IH is strictly greater than its IM and its IM is greater than</span>
+        <span class="comment">% its IL:</span>
+        <span class="comment">%            IH[i] &gt; IM[i] &gt; IL[i]   for at least one i</span>
+        Tmap = Tmap | imap;
+        <span class="comment">% note that in the case C=1, the previous condition is still</span>
+        <span class="comment">% equivalent to that proposed in [Leu00]</span>
+        <span class="keyword">if</span> strcmp(p.const,<span class="string">'strong'</span>)
+            <span class="comment">% in the case 'strong': we then further verify that there is no</span>
+            <span class="comment">% band where its IH is lower than its IM or its IM is lower than</span>
+            <span class="comment">% its IL, ie.:</span>
+            <span class="comment">%            IH[j] &gt;= IM[j] &gt;= IL[j]   for all j&lt;&gt;i</span>
+            imap2 = maptransition_indice(I(:,:,j),[p.comp <span class="string">'='</span>]);
+            Tmap2 = Tmap2 &amp; imap2;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><p>update</p><pre class="codeinput"><span class="keyword">if</span> strcmp(p.method,<span class="string">'morph'</span>)
+</pre><p>the calculation of the maximal amplitude of the grey level difference between neighbours of each transition pixel and over all channels leads to the notion of transition map for multichannel image. Formally, it is denoted by TMAP and obtained by setting non transition pixels to 0 and transition pixels to the pointwise maximum of the morphological gradient computed for each channel: <img src="maptransition_eq93442.png" alt="$$    \begin{array}{lcll}      \mbox{TMAP}(f)(p) &amp; = &amp; 0          &amp; \mbox{if } p \in \mbox{LEXTR}^1(f), \\                        &amp; = &amp; \rho(f)(p) &amp; \mbox{otherwise}    \end{array} $$"></p><pre class="codeinput">    Tmap(Slextr&gt;=1) = false;
+</pre><p>For an ideal image with regions of constant intensity levels separated by ideal step edges (and assuming that one pixel thick regions must correspond to local extrema) the transition map is equal to zero everywhere; this would not be the case if regional instead of local extrema would have been considered.</p><pre class="codeinput">    <span class="comment">% reshape the output matrice</span>
+    Slextr = reshape(Slextr,x,y);
+    <span class="keyword">if</span> nargout&gt;=2
+        varargout{1} = Slextr;
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">elseif</span> strcmp(p.method,<span class="string">'indice'</span>) &amp;&amp; strcmp(p.const,<span class="string">'strong'</span>)
+   Tmap = Tmap &amp; Tmap2;
+<span class="keyword">end</span>
+
+<span class="comment">% reshape the output map</span>
+<span class="keyword">if</span> strcmp(p.method, <span class="string">'morph'</span>)
+    Tmap = reshape(Tmap,x,y);
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of maptransition</span>
+</pre><h2>Subfunctions<a name="24"></a></h2><p><tt>MAPTRANSITION_MORPH</tt> - Define the set of local extrema: a pixel of a grey level image <tt>f</tt> is a local extremum if and only if all its neighbours have a value either greater or lower than that of the considered pixel; ie: a pixel is a local extremum if and only if the (pointwise) minimum between the gradients by erosion <img src="maptransition_eq31822.png" alt="$\rho_\epsilon$"> and dilation <img src="maptransition_eq31953.png" alt="$\rho_\delta$"> of <tt>f</tt> at position <tt>p</tt> is equal to 0:</p><p><img src="maptransition_eq07335.png" alt="$$&#xA;    p \quad\mbox{local extremum of}\quad f&#xA;    \Leftrightarrow&#xA;    \left[ \rho_\epsilon(f) \wedge \rho_\delta(f)\right](p) = 0&#xA;$$"></p><pre class="codeinput"><span class="comment">%--------------------------------------------------------------------------</span>
+<span class="keyword">function</span> [gmap,imap] = maptransition_morph(I,se)
+</pre><pre class="codeinput"><span class="keyword">if</span> isempty(ver(<span class="string">'images'</span>))
+    <span class="keyword">if</span> any(strcmp(se,{<span class="string">'diamond'</span>,<span class="string">'disk'</span>})),      nconn=4;
+    <span class="keyword">elseif</span> strcmp(se,<span class="string">'square'</span>),                 nconn=8;
+    <span class="keyword">end</span>
+    gerod = I - extrema3x3(I, @min, nconn);
+    gdil = extrema3x3(I, @max, nconn) - I;
+<span class="keyword">else</span>
+    gerod = I - imerode(I,se);
+    gdil =  imdilate(I,se) - I;
+<span class="keyword">end</span>
+</pre><p>the local extremum map <tt>LEXTR</tt> of a grey level image <tt>f</tt> is simply obtained by thresholding the pointwise minimum of its gradients by erosion and dilation for all values equal to 0:</p><p><img src="maptransition_eq80008.png" alt="$$&#xA;    \mbox{LEXTR}(f) =&#xA;    T_{t=0} \left[\rho_\epsilon(f) \wedge \rho_\delta(f)\right].&#xA;$$"></p><pre class="codeinput"><span class="comment">% the LEXTR map corresponds to the indicator function returning 1 for local</span>
+<span class="comment">% extrema pixels and 0 otherwise.</span>
+lextr = min(gerod(:),gdil(:)) == 0;
+<span class="comment">%figure, imagesc(reshape(lextr,size(I))), axis image, colormap gray</span>
+</pre><p>we define transition pixels of a grey level image f as those image pixels that are not local extrema:</p><p><img src="maptransition_eq01822.png" alt="$$&#xA;    p \quad\mbox{local extremum of}\quad f&#xA;    \Leftrightarrow&#xA;    \left[ \rho_\epsilon(f) \wedge \rho_\delta(f)\right](p) \neq 0&#xA;$$"></p><pre class="codeinput">imap = ~lextr;
+<span class="comment">%figure, imagesc(reshape(imap,size(I))), axis image, colormap gray</span>
+</pre><p>the value of the morphological gradient of a transition pixel indicates the largest intensity jump that occurs when crossing this pixel. It corresponds to the intensity difference between its highest and lowest neighbours. we define the transition map the grey tone image obtained by setting each transition pixel to the value of this intensity difference:</p><p><img src="maptransition_eq62169.png" alt="$$&#xA;   \begin{array}{lcll}&#xA;   \mbox{TMAP}(f)(p) &amp; = &amp; 0          &amp; \mbox{if } p \in \mbox{LEXTR}_1(f), \\&#xA;                     &amp; = &amp; \rho(f)(p) &amp; \mbox{otherwise}&#xA;   \end{array}&#xA;$$"></p><p>where <img src="maptransition_eq20099.png" alt="$\rho$"> denotes the morphological gradient operator (i.e., sum of the gradients by erosion and dilation): <img src="maptransition_eq44824.png" alt="$\rho(f) = \rho_\epsilon(f) + \rho_\delta(f)$">.</p><pre class="codeinput">gmap = (gerod(imap) + gdil(imap)) / 2;
+<span class="comment">%gmap = (gerod + gdil) / 2;</span>
+<span class="comment">%gmap(lextr) = 0;</span>
+<span class="comment">%figure, imagesc(gmap), axis image, colormap gray</span>
+</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of maptransition_morph</span>
+</pre><p><tt>MAPTRANSITION_INDICE</tt> - Compare the column elements of <tt>I</tt> taken in increasing order (<tt>I(:,1)</tt> compared to <tt>I(:,2)</tt>, <tt>I(:,2)</tt> compared to <tt>I(:,3)</tt>,...) where the comparison function is given by the string <tt>strordre</tt>.</p><pre class="codeinput"><span class="comment">%--------------------------------------------------------------------------</span>
+<span class="keyword">function</span> imap = maptransition_indice(I, strordre)
+ncheck = size(I,2);
+imap = ones(size(I,1),1);
+
+<span class="comment">% check the ordering (comparison) function</span>
+ordre = str2func(strordre);
+
+<span class="keyword">for</span> i=1:ncheck-1
+    <span class="comment">% imap = eval(['imap &amp; I(:,i)' ordre 'I(:,i+1)']);</span>
+    imap = imap &amp; ordre(I(:,i),I(:,i+1));
+    <span class="comment">% example: if ordre='&lt;' and I of size 3, this expresion is then</span>
+    <span class="comment">% equivalent to:</span>
+    <span class="comment">%     imap = I(:,1)&lt;I(:,2) &amp; I(:,2)&lt;I(:3)</span>
+<span class="keyword">end</span>
+
+<span class="comment">% if ordre==0 % ordre strict</span>
+<span class="comment">%     imap = I(:,H)&gt;I(:,M) &amp; I(:,M)&gt;I(:,L);</span>
+<span class="comment">% else</span>
+<span class="comment">%     imap = I(:,H)&gt;=I(:,M) &amp; I(:,M)&gt;=I(:,L);</span>
+<span class="comment">% end</span>
+<span class="keyword">end</span> <span class="comment">% end of maptransition_indice</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.14<br></p></div><!--
+##### SOURCE BEGIN #####
+%% MAPTRANSITION - Transition pixels mapping.
+%
+%% Description
+% Criterion for mapping transition ('ramp') pixels in natural (possibly
+% multichannel) images.
+% Given the general low pass filtering nature of imaging systems, ideal step
+% edges are actually transformed (blurred) into ramp discontinuities. Ramp
+% pixels are sometimes called stairs, transition regions, or simply 
+% transitions because they establish a path between nearby bright and dark 
+% regions.
+%
+%% Syntax
+%     [map,slextr] = MAPTRANSITION(I);
+%     [map,slextr] = MAPTRANSITION(I, method);
+%     [map,slextr] = MAPTRANSITION(I, method, 'Property', propertyvalue, ...);
+%     
+%% Inputs
+% *|I|* : depending on the |'method'| (see below), this input matrix can be: 
+%
+% * the original image with size |(X,Y,C)| when the method |'morph'| is 
+%         invoked,
+% * the local lower, medium and hight intensity indices (see function,
+%         |RAMPSHARP|) with size |(X*Y,3,C)| computed over an image with size
+%         |(X,Y,C)|, when either of the |'indice'| method is invoked,
+%      
+% where |C>1| when the considered image is multichannel.
+%
+% *|method|* : optional string setting the approach used for defining the 
+%     transition (ramp) pixels in the image; it is either:
+%
+% * |'morph'|  when the adopted definition is the one presented in
+%         [SG09],
+% * |'indice'| when the adopted definition is derived from that
+%         presented in [Leu00], with possibly stronger constraints.
+%
+%% Property [propertyname  propertyvalues]
+% *|'se'|* : structuring element used for looking for extrema and transitions; 
+%     must be of class |strel|; default: |se=strel('square',3)|.
+%
+% *|'nhood'|* : optional string defining the shape of neighbourhood used for
+%     defining the structuring element (see function |STREL|) when it has  
+%     not been passed as an argument; it can be either: |'disk'|, |'square'|,
+%     |'diamond'|, |'line'| or |'octagon'|;  incompatible with |'se'|.
+%
+% *|'k'|* : size of the neighbourhood; it is either a scalar or a |(2,1)|
+%     vector, depending on the shape of the structuring element as defined by 
+%     |'nhood'|; incompatible with |'se'|.
+%
+%% Outputs
+% *|Tmap|* : transition map of the input image, where the maximal amplitude
+%     of the grey level difference between neighbours of each transition pixel
+%     and over all channels is represented; it is obtained by setting non 
+%     transition pixels to 0 and transition pixels to the pointwise maximum 
+%     of the morphological gradient computed for each channel.
+%
+% *|slextr|* : local extremum map summing the outputs of the extremum indicator
+%     function applied to each channel of the input image; the values in 
+%     |slextr| represent the local extrema of order, ie. |slextr(p)=n| on those
+%     pixels |p| of the image that are local extrema in at least |n| channels
+%     of the input image.
+%
+%% Remark
+% In the absence of the Image Processing Toolbox, a simple version of this
+% function is available, where the only possible neighbourhoods are 3x3
+% structuring elements with 4 or 8 connectivity (though, default SE is also
+% the one used in [SG09]: |se=strel('square',3)|). The function |EXTREMA3X3|
+% is called in that case.
+% 
+%% References
+% [Leu00] J.G. Leu: "Edge sharpening through ramd width reduction", Image
+%      and Vision Computing, 18:501-514, 2000.
+%      <http://www.sciencedirect.com/science/article/pii/S0262885699000414>
+%
+% [SG09]  P. Soille and J. Grazzini: "Constrained connectivity and transition 
+%      regions", Proc. of ISMM, LNCS 5720, pp. 59-69, Springer-Verlag, 2009.
+%      <http://www.springerlink.com/content/g6h8mk8447041532/>
+%
+% [GS10]  J. Grazzini and P. Soille: "Iterative ramp sharpening for 
+%      structure/signature-preserving simplification of images", Proc.
+%      ICPR, pp. 4586-4589, 2010.
+%      <http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=5597348>
+%
+% [Soille11] P. Soille: "Preventing chaining through transitions while
+%      favouring it within homogeneous regions", Proc. of ISMM, LNCS 6671,
+%      pp. 96-107, Springer-Verlag, 2011.
+%      <http://www.springerlink.com/content/r62m9612j786207l/>
+%
+%% Credit
+% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)
+
+%% Function implementation
+function [Tmap,varargout] = maptransition(I,varargin)
+
+narginchk(1, 12);  % 'struct'
+nargoutchk(1, 2); % 'struct'
+
+%% 
+% parsing parameters
+
+if ~isnumeric(I)
+    error('maptransition:inputerror','a matrix is required in input');
+end
+
+p = createParser('MAPTRANSITION');   % create an instance of the inputParser class.
+p.addOptional('method', 'morph', @(x)ischar(x) && ...
+    any(strcmpi(x,{'morph','indice'})));
+p.addParamValue('se', [], @(x)isa(x,'strel'));
+p.addParamValue('nhood', 'square', @(x)ischar(x) && ...
+    any(strcmp(x,{'disk','square','diamond','line','octagon'})));
+p.addParamValue('k', 3, @(x)isnumeric(x) && all(x>0) && length(x)<=2);
+p.addParamValue('const', 'weak', @(x) ischar(x) && ...
+    any(strcmp(x,{'weak','strong'})));
+p.addParamValue('comp', '<', @(x) ischar(x) && any(strcmp(x,{'<','>'})));
+
+% parse and validate all input arguments
+p.parse(varargin{:}); 
+p = getvarParser(p);                                                            
+
+% check
+if strcmp(p.nhood,'line') && length(p.k)<2
+    error(['2 parameters need to be passed for building a SE '...
+        'with shape ' p.nhood ' - use field k']);
+end
+
+%% 
+% internal variables
+
+if isempty(ver('images'))  
+    % in the absence of the IP toolbox, define (force) a simple SE reduced
+    % to a 3x3 neighbourhood with connectivity 4 or 8.
+    if ~isempty(p.se)
+        error('unknown SE parameter in the absence of IP toolbox');
+    elseif ~any(strcmp(p.nhood,{'diamond','disk','square'}))
+        error('only ''diamond'', ''disk'' and ''square'' available for parameter NHOOD');
+    elseif p.k~=3
+        error('only size=3 available for parameter  K');
+    end
+    p.se = p.nhood;
+else
+    % when the IP toolbox is present, define the structuring element as desired.
+    if isempty(p.se)                
+       if length(p.k)==1,   p.se = strel(p.nhood,p.k);
+       else                 p.se = strel(p.nhood,p.k(1),p.k(2));
+       end
+    end
+end
+
+% size and dimension of the input image
+C = size(I,3);
+
+switch p.method
+    case 'morph'
+    [x y] = size(I(:,:,1));
+    xy = x*y;
+    case 'indice'
+    xy = size(I(:,1,1));
+end
+
+% create the output variables
+% maps for multichannel transitions/extrema
+Slextr = false(xy,1); % zeros(x,y);  
+% smap = repmat(true,x,y); 
+
+Tmap = zeros([xy,1]);  
+if strcmp(p.const,'strong')
+    Tmap2 = true([xy,1]);
+end
+
+%%
+% main computation: proceed channel by channel
+for j = 1:C
+    % compute the map over a single channel
+    if strcmp(p.method,'morph')
+        
+        %%
+        % compute the transition map (values and positions) for the current
+        % channel
+        [gmap, imap] = maptransition_morph(I(:,:,j),p.se); 
+        
+        %%
+        % a pixel |p| is a transition pixel if and only if, in all channels
+        % of the input image, it has at least one lower and one higher
+        % neighbours:
+        %
+        % $$
+        %    \begin{array}{lll}
+        %      p \quad\mbox{transition pixel of}\quad f &
+        %      \Leftrightarrow  & p \notin  \mbox{LEXTR}^1(f) \\
+        %    & \Leftrightarrow  & \vee_{j=1}^{j=m} \mbox{LEXTR}(f_j) = 0
+        %    \end{array}
+        % $$
+        %
+        % ie, a pixel of a multichannel is a transition pixel if and only
+        % if it is a transition pixel in each individual channel.
+        Tmap(imap) = max(gmap,Tmap(imap));
+        
+        %%
+        % when considering a multichannel image $f = (f_1,\cdots,f_m)$, we
+        % define the operator $\mbox{LEXTR}^\Sigma$ summing the outputs of
+        % the indicator function $\mbox{LEXTR}$ (see below) applied to each
+        % channel $f_j$ of the input image:
+        %
+        % $$
+        %   \mbox{LEXTR}^\Sigma = \sum_{j=1}^{j=m} \mbox{LEXTR}(f_j)
+        % $$
+        %
+        % we then define the local extrema of order |n| as those pixels of
+        % the image that are local extrema in at least |n| channels of the
+        % input image. They are denoted by $\mbox{LEXTR}^n$:
+        %
+        % $$
+        %   \mbox{LEXTR}^n(f) = \{ p \mid \mbox{LEXTR}^\Sigma(f)(p) \geq n \}
+        % $$
+        Slextr = Slextr - imap; % considering that imap=~lextr
+        
+    elseif strcmp(p.method,'indice')
+        imap = maptransition_indice(I(:,:,j),p.comp);       
+        % for each pixel, we first check if it exists at least one band where
+        % its IH is strictly greater than its IM and its IM is greater than
+        % its IL:
+        %            IH[i] > IM[i] > IL[i]   for at least one i
+        Tmap = Tmap | imap;
+        % note that in the case C=1, the previous condition is still
+        % equivalent to that proposed in [Leu00]
+        if strcmp(p.const,'strong')
+            % in the case 'strong': we then further verify that there is no
+            % band where its IH is lower than its IM or its IM is lower than
+            % its IL, ie.:
+            %            IH[j] >= IM[j] >= IL[j]   for all j<>i
+            imap2 = maptransition_indice(I(:,:,j),[p.comp '=']);
+            Tmap2 = Tmap2 & imap2;
+        end
+    end
+end
+
+%%
+% update
+if strcmp(p.method,'morph')
+    %%
+    % the calculation of the maximal amplitude of the grey level difference
+    % between neighbours of each transition pixel and over all channels leads
+    % to the notion of transition map for multichannel image. Formally, it
+    % is denoted by TMAP and obtained by setting non transition pixels to 0
+    % and transition pixels to the pointwise maximum of the morphological
+    % gradient computed for each channel:
+    % $$
+    %    \begin{array}{lcll}
+    %      \mbox{TMAP}(f)(p) & = & 0          & \mbox{if } p \in \mbox{LEXTR}^1(f), \\
+    %                        & = & \rho(f)(p) & \mbox{otherwise}
+    %    \end{array}
+    % $$
+    Tmap(Slextr>=1) = false;
+    
+    %%
+    % For an ideal image with regions of constant intensity levels separated
+    % by ideal step edges (and assuming that one pixel thick regions must
+    % correspond to local extrema) the transition map is equal to zero
+    % everywhere; this would not be the case if regional instead of local
+    % extrema would have been considered.
+    
+    % reshape the output matrice
+    Slextr = reshape(Slextr,x,y);
+    if nargout>=2
+        varargout{1} = Slextr;
+    end
+    
+elseif strcmp(p.method,'indice') && strcmp(p.const,'strong')
+   Tmap = Tmap & Tmap2;
+end
+
+% reshape the output map
+if strcmp(p.method, 'morph')
+    Tmap = reshape(Tmap,x,y);
+end
+        
+end % end of maptransition
+
+
+%% Subfunctions
+
+%% 
+% |MAPTRANSITION_MORPH| - Define the set of local extrema: a pixel of a grey
+% level image |f| is a local extremum if and only if all its neighbours have
+% a value either greater or lower than that of the considered pixel; ie: a
+% pixel is a local extremum if and only if the (pointwise) minimum between
+% the gradients by erosion $\rho_\epsilon$ and dilation $\rho_\delta$ of |f|
+% at position |p| is equal to 0:
+%
+% $$
+%     p \quad\mbox{local extremum of}\quad f 
+%     \Leftrightarrow 
+%     \left[ \rho_\epsilon(f) \wedge \rho_\delta(f)\right](p) = 0
+% $$ 
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function [gmap,imap] = maptransition_morph(I,se)
+
+if isempty(ver('images'))  
+    if any(strcmp(se,{'diamond','disk'})),      nconn=4;
+    elseif strcmp(se,'square'),                 nconn=8;
+    end
+    gerod = I - extrema3x3(I, @min, nconn);
+    gdil = extrema3x3(I, @max, nconn) - I;
+else
+    gerod = I - imerode(I,se);
+    gdil =  imdilate(I,se) - I;
+end
+
+%%
+% the local extremum map |LEXTR| of a grey level image |f| is simply obtained
+% by thresholding the pointwise minimum of its gradients by erosion and dilation
+% for all values equal to 0:
+%
+% $$
+%     \mbox{LEXTR}(f) = 
+%     T_{t=0} \left[\rho_\epsilon(f) \wedge \rho_\delta(f)\right].
+% $$
+
+% the LEXTR map corresponds to the indicator function returning 1 for local
+% extrema pixels and 0 otherwise.
+lextr = min(gerod(:),gdil(:)) == 0;
+%figure, imagesc(reshape(lextr,size(I))), axis image, colormap gray
+
+%%
+% we define transition pixels of a grey level image f as those image pixels
+% that are not local extrema:
+%
+% $$
+%     p \quad\mbox{local extremum of}\quad f 
+%     \Leftrightarrow 
+%     \left[ \rho_\epsilon(f) \wedge \rho_\delta(f)\right](p) \neq 0
+% $$ 
+
+imap = ~lextr;
+%figure, imagesc(reshape(imap,size(I))), axis image, colormap gray
+
+%%
+% the value of the morphological gradient of a transition pixel indicates
+% the largest intensity jump that occurs when crossing this pixel. It
+% corresponds to the intensity difference between its highest and lowest
+% neighbours.
+% we define the transition map the grey tone image obtained by setting
+% each transition pixel to the value of this intensity difference:
+%
+% $$ 
+%    \begin{array}{lcll}
+%    \mbox{TMAP}(f)(p) & = & 0          & \mbox{if } p \in \mbox{LEXTR}_1(f), \\
+%                      & = & \rho(f)(p) & \mbox{otherwise}
+%    \end{array}
+% $$ 
+%
+% where $\rho$ denotes the morphological gradient operator (i.e., sum of the
+% gradients by erosion and dilation): 
+% $\rho(f) = \rho_\epsilon(f) + \rho_\delta(f)$.
+
+gmap = (gerod(imap) + gdil(imap)) / 2;
+%gmap = (gerod + gdil) / 2;
+%gmap(lextr) = 0;
+%figure, imagesc(gmap), axis image, colormap gray
+
+end % end of maptransition_morph
+
+
+%%
+% |MAPTRANSITION_INDICE| - Compare the column elements of |I| taken in 
+% increasing order (|I(:,1)| compared to |I(:,2)|, |I(:,2)| compared to 
+% |I(:,3)|,...) where the comparison function is given by the string |strordre|.
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function imap = maptransition_indice(I, strordre)
+ncheck = size(I,2);
+imap = ones(size(I,1),1);
+
+% check the ordering (comparison) function
+ordre = str2func(strordre);
+
+for i=1:ncheck-1
+    % imap = eval(['imap & I(:,i)' ordre 'I(:,i+1)']);
+    imap = imap & ordre(I(:,i),I(:,i+1));
+    % example: if ordre='<' and I of size 3, this expresion is then 
+    % equivalent to:
+    %     imap = I(:,1)<I(:,2) & I(:,2)<I(:3)
+end
+
+% if ordre==0 % ordre strict
+%     imap = I(:,H)>I(:,M) & I(:,M)>I(:,L);
+% else   
+%     imap = I(:,H)>=I(:,M) & I(:,M)>=I(:,L);
+% end
+end % end of maptransition_indice
+
+
+##### SOURCE END #####
+--></body></html>
