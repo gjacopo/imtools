@@ -88,7 +88,7 @@ span.syscmd { color:#B28C00 }
 <span class="comment">%   <a href="derive/gstfeature.html">gstfeature</a>     - Derive features like norm, orientation, coherence, or inertia from tensor representation</span>
 <span class="comment">%   <a href="derive/grd2gst.html">grd2gst</a>        - Compute the entries of the gradient structure tensor of an image from its directional derivatives.</span>
 <span class="comment">%   <a href="derive/grd2hess.html">grd2hess</a>       - Compute the entries of the Hessian of an image from its directional derivatives.</span>
-<span class="comment">%   <a href="derive/grdmask.html">grdmask</a>        - Compute the directional derivatives of an image using</span></span> gradient operators with local difference masks.</span>
+<span class="comment">%   <a href="derive/grdmask.html">grdmask</a>        - Compute the directional derivatives of an image using</span></span> gradient operators with local difference masks.
 <span class="comment">%</span>
 <span class="comment">% feature/  Feature extraction:</span>
 <span class="comment">%   <a href="feature/anisoedge.html">anisoedge</a>      - Anisotropic diffusion edge detector.</span>
@@ -169,6 +169,10 @@ span.syscmd { color:#B28C00 }
 <span class="comment">%   <a href="pyramid/expand2d.html">expand2d</a>       - Wrapping function for the expand2d operator of the BIG Spline Pyramids Software.</span>
 <span class="comment">%</span>
 <span class="comment">% sharpen/  Sharpening and enhancing functions:</span>
+<span class="comment">%   rampsharp       - Iterative ramp sharpening of multispectral images.</span>
+<span class="comment">%   <a href="sharpen/maptransition.html">maptransition</a>   - Transition pixels mapping.</span>
+<span class="comment">%   localorientzone - Define the clockwise zone of an image of orientation.</span>
+<span class="comment">%   localorientfeature - Local zone-based filtering.</span>
 <span class="comment">%</span>
 <span class="comment">% geometry/  Basic geometrical tools:</span>
 <span class="comment">%   <a href="geometry/bresenhamline.html">bresenhamline</a>  - 2D Bresenham line algorithm.</span>
@@ -277,7 +281,7 @@ span.syscmd { color:#B28C00 }
 <span class="comment">%   <a href="misc/structa2astruct.html">structa2astruct</a> - Convert a structure of arrays to an array of structures.
 <span class="comment">%   <a href="misc/suptitle.html">suptitle</a>       - Utility to put a title above all subplots
 <span class="comment">%   <a href="misc/webpub.html">webpub</a>         - Creation of web formatted functions' documentation.
-<span class="comment">%   <a href="misc/whichpath.html">whichpath</a>      - Return the full path name of a function.<br></span><br></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></pre> </div>
+<span class="comment">%   <a href="misc/whichpath.html">whichpath</a>      - Return the full path name of a function.<br></span><br></span></span></span></span></span></span></span></span></span></span></span></span></span></span></pre> </div>
     <!--##### SOURCE BEGIN #####
 % grazzja - Utility function%% credit: J.Grazzini %% cluster/  Clustering and classification:		%   fuzzbound      - Computes the fuzzy boundaries on a fuzzy categorical map.%% derive/  Differentiation functions:		%   gstsmooth      - Compute the Gradient Structure Tensor of a (possibly %                    multichannel) image.%   grdsmooth      - Compute the directional derivatives of an image.%   hessmooth      - Compute the Hessian Tensor of a (possibly multichannel)%                    image.%   gstdecomp      - Perform the eigen decomposition or the reconstruction%                    of a tensor field. %   gstfeature     - Derive features like norm, orientation, coherence, or 
 %                    inertia from tensor representation%   grd2gst        - Compute the entries of the gradient structure tensor of%                    an image from its directional derivatives.%   grd2hess       - Compute the entries of the Hessian of an image from its%                    directional derivatives.%   grdmask        - Compute the directional derivatives of an image through%                    classical gradient operators using local difference masks.%% feature/  Feature extraction:		%   anisoedge      - Anisotropic diffusion edge detector.%   cannyedge      - Wrapping function calling either edge, cannyedges or%                    cannyedgemap.%   cannyedgefuse  - Two-scale Canny edge detection by fusion of the binary%                    Canny edge maps at two different scales.%   cannyedgemap   - Edge map calculation. %   cannyedgeprod  - Two-scale Canny edge detection obtained by multiplication

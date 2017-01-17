@@ -152,6 +152,10 @@
 %                    Spline Pyramids Software.
 %
 % sharpen/  Sharpening and enhancing functions:		 
+%   rampsharp       - Iterative ramp sharpening of multispectral images.
+%   maptransition   - Transition pixels mapping.
+%   localorientzone - Define the clockwise zone of an image of orientation.
+%   localorientfeature - Local zone-based filtering.
 %
 % geometry/  Basic geometrical tools: 	
 %   bresenhamline  - 2D Bresenham line algorithm. 
