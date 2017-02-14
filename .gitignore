@@ -3,7 +3,9 @@
 */src/*.exe
 */.DS_Store
 .DS_Store
-todo/
-triangulation/
+triangulation
+triangulation/*
+docs/triangulation
+docs/triangulation/*
 sharpen/rampsharp0.m
 sharpen/rampsharp1.m
