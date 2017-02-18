@@ -1,1 +1,514 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>  <head>    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">    <!--This HTML was auto-generated from MATLAB code.To make changes, update the MATLAB code and republish this document.      -->    <title>AMOEBASUPERPIX_BASE - Base function for AMOEBASUPERPIX.</title>    <meta name="generator" content="MATLAB 7.14">    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">    <meta name="DC.date" content="2012-05-31">    <meta name="DC.source" content="amoebasuperpix_base.m">    <style type="text/css">html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}html { min-height:100%; margin-bottom:1px; }html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }html body td { vertical-align:top; text-align:left; }h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }a { color:#005fce; text-decoration:none; }a:hover { color:#005fce; text-decoration:underline; }a:visited { color:#004aa0; text-decoration:none; }p { padding:0px; margin:0px 0px 20px; }img { padding:0px; margin:0px 0px 20px; border:none; }p img, pre img, tt img, li img { margin-bottom:0px; } ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }ul li { padding:0px; margin:0px 0px 7px 0px; }ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }ul li ol li { list-style:decimal; }ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }ol li ol li { list-style-type:lower-alpha; }ol li ul { padding-top:7px; }ol li ul li { list-style:square; }.content { font-size:1.2em; line-height:140%; padding: 20px; }pre, tt, code { font-size:12px; }pre { margin:0px 0px 20px; }pre.error { color:red; }pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }span.keyword { color:#0000FF }span.comment { color:#228B22 }span.string { color:#A020F0 }span.untermstring { color:#B20000 }span.syscmd { color:#B28C00 }.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }.footer p { margin:0px; }  </style>  </head>  <body>    <div class="content">      <h1>AMOEBASUPERPIX_BASE - Base function for AMOEBASUPERPIX.</h1>      <!--introduction--><!--/introduction-->      <h2>Contents</h2>      <div>        <ul>          <li><a href="#1">Syntax</a></li>          <li><a href="#3">See also</a></li>          <li><a href="#4">Function implementation</a></li>        </ul>      </div>      <h2>Syntax<a name="1"></a></h2>      <pre>  [Q, Ck, ColCk] = AMOEBASUPERPIX_BASE(I, K, isLab, alpha, T, n, k, maxiter);</pre>      <h2>See also<a name="3"></a></h2>      <p>Related: <a href="AMOEBASUPERPIX.html"><tt>AMOEBASUPERPIX</tt></a>, <a          href="SLICSUPERPIX_BASE.html"><tt>SLICSUPERPIX_BASE</tt></a>,        <a href="GEOSUPERPIX_BASE.html"><tt>GEOSUPERPIX_BASE</tt></a>. Called: <a          href="matlab:web%28whichpath%28%27RGB2LAB%27%29%29"><tt>RGB2LAB</tt></a>,        <a href="../../graph/html/DIJKADVANCED_BASE.html"><tt>DIJKADVANCED_BASE</tt></a>,        DIJKSTRAPROPAGATION_MEX, <a href="../../propagation/html/IM2POTENTIAL.html"><tt>IM2POTENTIAL</tt></a>,        <a href="../../propagation/html/POTENTIAL2FRONT.html"><tt>POTENTIAL2FRONT</tt></a>,        <a href="../../derive/html/GSTDECOMP.html"><tt>GSTDECOMP</tt></a>, <a href="../../derive/html/GRDMASK_BASE.html"><tt>GRDMASK_BASE</tt></a>,        <a href="../../derive/html/GSTFEATURE_BASE.html"><tt>GSTFEATURE_BASE</tt></a>,        <a href="../../kernel/html/NEIPOSKERNEL.html"><tt>NEIPOSKERNEL</tt></a>.</p>      <h2>Function implementation<a name="4"></a></h2>      <pre class="codeinput"><span class="keyword">function</span> [Q, Ck, ColCk, D] = amoebasuperpix_base(I, K, isLab, alpha, T, n, k, maxiter)</pre>      <p>checking/setting parameters</p>      <pre class="codeinput"><span class="keyword">if</span> nargin&lt;8,  maxiter = Inf;    <span class="keyword">if</span> nargin&lt;7,  k = 3;        <span class="keyword">if</span> nargin&lt;6,  n = 2;            <span class="keyword">if</span> nargin&lt;5,  T = eps;                <span class="keyword">if</span> nargin&lt;4,  alpha = 1;                <span class="keyword">end</span>            <span class="keyword">end</span>        <span class="keyword">end</span>    <span class="keyword">end</span><span class="keyword">end</span><span class="keyword">if</span> ~exist(<span class="string">'dijkstrapropagation_mex'</span>,<spanclass="string">'file'</span>)    warning(<span class="string">'amoebasuperpix_base:methodwarning'</span>, <spanclass="keyword">...</span>        [<span class="string">'!!!very slow matlab implementation of Disjkstra-like algorithm - use '</span> <spanclass="keyword">...</span>        <span class="string">'C implemented version instead (see function dijkstrapropagation_mex)!!!'</span>])    handle_dijkstra = @(G,start) dijkadvanced(G&gt;0, G, start);;    <span class="comment">%#ok</span>    <span class="comment">% transform the input weight matrix and create an appropriate adjacency</span>    <span class="comment">% matrix for DIJKADVANCED_BASE</span><span class="keyword">else</span>    handle_dijkstra = @(G,start) <span class="keyword">...</span>        dijkstrapropagation_mex(G, start-1, -1, 1.2*numel(G));         <span class="comment">%#ok</span>    <span class="comment">% use C-implemented priority queues</span><span class="keyword">end</span><span class="comment">% note: using a function handle in a loop will slower the program anyway</span>[X,Y,C] = size(I);<span class="keyword">if</span> isLab    <span class="keyword">if</span> C~=3        warning(<span class="string">'amoebasuperpix_base:inputwarning'</span>,<spanclass="string">'RGB image required in input'</span>);        <span class="keyword">if</span> C==1,  I = repmat(I, [1 1 3]);  <span class="keyword">else</span>  I = I(:,:,1:3);  <spanclass="keyword">end</span>        C = 3;    <span class="keyword">end</span>    I = RGB2Lab(I(:,:,1), I(:,:,2), I(:,:,3));<span class="keyword">end</span></pre>      <p>for an image with <tt>N=X*Y</tt> pixels, the approximate size of each        superpixel is <tt>N/K pixels</tt>; therefore, for roughly equally sized        superpixels there would be a superpixel center at every grid interval <tt>S</tt></p>      <pre class="codeinput">S = floor(sqrt(X*Y/K));<span class="keyword">if</span> mod(n,2)~=0,  n = n+1;  <span class="keyword">end</span>;win = S * n;  pad = win / 2;  win = win + 1;<span class="comment">% L1 and L2 distance functions</span><span class="comment">% L1 distance</span>distL1 = @(v0, v1) sum(abs(v1-v0), 2);                                 <span class="comment">%#ok</span>distL2sqr = @(v0, v1) sum((v1-v0).^2, 2);distL2 = @(v0, v1) sqrt(distL2sqr(v0,v1));</pre>      <p>main calculation</p>      <p>we begin by sampling <tt>K</tt> regularly spaced cluster centers</p>      <pre class="codeinput">[Ck, ColCk] = initcenters(I, S);</pre>      <p>since the spatial extent of any superpixel is approximately <tt>S^2</tt>        (the area of a superpixel), we can safely assume that pixels that are        associated with this cluster center lie within a <tt>(nS,nS)</tt>        window around the superpixel center on the X-Y plane</p>      <pre class="codeinput">nk = size(Ck,1);<span class="comment">%   %----------------------------------------------------------------------</span>    <span class="keyword">function</span> [Ck, ColCk] = initcenters(I, S)        <span class="comment">% [X,Y] = size(Lab(:,:,1));</span>        xk = round(X / S);        <span class="keyword">if</span> xk==0,  xk = floor(X/2);        <span class="keyword">else</span>       xk = floor(S * (0:xk-1) + S/2);        <span class="keyword">end</span>        yk = round(Y / S);        <span class="keyword">if</span> yk==0,  yk = floor(X/2);        <span class="keyword">else</span>       yk = floor(S * (0:yk-1) + S/2);        <span class="keyword">end</span>        ColCk = reshape(I(xk,yk,:), [length(xk)*length(yk) C]);        [xk yk] = meshgrid(xk, yk);        Ck = [xk(:), yk(:)];        <span class="comment">% Ck = sub2ind([X,Y], xk(:), yk(:));</span>    <span class="keyword">end</span></pre>      <p>and we move the centers to seed locations corresponding to the lowest        gradient position in a <tt>(k,k)</tt> neighborhood.</p>      <pre class="codeinput"><span class="keyword">if</span> k&gt;0    [Ck, ColCk] = movecenters(I, Ck, k);<span class="keyword">end</span><span class="comment">%   %----------------------------------------------------------------------</span>    <span class="keyword">function</span> [Ck, ColCk] = movecenters(I, Ck, k)        [gx, gy] = grdmask_base(I,<span class="string">'matlab'</span>,<span class="string">'ij'</span>);        G = sum(gx.^2+gy.^2,3);        <span class="comment">% I0 = I([2:X X], (1:Y));  I1 = I([1 1:(X-1)], (1:Y));</span>        <span class="comment">% G = distL2sqr(I0(:),I1(:));</span>        <span class="comment">% I0 = I((1:X), [2:Y Y]);  I1 = I((1:X), [1 1:(Y-1)]);</span>        <span class="comment">% G = G + distL2sqr(I0(:),I1(:));</span>        <span class="comment">% G = reshape(G,[X,Y]);</span>        [ind, ix, iy] = neiposkernel(k,X);        ind = ind(:);  ix = ix(:);  iy = iy(:);        cind = sub2ind([X,Y], Ck(:,1), Ck(:,2));        ind = repmat(cind, [1 numel(ind)]) + repmat(ind', [length(cind) 1]);        ind(ind&gt;X*Y) = X*Y;        ind(ind&lt;=0) = 1;        [~,pos] = min(G(ind), [], 2);        Ck = [Ck(:,1) + ix(pos), Ck(:,2) + iy(pos)];        <span class="comment">% check that the Ck are not outside the image domain's limits</span>        Ck(:,1) = min([max([Ck(:,1), ones(nk,1)],[],2), X*ones(nk,1)], [], 2);        Ck(:,2) = min([max([Ck(:,2), ones(nk,1)],[],2), Y*ones(nk,1)], [], 2);        cind = sub2ind([X,Y], Ck(:,1), Ck(:,2));        cind = repmat(cind, [1 C]) + (X*Y) * meshgrid(0:C-1, 1:length(cind));        ColCk = reshape(I(cind), [nk C]);    <span class="keyword">end</span><span class="comment">%   %----------------------------------------------------------------------</span></pre>      <p>pad the original image</p>      <pre class="codeinput">A = padarray(I, [pad pad 0], <span class="string">'both'</span>, <spanclass="string">'replicate'</span>);[M,N] = size(A(:,:,1));</pre>      <p>possibly define an additional cost function when propagating the        amoeba: a gradient magnitude map</p>      <pre class="codeinput"><span class="keyword">if</span> alpha(2)    rho = 1;  sigma=0.7;  samp = 1;    int = <span class="string">'fast'</span>;  der = <span class="string">'fast'</span>;  eign = <spanclass="string">'zen'</span>;    P = gstsmooth_base(A, rho, sigma, der, int, samp, <span class="keyword">...</span>        [], false, false, 8, .4);    grd = gstfeature_base(P(:,:,1,1), P(:,:,2,2), P(:,:,1,2), <span class="keyword">...</span>        <span class="string">'norm'</span>, eign, [], []);    grd = rescale(grd);    clear <span class="string">P</span>;<span class="keyword">else</span>    <span class="comment">% dgxy = zeros(win^2,1);</span>    grd = zeros(size(A)); <span class="comment">% we want to avoid further 'if' tests</span><span class="keyword">end</span></pre>      <p>reshape for easier manipulations</p>      <pre class="codeinput">A = reshape(A,[M*N C]);I = reshape(I,[X*Y C]);</pre>      <p>initial labels and distances matrices</p>      <pre class="codeinput">Q0 = zeros(M,N);D0 = Inf(M,N);</pre>      <p>define some utility matrices</p>      <pre class="codeinput"><span class="comment">% general indices</span>pixindex = reshape(1:M*N,M,N);<span class="comment">% relative indices of the image pixels w.r.t. the paded image</span>pixin = pixindex(pad+1:pad+X,pad+1:pad+Y);<span class="comment">% relative indices of the pixels inside the centered analyzing window w.r.t.</span><span class="comment">% the paded image</span>ind2D = neiposkernel(pad, M);  ind2D = ind2D(:);  <span class="comment">% 2D: spatial position</span><span class="comment">%indnD = repmat(ind2D,[1 C]);            % nD: spatial/spectral position</span><span class="comment">% relative indice of the centroid pixel w.r.t. the analyzing window</span>cwin = [pad+1; pad+1];cwin = sub2ind([win,win],cwin(1),cwin(2)); <span class="comment">% = (pad+1) + (pad+1)*(win);</span><span class="comment">% list of neighbour connections within the analyzing window: we compute it</span><span class="comment">% once for all</span>conn = 8;[ic,icd] = ixneighbours(true(win,win), [], conn);<span class="comment">% note that ic is of size close to (but &lt;) 8*win^2</span><span class="comment">% compute the spatial distance once for all</span>dxy = distL2(ind2rc(win,ic,<span class="string">'rc'</span>), ind2rc(win,icd,<spanclass="string">'rc'</span>));<span class="comment">% the local cost of traveling from one pixel to any of its neighbours is</span><span class="comment">% the standard Euclidean distance between them</span></pre>      <p>start 'looping'</p>      <pre class="codeinput">niter = 1;err = Inf(nk,1);<span class="comment">% % ierr = 1:nk;</span><span class="keyword">while</span> niter&lt;=maxiter</pre>      <pre class="codeinput">    <span class="comment">% % if ~any(err&gt;T),  break;  end</span>    ierr = find(err&gt;T); <span class="keyword">if</span> isempty(ierr),  <spanclass="keyword">break</span>;  <spanclass="keyword">end</span></pre>      <p>update distance and labels</p>      <pre class="codeinput">    [D0,Q0] = updatedistance(ierr, D0, Q0, Ck, ColCk);    Q = Q0(pixin);    D = D0(pixin);</pre>      <p>update centroids</p>      <pre class="codeinput">    [nCk, nColCk] = updatecentroids(ierr, Q);</pre>      <p>update error</p>      <pre class="codeinput">    <span class="comment">% % ierr = 1:nk;</span>    err = updaterror(ierr, D, Q, Ck, nCk, ColCk, nColCk);</pre>      <p>update amoeba</p>      <pre class="codeinput">    Ck(ierr,:) = nCk;    ColCk(ierr,:) = nColCk;    niter = niter + 1;</pre>      <pre class="codeinput"><span class="keyword">end</span><span class="comment">%   %----------------------------------------------------------------------</span>    <span class="keyword">function</span> [D, Q, err ] = updatedistance(ierr, D, Q, Ck, ColCk)      <spanclass="comment">%#ok</span>        <span class="comment">% in that context, A, M, N, win, pixin, ind2D, indnD, win2D, lambda</span>        <span class="comment">% pad, and dxy are all 'global' variables in the sense that they are</span>        <span class="comment">% either passed to the program, or computed prior to the algorithm</span>        <span class="comment">% running and they are not modified throughout the algorithm; on the</span>        <span class="comment">% contrary, ierr, D, Q, Ck and ColCk are.</span>        <span class="comment">% err = zeros(length(ierr),1);</span>        <span class="keyword">for</span> l=1:length(ierr)  <span class="comment">% separable estimation</span>            ll = ierr(l);            <span class="comment">% ll = l; % we recompute all of them, even those unchanged</span>            <span class="comment">% retrieve the coordinates of the cluster centroid (also center</span>            <span class="comment">% of the analyzing window) w.r.t. the paded image, then the indices</span>            <span class="comment">% of the analyzing window (in 2D) w.r.t. the paded image</span>            c2D = pixin(Ck(ll,1),Ck(ll,2));            cind2D = c2D + ind2D;            <span class="comment">% % retrieve the position in color space</span>            <span class="comment">% cnD = c2D + (M*N) * (0:C-1);</span>            <span class="comment">% cindnD = repmat(cnD,[win^2 1]) + indnD;</span>            <span class="comment">% extract labels and distances within the current neighbourhood</span>            q = Q(cind2D);  d = D(cind2D);            <span class="comment">% F = A(cindnD);</span>            <span class="comment">% F(cwin + wind2D) = ColCk(ll,:);</span>            F = A(cind2D,:);            F(cwin,:) = ColCk(ll,:);            dI = distL2(F(ic,:),F(icd,:));  <span class="comment">% distL2(F(icnD),F(icdnD));</span>            <span class="comment">% the cost of traveling from ic to icd is the distance between the</span>            <span class="comment">% spectral values taken by the image on those points: the closer</span>            <span class="comment">% their spectral values, the higher the probability they belong</span>            <span class="comment">% to the same amoeba</span>            <span class="comment">% compute the cost induced by the gradient magnitude of the image</span>            <span class="comment">% (it may be null)</span>            dgxy = (grd(ic) + grd(icd)) / 2;            <span class="comment">% the cost of traveling from ic to icd is the average of their</span>            <span class="comment">% gradient values: the lower the gradient at those points, the</span>            <span class="comment">% higher the probability they belong to the same amoeba; high</span>            <span class="comment">% gradient pixels act like barriers in the amoeba propagation</span>            <span class="comment">% method 1</span>            <span class="comment">% start = sub2ind([win,win], pad+1, pad+1);</span>            W = dxy + alpha(1) * dI + alpha(2) * dgxy;            <span class="comment">% construct a sparse adjacency matrix G</span>            G = sparse(ic, icd, W, win^2, win^2);            <span class="comment">% Ds = handle_dijkstra(G, cwin);</span>            Ds = dijkstrapropagation_mex(G, cwin-1, -1, 1.2*numel(G));            <span class="comment">% % method 2</span>            <span class="comment">% W = reshape(dfeat(F, repmat(F(cwin+wind2D),[win^2 1])), [win win]);</span>            <span class="comment">% W = im2potential(W, 'pixinv', lambda);</span>            <span class="comment">% d = potential2front(W, [pad+1;pad+1]);</span>            <span class="comment">% find closest</span>            [d, r] = min(cat(2,d(:),Ds(:)), [], 2);            q(r==2) = ll;            <span class="comment">% update labels</span>            Q(cind2D) = q;            <span class="comment">% Qll = find(Q==ll);</span>            <span class="comment">% ck = floor(sum(ind2rc(M,Qll,'rc')) / length(Qll));</span>            <span class="comment">% c2D = ind2rc(M,c2D,'rc');  pos = pad+1 + ck - c2D;</span>            <span class="comment">% Ds = reshape(Ds,[win,win]);</span>            <span class="comment">% err(l) = Ds(pos(1), pos(2));</span>            <span class="comment">% update distances</span>            D(cind2D) = d;        <span class="keyword">end</span>    <span class="keyword">end</span><span class="comment">%   %----------------------------------------------------------------------</span>    <span class="keyword">function</span> [Ck, ColCk] = updatecentroids(ierr, Q)        labels = cellfun(@(k) find(Q==k), num2cell(ierr(:)), <span class="string">'UniformOutput'</span>, false);        <span class="comment">% note that we choose the color value of the (point closest to the)</span>        <span class="comment">% centroid point as a representative value</span>        ColCk = cellfun(@(x) sum(I(x,:))/length(x), labels, <span class="string">'UniformOutput'</span>, false);        <span class="comment">% if we sum the Lab values over the component with same label</span>        <span class="comment">% ColCk = cellfun(@(x) sum(I([x x+X*Y x+2*X*Y]),1) / length(x), ...</span>        <span class="comment">%    labels, 'UniformOutput', false);</span>        labels = cellfun(@(x) ind2rc(X,x,<span class="string">'rc'</span>), labels, <spanclass="string">'UniformOutput'</span>, false);        Ck = cellfun(@(x) floor(sum(x)/size(x,1)), labels, <span class="string">'UniformOutput'</span>, false);        Ck = cell2mat(Ck);        ColCk = cell2mat(ColCk);    <span class="keyword">end</span><span class="comment">%   %----------------------------------------------------------------------</span>    <span class="keyword">function</span> err = updaterror(ierr, D, Q, Ck, nCk, ColCk, nColCk)      <spanclass="comment">%#ok</span>        <span class="comment">% % - error type 1:</span>        <span class="comment">% err = distL1(Ck(ierr,:), nCk);</span>        <span class="comment">% % - error type 2:</span>        ddxy =  distL2(Ck(ierr,:), nCk);        ddrange = distL2(ColCk(ierr,:), nColCk);        err = ddxy + alpha(1) * ddrange; <span class="comment">% + alpha(2) * ddgxy;</span>        <span class="comment">% - error type 3:</span>        <span class="comment">% find the centroids' neighbours within their own superpixel</span>        <span class="comment">% region (connected component with same label)</span>        <span class="comment">% [i,j] = ixneighbours(true(X,Y), sub2ind([X Y],nCk(ierr,1),nCk(ierr,2)), conn);</span>        <span class="comment">% ii = Q(j)~=ierr;  % Q(j)~=Q(i); the centroid may have a different label</span>        <span class="comment">% i(ii) = []; j(ii) = [];</span>        <span class="comment">% % spatial distance between a centroid and ist nearest neighbours</span>        <span class="comment">% ii = (ind2rc(X,i,'r')~=ind2rc(X,j,'r')) &amp; ...</span>        <span class="comment">%     (ind2rc(X,i,'c')~=ind2rc(X,j,'c'));</span>        <span class="comment">% W = sqrt(2)*ii + ~ii;</span>        <span class="comment">% % add the spectral distance between a centroid and any of its nearest</span>        <span class="comment">% % neighbours to the already computed distance between those neighbours</span>        <span class="comment">% % and the previous centroids</span>        <span class="comment">% W = W + (D(j) + lambda * distL2(nColCk(Q(i),:),I(j,:)));</span>        <span class="comment">% err = accumarray(i, W, [], @(x){x}, {NaN});</span>        <span class="comment">% err(cellfun(@(x)isnan(x(1)),err)) = [];</span>        <span class="comment">% err = cellfun(@min,err);</span>    <span class="keyword">end</span><span class="comment">%   %----------------------------------------------------------------------</span></pre>      <pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of amoebasuperpix_base</span></pre></div>    <!--##### SOURCE BEGIN #####%% AMOEBASUPERPIX_BASE - Base function for AMOEBASUPERPIX.%%% Syntax%    [Q, Ck, ColCk] = AMOEBASUPERPIX_BASE(I, K, isLab, alpha, T, n, k, maxiter);%%% Credit% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)%%% See also% Related:% <AMOEBASUPERPIX.html |AMOEBASUPERPIX|>,% <SLICSUPERPIX_BASE.html |SLICSUPERPIX_BASE|>,% <GEOSUPERPIX_BASE.html |GEOSUPERPIX_BASE|>.% Called:% <matlab:web(whichpath('RGB2LAB')) |RGB2LAB|>,% <../../graph/html/DIJKADVANCED_BASE.html |DIJKADVANCED_BASE|>,% DIJKSTRAPROPAGATION_MEX,% <../../propagation/html/IM2POTENTIAL.html |IM2POTENTIAL|>,% <../../propagation/html/POTENTIAL2FRONT.html |POTENTIAL2FRONT|>,% <../../derive/html/GSTDECOMP.html |GSTDECOMP|>,% <../../derive/html/GRDMASK_BASE.html |GRDMASK_BASE|>,% <../../derive/html/GSTFEATURE_BASE.html |GSTFEATURE_BASE|>,% <../../kernel/html/NEIPOSKERNEL.html |NEIPOSKERNEL|>.%% Function implementationfunction [Q, Ck, ColCk, D] = amoebasuperpix_base(I, K, isLab, alpha, T, n, k, maxiter)%% % checking/setting parametersif nargin<8,  maxiter = Inf;    if nargin<7,  k = 3;        if nargin<6,  n = 2;            if nargin<5,  T = eps;                if nargin<4,  alpha = 1;                end            end        end    endendif ~exist('dijkstrapropagation_mex','file')    warning('amoebasuperpix_base:methodwarning', ...        ['!!!very slow matlab implementation of Disjkstra-like algorithm - use ' ...        'C implemented version instead (see function dijkstrapropagation_mex)!!!'])    handle_dijkstra = @(G,start) dijkadvanced(G>0, G, start);;    %#ok    % transform the input weight matrix and create an appropriate adjacency    % matrix for DIJKADVANCED_BASEelse    handle_dijkstra = @(G,start) ...        dijkstrapropagation_mex(G, start-1, -1, 1.2*numel(G));         %#ok    % use C-implemented priority queuesend% note: using a function handle in a loop will slower the program anyway[X,Y,C] = size(I);if isLab    if C~=3                                                                    warning('amoebasuperpix_base:inputwarning','RGB image required in input');        if C==1,  I = repmat(I, [1 1 3]);  else  I = I(:,:,1:3);  end        C = 3;    end    I = RGB2Lab(I(:,:,1), I(:,:,2), I(:,:,3));end%%% for an image with |N=X*Y| pixels, the approximate size of each superpixel% is |N/K pixels|; therefore, for roughly equally sized superpixels there% would be a superpixel center at every grid interval |S|S = floor(sqrt(X*Y/K));if mod(n,2)~=0,  n = n+1;  end;win = S * n;  pad = win / 2;  win = win + 1;% L1 and L2 distance functions% L1 distance distL1 = @(v0, v1) sum(abs(v1-v0), 2);                                 %#okdistL2sqr = @(v0, v1) sum((v1-v0).^2, 2);distL2 = @(v0, v1) sqrt(distL2sqr(v0,v1));%% % main calculation%%% we begin by sampling |K| regularly spaced cluster centers[Ck, ColCk] = initcenters(I, S);%%% since the spatial extent of any superpixel is approximately |S^2| (the area% of a superpixel), we can safely assume that pixels that are associated% with this cluster center lie within a |(nS,nS)| window around the superpixel% center on the X-Y planenk = size(Ck,1);%   %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH    function [Ck, ColCk] = initcenters(I, S)        % [X,Y] = size(Lab(:,:,1));        xk = round(X / S);        if xk==0,  xk = floor(X/2);        else       xk = floor(S * (0:xk-1) + S/2);        end        yk = round(Y / S);        if yk==0,  yk = floor(X/2);        else       yk = floor(S * (0:yk-1) + S/2);        end                ColCk = reshape(I(xk,yk,:), [length(xk)*length(yk) C]);                [xk yk] = meshgrid(xk, yk);        Ck = [xk(:), yk(:)];        % Ck = sub2ind([X,Y], xk(:), yk(:));    end%%% and we move the centers to seed locations corresponding to the lowest% gradient position in a |(k,k)| neighborhood.if k>0    [Ck, ColCk] = movecenters(I, Ck, k);end%   %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH    function [Ck, ColCk] = movecenters(I, Ck, k)        [gx, gy] = grdmask_base(I,'matlab','ij');        G = sum(gx.^2+gy.^2,3);        % I0 = I([2:X X], (1:Y));  I1 = I([1 1:(X-1)], (1:Y));        % G = distL2sqr(I0(:),I1(:));        % I0 = I((1:X), [2:Y Y]);  I1 = I((1:X), [1 1:(Y-1)]);        % G = G + distL2sqr(I0(:),I1(:));        % G = reshape(G,[X,Y]);                [ind, ix, iy] = neiposkernel(k,X);        ind = ind(:);  ix = ix(:);  iy = iy(:);                cind = sub2ind([X,Y], Ck(:,1), Ck(:,2));        ind = repmat(cind, [1 numel(ind)]) + repmat(ind', [length(cind) 1]);        ind(ind>X*Y) = X*Y;        ind(ind<=0) = 1;        [~,pos] = min(G(ind), [], 2);                Ck = [Ck(:,1) + ix(pos), Ck(:,2) + iy(pos)];        % check that the Ck are not outside the image domain's limits        Ck(:,1) = min([max([Ck(:,1), ones(nk,1)],[],2), X*ones(nk,1)], [], 2);        Ck(:,2) = min([max([Ck(:,2), ones(nk,1)],[],2), Y*ones(nk,1)], [], 2);                cind = sub2ind([X,Y], Ck(:,1), Ck(:,2));        cind = repmat(cind, [1 C]) + (X*Y) * meshgrid(0:C-1, 1:length(cind));        ColCk = reshape(I(cind), [nk C]);    end%   %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH%%% pad the original imageA = padarray(I, [pad pad 0], 'both', 'replicate');[M,N] = size(A(:,:,1));%%% possibly define an additional cost function when propagating the amoeba:% a gradient magnitude mapif alpha(2)    rho = 1;  sigma=0.7;  samp = 1;    int = 'fast';  der = 'fast';  eign = 'zen';    P = gstsmooth_base(A, rho, sigma, der, int, samp, ...        [], false, false, 8, .4);    grd = gstfeature_base(P(:,:,1,1), P(:,:,2,2), P(:,:,1,2), ...        'norm', eign, [], []);    grd = rescale(grd);    clear P;else    % dgxy = zeros(win^2,1);    grd = zeros(size(A)); % we want to avoid further 'if' testsend%%% reshape for easier manipulationsA = reshape(A,[M*N C]);I = reshape(I,[X*Y C]);%%% initial labels and distances matricesQ0 = zeros(M,N);D0 = Inf(M,N);%%% define some utility matrices% general indicespixindex = reshape(1:M*N,M,N);% relative indices of the image pixels w.r.t. the paded image pixin = pixindex(pad+1:pad+X,pad+1:pad+Y);% relative indices of the pixels inside the centered analyzing window w.r.t. % the paded imageind2D = neiposkernel(pad, M);  ind2D = ind2D(:);  % 2D: spatial position%indnD = repmat(ind2D,[1 C]);            % nD: spatial/spectral position% relative indice of the centroid pixel w.r.t. the analyzing windowcwin = [pad+1; pad+1];cwin = sub2ind([win,win],cwin(1),cwin(2)); % = (pad+1) + (pad+1)*(win);% list of neighbour connections within the analyzing window: we compute it% once for allconn = 8;  [ic,icd] = ixneighbours(true(win,win), [], conn);% note that ic is of size close to (but <) 8*win^2% compute the spatial distance once for alldxy = distL2(ind2rc(win,ic,'rc'), ind2rc(win,icd,'rc'));% the local cost of traveling from one pixel to any of its neighbours is% the standard Euclidean distance between them%%% start 'looping'niter = 1;err = Inf(nk,1);% % ierr = 1:nk;while niter<=maxiter    % % if ~any(err>T),  break;  end    ierr = find(err>T); if isempty(ierr),  break;  end        %%    % update distance and labels    [D0,Q0] = updatedistance(ierr, D0, Q0, Ck, ColCk);        Q = Q0(pixin);    D = D0(pixin);        %%    % update centroids    [nCk, nColCk] = updatecentroids(ierr, Q);        %%    % update error        % % ierr = 1:nk;    err = updaterror(ierr, D, Q, Ck, nCk, ColCk, nColCk);        %%     % update amoeba    Ck(ierr,:) = nCk;    ColCk(ierr,:) = nColCk;        niter = niter + 1;end%   %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH    function [D, Q, err ] = updatedistance(ierr, D, Q, Ck, ColCk)      %#ok        % in that context, A, M, N, win, pixin, ind2D, indnD, win2D, lambda        % pad, and dxy are all 'global' variables in the sense that they are        % either passed to the program, or computed prior to the algorithm        % running and they are not modified throughout the algorithm; on the        % contrary, ierr, D, Q, Ck and ColCk are.        % err = zeros(length(ierr),1);        for l=1:length(ierr)  % separable estimation            ll = ierr(l);            % ll = l; % we recompute all of them, even those unchanged                        % retrieve the coordinates of the cluster centroid (also center            % of the analyzing window) w.r.t. the paded image, then the indices            % of the analyzing window (in 2D) w.r.t. the paded image            c2D = pixin(Ck(ll,1),Ck(ll,2));            cind2D = c2D + ind2D;            % % retrieve the position in color space            % cnD = c2D + (M*N) * (0:C-1);            % cindnD = repmat(cnD,[win^2 1]) + indnD;                        % extract labels and distances within the current neighbourhood            q = Q(cind2D);  d = D(cind2D);                       % F = A(cindnD);            % F(cwin + wind2D) = ColCk(ll,:);            F = A(cind2D,:);            F(cwin,:) = ColCk(ll,:);            dI = distL2(F(ic,:),F(icd,:));  % distL2(F(icnD),F(icdnD));            % the cost of traveling from ic to icd is the distance between the            % spectral values taken by the image on those points: the closer            % their spectral values, the higher the probability they belong            % to the same amoeba                        % compute the cost induced by the gradient magnitude of the image            % (it may be null)            dgxy = (grd(ic) + grd(icd)) / 2;            % the cost of traveling from ic to icd is the average of their            % gradient values: the lower the gradient at those points, the            % higher the probability they belong to the same amoeba; high            % gradient pixels act like barriers in the amoeba propagation                        % method 1            % start = sub2ind([win,win], pad+1, pad+1);            W = dxy + alpha(1) * dI + alpha(2) * dgxy;            % construct a sparse adjacency matrix G            G = sparse(ic, icd, W, win^2, win^2);            % Ds = handle_dijkstra(G, cwin);            Ds = dijkstrapropagation_mex(G, cwin-1, -1, 1.2*numel(G));                        % % method 2            % W = reshape(dfeat(F, repmat(F(cwin+wind2D),[win^2 1])), [win win]);            % W = im2potential(W, 'pixinv', lambda);            % d = potential2front(W, [pad+1;pad+1]);                        % find closest            [d, r] = min(cat(2,d(:),Ds(:)), [], 2);            q(r==2) = ll;                        % update labels            Q(cind2D) = q;                         % Qll = find(Q==ll);            % ck = floor(sum(ind2rc(M,Qll,'rc')) / length(Qll));            % c2D = ind2rc(M,c2D,'rc');  pos = pad+1 + ck - c2D;            % Ds = reshape(Ds,[win,win]);            % err(l) = Ds(pos(1), pos(2));                        % update distances            D(cind2D) = d;        end    end%   %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH    function [Ck, ColCk] = updatecentroids(ierr, Q)        labels = cellfun(@(k) find(Q==k), num2cell(ierr(:)), 'UniformOutput', false);        % note that we choose the color value of the (point closest to the)        % centroid point as a representative value        ColCk = cellfun(@(x) sum(I(x,:))/length(x), labels, 'UniformOutput', false);        % if we sum the Lab values over the component with same label        % ColCk = cellfun(@(x) sum(I([x x+X*Y x+2*X*Y]),1) / length(x), ...        %    labels, 'UniformOutput', false);        labels = cellfun(@(x) ind2rc(X,x,'rc'), labels, 'UniformOutput', false);        Ck = cellfun(@(x) floor(sum(x)/size(x,1)), labels, 'UniformOutput', false);        Ck = cell2mat(Ck);        ColCk = cell2mat(ColCk);    end%   %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH    function err = updaterror(ierr, D, Q, Ck, nCk, ColCk, nColCk)      %#ok        % % - error type 1:        % err = distL1(Ck(ierr,:), nCk);        % % - error type 2:        ddxy =  distL2(Ck(ierr,:), nCk);        ddrange = distL2(ColCk(ierr,:), nColCk);        err = ddxy + alpha(1) * ddrange; % + alpha(2) * ddgxy;        % - error type 3:        % find the centroids' neighbours within their own superpixel        % region (connected component with same label)        % [i,j] = ixneighbours(true(X,Y), sub2ind([X Y],nCk(ierr,1),nCk(ierr,2)), conn);        % ii = Q(j)~=ierr;  % Q(j)~=Q(i); the centroid may have a different label         % i(ii) = []; j(ii) = [];        % % spatial distance between a centroid and ist nearest neighbours        % ii = (ind2rc(X,i,'r')~=ind2rc(X,j,'r')) & ...        %     (ind2rc(X,i,'c')~=ind2rc(X,j,'c'));        % W = sqrt(2)*ii + ~ii;        % % add the spectral distance between a centroid and any of its nearest         % % neighbours to the already computed distance between those neighbours        % % and the previous centroids        % W = W + (D(j) + lambda * distL2(nColCk(Q(i),:),I(j,:)));        % err = accumarray(i, W, [], @(x){x}, {NaN});        % err(cellfun(@(x)isnan(x(1)),err)) = [];        % err = cellfun(@min,err);    end%   %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHend % end of amoebasuperpix_base##### SOURCE END #####--></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <!--
+This HTML was auto-generated from MATLAB code.To make changes, update the MATLAB code and republish this document.      -->
+    <title>AMOEBASUPERPIX_BASE - Base function for AMOEBASUPERPIX.</title>
+    <meta name="generator" content="MATLAB 7.14">
+    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+    <meta name="DC.date" content="2012-05-31">
+    <meta name="DC.source" content="amoebasuperpix_base.m">
+    <style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+
+  </style>
+  </head>
+  <body>
+    <div class="content">
+      <h1>AMOEBASUPERPIX_BASE - Base function for AMOEBASUPERPIX.</h1>
+      <!--introduction--><!--/introduction-->
+      <h2>Contents</h2>
+      <div>
+        <ul>
+          <li><a href="#1">Syntax</a></li>
+          <li><a href="#3">See also</a></li>
+          <li><a href="#4">Function implementation</a></li>
+        </ul>
+      </div>
+      <h2>Syntax<a name="1"></a></h2>
+      <pre>  [Q, Ck, ColCk] = AMOEBASUPERPIX_BASE(I, K, isLab, alpha, T, n, k, maxiter);</pre>
+      <h2>See also<a name="3"></a></h2>
+      <p>Related: <a href="AMOEBASUPERPIX.html"><tt>AMOEBASUPERPIX</tt></a>, <a
+          href="SLICSUPERPIX_BASE.html"><tt>SLICSUPERPIX_BASE</tt></a>,
+        <a href="GEOSUPERPIX_BASE.html"><tt>GEOSUPERPIX_BASE</tt></a>. Called: <a
+          href="matlab:web%28whichpath%28%27RGB2LAB%27%29%29"><tt>RGB2LAB</tt></a>,
+        <a href="../graph/DIJKADVANCED_BASE.html"><tt>DIJKADVANCED_BASE</tt></a>,
+        DIJKSTRAPROPAGATION_MEX, <a href="../propagation/IM2POTENTIAL.html"><tt>IM2POTENTIAL</tt></a>,
+        <a href="../propagation/POTENTIAL2FRONT.html"><tt>POTENTIAL2FRONT</tt></a>,
+        <a href="../derive/GSTDECOMP.html"><tt>GSTDECOMP</tt></a>, <a href="../derive/GRDMASK_BASE.html"><tt>GRDMASK_BASE</tt></a>,
+        <a href="../derive/GSTFEATURE_BASE.html"><tt>GSTFEATURE_BASE</tt></a>,
+        <a href="../kernel/NEIPOSKERNEL.html"><tt>NEIPOSKERNEL</tt></a>.</p>
+      <h2>Function implementation<a name="4"></a></h2>
+      <pre class="codeinput"><span class="keyword">function</span> [Q, Ck, ColCk, D] = amoebasuperpix_base(I, K, isLab, alpha, T, n, k, maxiter)
+</pre>
+      <p>checking/setting parameters</p>
+      <pre class="codeinput"><span class="keyword">if</span> nargin&lt;8,  maxiter = Inf;
+    <span class="keyword">if</span> nargin&lt;7,  k = 3;
+        <span class="keyword">if</span> nargin&lt;6,  n = 2;
+            <span class="keyword">if</span> nargin&lt;5,  T = eps;
+                <span class="keyword">if</span> nargin&lt;4,  alpha = 1;
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> ~exist(<span class="string">'dijkstrapropagation_mex'</span>,<span
+class="string">'file'</span>)
+    warning(<span class="string">'amoebasuperpix_base:methodwarning'</span>, <span
+class="keyword">...</span>
+        [<span class="string">'!!!very slow matlab implementation of Disjkstra-like algorithm - use '</span> <span
+class="keyword">...</span>
+        <span class="string">'C implemented version instead (see function dijkstrapropagation_mex)!!!'</span>])
+    handle_dijkstra = @(G,start) dijkadvanced(G&gt;0, G, start);;    <span class="comment">%#ok</span>
+    <span class="comment">% transform the input weight matrix and create an appropriate adjacency</span>
+    <span class="comment">% matrix for DIJKADVANCED_BASE</span>
+
+<span class="keyword">else</span>
+    handle_dijkstra = @(G,start) <span class="keyword">...</span>
+        dijkstrapropagation_mex(G, start-1, -1, 1.2*numel(G));         <span class="comment">%#ok</span>
+    <span class="comment">% use C-implemented priority queues</span>
+<span class="keyword">end</span>
+<span class="comment">% note: using a function handle in a loop will slower the program anyway</span>
+
+[X,Y,C] = size(I);
+
+<span class="keyword">if</span> isLab
+    <span class="keyword">if</span> C~=3
+        warning(<span class="string">'amoebasuperpix_base:inputwarning'</span>,<span
+class="string">'RGB image required in input'</span>);
+        <span class="keyword">if</span> C==1,  I = repmat(I, [1 1 3]);  <span class="keyword">else</span>  I = I(:,:,1:3);  <span
+class="keyword">end</span>
+        C = 3;
+    <span class="keyword">end</span>
+    I = RGB2Lab(I(:,:,1), I(:,:,2), I(:,:,3));
+<span class="keyword">end</span>
+</pre>
+      <p>for an image with <tt>N=X*Y</tt> pixels, the approximate size of each
+        superpixel is <tt>N/K pixels</tt>; therefore, for roughly equally sized
+        superpixels there would be a superpixel center at every grid interval <tt>S</tt></p>
+      <pre class="codeinput">S = floor(sqrt(X*Y/K));
+<span class="keyword">if</span> mod(n,2)~=0,  n = n+1;  <span class="keyword">end</span>;
+win = S * n;  pad = win / 2;  win = win + 1;
+
+<span class="comment">% L1 and L2 distance functions</span>
+<span class="comment">% L1 distance</span>
+distL1 = @(v0, v1) sum(abs(v1-v0), 2);                                 <span class="comment">%#ok</span>
+distL2sqr = @(v0, v1) sum((v1-v0).^2, 2);
+distL2 = @(v0, v1) sqrt(distL2sqr(v0,v1));
+</pre>
+      <p>main calculation</p>
+      <p>we begin by sampling <tt>K</tt> regularly spaced cluster centers</p>
+      <pre class="codeinput">[Ck, ColCk] = initcenters(I, S);
+</pre>
+      <p>since the spatial extent of any superpixel is approximately <tt>S^2</tt>
+        (the area of a superpixel), we can safely assume that pixels that are
+        associated with this cluster center lie within a <tt>(nS,nS)</tt>
+        window around the superpixel center on the X-Y plane</p>
+      <pre class="codeinput">nk = size(Ck,1);
+
+<span class="comment">%   %----------------------------------------------------------------------</span>
+    <span class="keyword">function</span> [Ck, ColCk] = initcenters(I, S)
+        <span class="comment">% [X,Y] = size(Lab(:,:,1));</span>
+        xk = round(X / S);
+        <span class="keyword">if</span> xk==0,  xk = floor(X/2);
+        <span class="keyword">else</span>       xk = floor(S * (0:xk-1) + S/2);
+        <span class="keyword">end</span>
+        yk = round(Y / S);
+        <span class="keyword">if</span> yk==0,  yk = floor(X/2);
+        <span class="keyword">else</span>       yk = floor(S * (0:yk-1) + S/2);
+        <span class="keyword">end</span>
+
+        ColCk = reshape(I(xk,yk,:), [length(xk)*length(yk) C]);
+
+        [xk yk] = meshgrid(xk, yk);
+        Ck = [xk(:), yk(:)];
+        <span class="comment">% Ck = sub2ind([X,Y], xk(:), yk(:));</span>
+    <span class="keyword">end</span>
+</pre>
+      <p>and we move the centers to seed locations corresponding to the lowest
+        gradient position in a <tt>(k,k)</tt> neighborhood.</p>
+      <pre class="codeinput"><span class="keyword">if</span> k&gt;0
+    [Ck, ColCk] = movecenters(I, Ck, k);
+<span class="keyword">end</span>
+
+<span class="comment">%   %----------------------------------------------------------------------</span>
+    <span class="keyword">function</span> [Ck, ColCk] = movecenters(I, Ck, k)
+        [gx, gy] = grdmask_base(I,<span class="string">'matlab'</span>,<span class="string">'ij'</span>);
+        G = sum(gx.^2+gy.^2,3);
+        <span class="comment">% I0 = I([2:X X], (1:Y));  I1 = I([1 1:(X-1)], (1:Y));</span>
+        <span class="comment">% G = distL2sqr(I0(:),I1(:));</span>
+        <span class="comment">% I0 = I((1:X), [2:Y Y]);  I1 = I((1:X), [1 1:(Y-1)]);</span>
+        <span class="comment">% G = G + distL2sqr(I0(:),I1(:));</span>
+        <span class="comment">% G = reshape(G,[X,Y]);</span>
+
+        [ind, ix, iy] = neiposkernel(k,X);
+        ind = ind(:);  ix = ix(:);  iy = iy(:);
+
+        cind = sub2ind([X,Y], Ck(:,1), Ck(:,2));
+        ind = repmat(cind, [1 numel(ind)]) + repmat(ind', [length(cind) 1]);
+        ind(ind&gt;X*Y) = X*Y;
+        ind(ind&lt;=0) = 1;
+        [~,pos] = min(G(ind), [], 2);
+
+        Ck = [Ck(:,1) + ix(pos), Ck(:,2) + iy(pos)];
+        <span class="comment">% check that the Ck are not outside the image domain's limits</span>
+        Ck(:,1) = min([max([Ck(:,1), ones(nk,1)],[],2), X*ones(nk,1)], [], 2);
+        Ck(:,2) = min([max([Ck(:,2), ones(nk,1)],[],2), Y*ones(nk,1)], [], 2);
+
+        cind = sub2ind([X,Y], Ck(:,1), Ck(:,2));
+        cind = repmat(cind, [1 C]) + (X*Y) * meshgrid(0:C-1, 1:length(cind));
+        ColCk = reshape(I(cind), [nk C]);
+    <span class="keyword">end</span>
+<span class="comment">%   %----------------------------------------------------------------------</span>
+</pre>
+      <p>pad the original image</p>
+      <pre class="codeinput">A = padarray(I, [pad pad 0], <span class="string">'both'</span>, <span
+class="string">'replicate'</span>);
+[M,N] = size(A(:,:,1));
+</pre>
+      <p>possibly define an additional cost function when propagating the
+        amoeba: a gradient magnitude map</p>
+      <pre class="codeinput"><span class="keyword">if</span> alpha(2)
+    rho = 1;  sigma=0.7;  samp = 1;
+    int = <span class="string">'fast'</span>;  der = <span class="string">'fast'</span>;  eign = <span
+class="string">'zen'</span>;
+    P = gstsmooth_base(A, rho, sigma, der, int, samp, <span class="keyword">...</span>
+        [], false, false, 8, .4);
+    grd = gstfeature_base(P(:,:,1,1), P(:,:,2,2), P(:,:,1,2), <span class="keyword">...</span>
+        <span class="string">'norm'</span>, eign, [], []);
+    grd = rescale(grd);
+    clear <span class="string">P</span>;
+<span class="keyword">else</span>
+    <span class="comment">% dgxy = zeros(win^2,1);</span>
+    grd = zeros(size(A)); <span class="comment">% we want to avoid further 'if' tests</span>
+<span class="keyword">end</span>
+</pre>
+      <p>reshape for easier manipulations</p>
+      <pre class="codeinput">A = reshape(A,[M*N C]);
+I = reshape(I,[X*Y C]);
+</pre>
+      <p>initial labels and distances matrices</p>
+      <pre class="codeinput">Q0 = zeros(M,N);
+D0 = Inf(M,N);
+</pre>
+      <p>define some utility matrices</p>
+      <pre class="codeinput"><span class="comment">% general indices</span>
+pixindex = reshape(1:M*N,M,N);
+<span class="comment">% relative indices of the image pixels w.r.t. the paded image</span>
+pixin = pixindex(pad+1:pad+X,pad+1:pad+Y);
+
+<span class="comment">% relative indices of the pixels inside the centered analyzing window w.r.t.</span>
+<span class="comment">% the paded image</span>
+ind2D = neiposkernel(pad, M);  ind2D = ind2D(:);  <span class="comment">% 2D: spatial position</span>
+<span class="comment">%indnD = repmat(ind2D,[1 C]);            % nD: spatial/spectral position</span>
+
+<span class="comment">% relative indice of the centroid pixel w.r.t. the analyzing window</span>
+cwin = [pad+1; pad+1];
+cwin = sub2ind([win,win],cwin(1),cwin(2)); <span class="comment">% = (pad+1) + (pad+1)*(win);</span>
+
+<span class="comment">% list of neighbour connections within the analyzing window: we compute it</span>
+<span class="comment">% once for all</span>
+conn = 8;
+[ic,icd] = ixneighbours(true(win,win), [], conn);
+<span class="comment">% note that ic is of size close to (but &lt;) 8*win^2</span>
+<span class="comment">% compute the spatial distance once for all</span>
+dxy = distL2(ind2rc(win,ic,<span class="string">'rc'</span>), ind2rc(win,icd,<span
+class="string">'rc'</span>));
+<span class="comment">% the local cost of traveling from one pixel to any of its neighbours is</span>
+<span class="comment">% the standard Euclidean distance between them</span>
+</pre>
+      <p>start 'looping'</p>
+      <pre class="codeinput">niter = 1;
+err = Inf(nk,1);
+<span class="comment">% % ierr = 1:nk;</span>
+
+<span class="keyword">while</span> niter&lt;=maxiter
+</pre>
+      <pre class="codeinput">    <span class="comment">% % if ~any(err&gt;T),  break;  end</span>
+    ierr = find(err&gt;T); <span class="keyword">if</span> isempty(ierr),  <span
+class="keyword">break</span>;  <span
+class="keyword">end</span>
+</pre>
+      <p>update distance and labels</p>
+      <pre class="codeinput">    [D0,Q0] = updatedistance(ierr, D0, Q0, Ck, ColCk);
+
+    Q = Q0(pixin);
+    D = D0(pixin);
+</pre>
+      <p>update centroids</p>
+      <pre class="codeinput">    [nCk, nColCk] = updatecentroids(ierr, Q);
+</pre>
+      <p>update error</p>
+      <pre class="codeinput">    <span class="comment">% % ierr = 1:nk;</span>
+    err = updaterror(ierr, D, Q, Ck, nCk, ColCk, nColCk);
+</pre>
+      <p>update amoeba</p>
+      <pre class="codeinput">    Ck(ierr,:) = nCk;
+    ColCk(ierr,:) = nColCk;
+
+    niter = niter + 1;
+</pre>
+      <pre class="codeinput"><span class="keyword">end</span>
+
+<span class="comment">%   %----------------------------------------------------------------------</span>
+    <span class="keyword">function</span> [D, Q, err ] = updatedistance(ierr, D, Q, Ck, ColCk)      <span
+class="comment">%#ok</span>
+        <span class="comment">% in that context, A, M, N, win, pixin, ind2D, indnD, win2D, lambda</span>
+        <span class="comment">% pad, and dxy are all 'global' variables in the sense that they are</span>
+        <span class="comment">% either passed to the program, or computed prior to the algorithm</span>
+        <span class="comment">% running and they are not modified throughout the algorithm; on the</span>
+        <span class="comment">% contrary, ierr, D, Q, Ck and ColCk are.</span>
+        <span class="comment">% err = zeros(length(ierr),1);</span>
+        <span class="keyword">for</span> l=1:length(ierr)  <span class="comment">% separable estimation</span>
+            ll = ierr(l);
+            <span class="comment">% ll = l; % we recompute all of them, even those unchanged</span>
+
+            <span class="comment">% retrieve the coordinates of the cluster centroid (also center</span>
+            <span class="comment">% of the analyzing window) w.r.t. the paded image, then the indices</span>
+            <span class="comment">% of the analyzing window (in 2D) w.r.t. the paded image</span>
+            c2D = pixin(Ck(ll,1),Ck(ll,2));
+            cind2D = c2D + ind2D;
+            <span class="comment">% % retrieve the position in color space</span>
+            <span class="comment">% cnD = c2D + (M*N) * (0:C-1);</span>
+            <span class="comment">% cindnD = repmat(cnD,[win^2 1]) + indnD;</span>
+
+            <span class="comment">% extract labels and distances within the current neighbourhood</span>
+            q = Q(cind2D);  d = D(cind2D);
+
+            <span class="comment">% F = A(cindnD);</span>
+            <span class="comment">% F(cwin + wind2D) = ColCk(ll,:);</span>
+            F = A(cind2D,:);
+            F(cwin,:) = ColCk(ll,:);
+            dI = distL2(F(ic,:),F(icd,:));  <span class="comment">% distL2(F(icnD),F(icdnD));</span>
+            <span class="comment">% the cost of traveling from ic to icd is the distance between the</span>
+            <span class="comment">% spectral values taken by the image on those points: the closer</span>
+            <span class="comment">% their spectral values, the higher the probability they belong</span>
+            <span class="comment">% to the same amoeba</span>
+
+            <span class="comment">% compute the cost induced by the gradient magnitude of the image</span>
+            <span class="comment">% (it may be null)</span>
+            dgxy = (grd(ic) + grd(icd)) / 2;
+            <span class="comment">% the cost of traveling from ic to icd is the average of their</span>
+            <span class="comment">% gradient values: the lower the gradient at those points, the</span>
+            <span class="comment">% higher the probability they belong to the same amoeba; high</span>
+            <span class="comment">% gradient pixels act like barriers in the amoeba propagation</span>
+
+            <span class="comment">% method 1</span>
+            <span class="comment">% start = sub2ind([win,win], pad+1, pad+1);</span>
+            W = dxy + alpha(1) * dI + alpha(2) * dgxy;
+            <span class="comment">% construct a sparse adjacency matrix G</span>
+            G = sparse(ic, icd, W, win^2, win^2);
+            <span class="comment">% Ds = handle_dijkstra(G, cwin);</span>
+            Ds = dijkstrapropagation_mex(G, cwin-1, -1, 1.2*numel(G));
+
+            <span class="comment">% % method 2</span>
+            <span class="comment">% W = reshape(dfeat(F, repmat(F(cwin+wind2D),[win^2 1])), [win win]);</span>
+            <span class="comment">% W = im2potential(W, 'pixinv', lambda);</span>
+            <span class="comment">% d = potential2front(W, [pad+1;pad+1]);</span>
+
+            <span class="comment">% find closest</span>
+            [d, r] = min(cat(2,d(:),Ds(:)), [], 2);
+            q(r==2) = ll;
+
+            <span class="comment">% update labels</span>
+            Q(cind2D) = q;
+
+            <span class="comment">% Qll = find(Q==ll);</span>
+            <span class="comment">% ck = floor(sum(ind2rc(M,Qll,'rc')) / length(Qll));</span>
+            <span class="comment">% c2D = ind2rc(M,c2D,'rc');  pos = pad+1 + ck - c2D;</span>
+            <span class="comment">% Ds = reshape(Ds,[win,win]);</span>
+            <span class="comment">% err(l) = Ds(pos(1), pos(2));</span>
+
+            <span class="comment">% update distances</span>
+            D(cind2D) = d;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="comment">%   %----------------------------------------------------------------------</span>
+    <span class="keyword">function</span> [Ck, ColCk] = updatecentroids(ierr, Q)
+        labels = cellfun(@(k) find(Q==k), num2cell(ierr(:)), <span class="string">'UniformOutput'</span>, false);
+        <span class="comment">% note that we choose the color value of the (point closest to the)</span>
+        <span class="comment">% centroid point as a representative value</span>
+        ColCk = cellfun(@(x) sum(I(x,:))/length(x), labels, <span class="string">'UniformOutput'</span>, false);
+        <span class="comment">% if we sum the Lab values over the component with same label</span>
+        <span class="comment">% ColCk = cellfun(@(x) sum(I([x x+X*Y x+2*X*Y]),1) / length(x), ...</span>
+        <span class="comment">%    labels, 'UniformOutput', false);</span>
+        labels = cellfun(@(x) ind2rc(X,x,<span class="string">'rc'</span>), labels, <span
+class="string">'UniformOutput'</span>, false);
+        Ck = cellfun(@(x) floor(sum(x)/size(x,1)), labels, <span class="string">'UniformOutput'</span>, false);
+        Ck = cell2mat(Ck);
+        ColCk = cell2mat(ColCk);
+    <span class="keyword">end</span>
+<span class="comment">%   %----------------------------------------------------------------------</span>
+    <span class="keyword">function</span> err = updaterror(ierr, D, Q, Ck, nCk, ColCk, nColCk)      <span
+class="comment">%#ok</span>
+        <span class="comment">% % - error type 1:</span>
+        <span class="comment">% err = distL1(Ck(ierr,:), nCk);</span>
+        <span class="comment">% % - error type 2:</span>
+        ddxy =  distL2(Ck(ierr,:), nCk);
+        ddrange = distL2(ColCk(ierr,:), nColCk);
+        err = ddxy + alpha(1) * ddrange; <span class="comment">% + alpha(2) * ddgxy;</span>
+        <span class="comment">% - error type 3:</span>
+        <span class="comment">% find the centroids' neighbours within their own superpixel</span>
+        <span class="comment">% region (connected component with same label)</span>
+        <span class="comment">% [i,j] = ixneighbours(true(X,Y), sub2ind([X Y],nCk(ierr,1),nCk(ierr,2)), conn);</span>
+        <span class="comment">% ii = Q(j)~=ierr;  % Q(j)~=Q(i); the centroid may have a different label</span>
+        <span class="comment">% i(ii) = []; j(ii) = [];</span>
+        <span class="comment">% % spatial distance between a centroid and ist nearest neighbours</span>
+        <span class="comment">% ii = (ind2rc(X,i,'r')~=ind2rc(X,j,'r')) &amp; ...</span>
+        <span class="comment">%     (ind2rc(X,i,'c')~=ind2rc(X,j,'c'));</span>
+        <span class="comment">% W = sqrt(2)*ii + ~ii;</span>
+        <span class="comment">% % add the spectral distance between a centroid and any of its nearest</span>
+        <span class="comment">% % neighbours to the already computed distance between those neighbours</span>
+        <span class="comment">% % and the previous centroids</span>
+        <span class="comment">% W = W + (D(j) + lambda * distL2(nColCk(Q(i),:),I(j,:)));</span>
+        <span class="comment">% err = accumarray(i, W, [], @(x){x}, {NaN});</span>
+        <span class="comment">% err(cellfun(@(x)isnan(x(1)),err)) = [];</span>
+        <span class="comment">% err = cellfun(@min,err);</span>
+    <span class="keyword">end</span>
+<span class="comment">%   %----------------------------------------------------------------------</span>
+</pre>
+      <pre class="codeinput"><span class="keyword">end</span> <span class="comment">% end of amoebasuperpix_base</span>
+</pre></div>
+    <!--
+##### SOURCE BEGIN #####%% AMOEBASUPERPIX_BASE - Base function for AMOEBASUPERPIX.%%% Syntax
+%    [Q, Ck, ColCk] = AMOEBASUPERPIX_BASE(I, K, isLab, alpha, T, n, k, maxiter);%%% Credit% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)
+%%% See also% Related:% <AMOEBASUPERPIX.html |AMOEBASUPERPIX|>,
+% <SLICSUPERPIX_BASE.html |SLICSUPERPIX_BASE|>,% <GEOSUPERPIX_BASE.html |GEOSUPERPIX_BASE|>.% Called:% <matlab:web(whichpath('RGB2LAB')) |RGB2LAB|>,
+% <../../graph/html/DIJKADVANCED_BASE.html |DIJKADVANCED_BASE|>,% DIJKSTRAPROPAGATION_MEX,% <../../propagation/html/IM2POTENTIAL.html |IM2POTENTIAL|>,% <../../propagation/html/POTENTIAL2FRONT.html |POTENTIAL2FRONT|>,
+% <../../derive/html/GSTDECOMP.html |GSTDECOMP|>,% <../../derive/html/GRDMASK_BASE.html |GRDMASK_BASE|>,% <../../derive/html/GSTFEATURE_BASE.html |GSTFEATURE_BASE|>,% <../../kernel/html/NEIPOSKERNEL.html |NEIPOSKERNEL|>.
+%% Function implementationfunction [Q, Ck, ColCk, D] = amoebasuperpix_base(I, K, isLab, alpha, T, n, k, maxiter)
+%% % checking/setting parametersif nargin<8,  maxiter = Inf;
+    if nargin<7,  k = 3;        if nargin<6,  n = 2;            if nargin<5,  T = eps;                if nargin<4,  alpha = 1;
+                end            end        end    end
+endif ~exist('dijkstrapropagation_mex','file')    warning('amoebasuperpix_base:methodwarning', ...
+        ['!!!very slow matlab implementation of Disjkstra-like algorithm - use ' ...        'C implemented version instead (see function dijkstrapropagation_mex)!!!'])    handle_dijkstra = @(G,start) dijkadvanced(G>0, G, start);;    %#ok    % transform the input weight matrix and create an appropriate adjacency
+    % matrix for DIJKADVANCED_BASEelse    handle_dijkstra = @(G,start) ...
+        dijkstrapropagation_mex(G, start-1, -1, 1.2*numel(G));         %#ok    % use C-implemented priority queuesend% note: using a function handle in a loop will slower the program anyway
+[X,Y,C] = size(I);if isLab
+    if C~=3                                                                    warning('amoebasuperpix_base:inputwarning','RGB image required in input');        if C==1,  I = repmat(I, [1 1 3]);  else  I = I(:,:,1:3);  end        C = 3;
+    end    I = RGB2Lab(I(:,:,1), I(:,:,2), I(:,:,3));end
+%%% for an image with |N=X*Y| pixels, the approximate size of each superpixel% is |N/K pixels|; therefore, for roughly equally sized superpixels there% would be a superpixel center at every grid interval |S|
+S = floor(sqrt(X*Y/K));if mod(n,2)~=0,  n = n+1;  end;win = S * n;  pad = win / 2;  win = win + 1;
+% L1 and L2 distance functions% L1 distance distL1 = @(v0, v1) sum(abs(v1-v0), 2);                                 %#okdistL2sqr = @(v0, v1) sum((v1-v0).^2, 2);
+distL2 = @(v0, v1) sqrt(distL2sqr(v0,v1));%% 
+% main calculation%%% we begin by sampling |K| regularly spaced cluster centers
+[Ck, ColCk] = initcenters(I, S);%%% since the spatial extent of any superpixel is approximately |S^2| (the area% of a superpixel), we can safely assume that pixels that are associated
+% with this cluster center lie within a |(nS,nS)| window around the superpixel% center on the X-Y planenk = size(Ck,1);
+%   %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH    function [Ck, ColCk] = initcenters(I, S)        % [X,Y] = size(Lab(:,:,1));        xk = round(X / S);
+        if xk==0,  xk = floor(X/2);        else       xk = floor(S * (0:xk-1) + S/2);        end        yk = round(Y / S);
+        if yk==0,  yk = floor(X/2);        else       yk = floor(S * (0:yk-1) + S/2);        end        
+        ColCk = reshape(I(xk,yk,:), [length(xk)*length(yk) C]);                [xk yk] = meshgrid(xk, yk);        Ck = [xk(:), yk(:)];
+        % Ck = sub2ind([X,Y], xk(:), yk(:));    end%%
+% and we move the centers to seed locations corresponding to the lowest% gradient position in a |(k,k)| neighborhood.if k>0    [Ck, ColCk] = movecenters(I, Ck, k);
+end%   %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH    function [Ck, ColCk] = movecenters(I, Ck, k)
+        [gx, gy] = grdmask_base(I,'matlab','ij');        G = sum(gx.^2+gy.^2,3);        % I0 = I([2:X X], (1:Y));  I1 = I([1 1:(X-1)], (1:Y));        % G = distL2sqr(I0(:),I1(:));
+        % I0 = I((1:X), [2:Y Y]);  I1 = I((1:X), [1 1:(Y-1)]);        % G = G + distL2sqr(I0(:),I1(:));        % G = reshape(G,[X,Y]);        
+        [ind, ix, iy] = neiposkernel(k,X);        ind = ind(:);  ix = ix(:);  iy = iy(:);                cind = sub2ind([X,Y], Ck(:,1), Ck(:,2));
+        ind = repmat(cind, [1 numel(ind)]) + repmat(ind', [length(cind) 1]);        ind(ind>X*Y) = X*Y;        ind(ind<=0) = 1;        [~,pos] = min(G(ind), [], 2);
+                Ck = [Ck(:,1) + ix(pos), Ck(:,2) + iy(pos)];        % check that the Ck are not outside the image domain's limits        Ck(:,1) = min([max([Ck(:,1), ones(nk,1)],[],2), X*ones(nk,1)], [], 2);
+        Ck(:,2) = min([max([Ck(:,2), ones(nk,1)],[],2), Y*ones(nk,1)], [], 2);                cind = sub2ind([X,Y], Ck(:,1), Ck(:,2));        cind = repmat(cind, [1 C]) + (X*Y) * meshgrid(0:C-1, 1:length(cind));
+        ColCk = reshape(I(cind), [nk C]);    end%   %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%%% pad the original imageA = padarray(I, [pad pad 0], 'both', 'replicate');[M,N] = size(A(:,:,1));
+%%% possibly define an additional cost function when propagating the amoeba:% a gradient magnitude map
+if alpha(2)    rho = 1;  sigma=0.7;  samp = 1;    int = 'fast';  der = 'fast';  eign = 'zen';    P = gstsmooth_base(A, rho, sigma, der, int, samp, ...
+        [], false, false, 8, .4);    grd = gstfeature_base(P(:,:,1,1), P(:,:,2,2), P(:,:,1,2), ...        'norm', eign, [], []);    grd = rescale(grd);
+    clear P;else    % dgxy = zeros(win^2,1);    grd = zeros(size(A)); % we want to avoid further 'if' tests
+end%%% reshape for easier manipulations
+A = reshape(A,[M*N C]);I = reshape(I,[X*Y C]);%%
+% initial labels and distances matricesQ0 = zeros(M,N);D0 = Inf(M,N);
+%%% define some utility matrices% general indices
+pixindex = reshape(1:M*N,M,N);% relative indices of the image pixels w.r.t. the paded image pixin = pixindex(pad+1:pad+X,pad+1:pad+Y);
+% relative indices of the pixels inside the centered analyzing window w.r.t. % the paded imageind2D = neiposkernel(pad, M);  ind2D = ind2D(:);  % 2D: spatial position%indnD = repmat(ind2D,[1 C]);            % nD: spatial/spectral position
+% relative indice of the centroid pixel w.r.t. the analyzing windowcwin = [pad+1; pad+1];cwin = sub2ind([win,win],cwin(1),cwin(2)); % = (pad+1) + (pad+1)*(win);
+% list of neighbour connections within the analyzing window: we compute it% once for allconn = 8;  
+[ic,icd] = ixneighbours(true(win,win), [], conn);% note that ic is of size close to (but <) 8*win^2% compute the spatial distance once for alldxy = distL2(ind2rc(win,ic,'rc'), ind2rc(win,icd,'rc'));
+% the local cost of traveling from one pixel to any of its neighbours is% the standard Euclidean distance between them%%
+% start 'looping'niter = 1;err = Inf(nk,1);% % ierr = 1:nk;
+while niter<=maxiter    % % if ~any(err>T),  break;  end
+    ierr = find(err>T); if isempty(ierr),  break;  end        %%    % update distance and labels
+    [D0,Q0] = updatedistance(ierr, D0, Q0, Ck, ColCk);        Q = Q0(pixin);    D = D0(pixin);
+        %%    % update centroids    [nCk, nColCk] = updatecentroids(ierr, Q);
+        %%    % update error    
+    % % ierr = 1:nk;    err = updaterror(ierr, D, Q, Ck, nCk, ColCk, nColCk);        %% 
+    % update amoeba    Ck(ierr,:) = nCk;    ColCk(ierr,:) = nColCk;    
+    niter = niter + 1;end%   %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+    function [D, Q, err ] = updatedistance(ierr, D, Q, Ck, ColCk)      %#ok        % in that context, A, M, N, win, pixin, ind2D, indnD, win2D, lambda        % pad, and dxy are all 'global' variables in the sense that they are        % either passed to the program, or computed prior to the algorithm
+        % running and they are not modified throughout the algorithm; on the        % contrary, ierr, D, Q, Ck and ColCk are.        % err = zeros(length(ierr),1);        for l=1:length(ierr)  % separable estimation
+            ll = ierr(l);            % ll = l; % we recompute all of them, even those unchanged                        % retrieve the coordinates of the cluster centroid (also center
+            % of the analyzing window) w.r.t. the paded image, then the indices            % of the analyzing window (in 2D) w.r.t. the paded image            c2D = pixin(Ck(ll,1),Ck(ll,2));            cind2D = c2D + ind2D;
+            % % retrieve the position in color space            % cnD = c2D + (M*N) * (0:C-1);            % cindnD = repmat(cnD,[win^2 1]) + indnD;            
+            % extract labels and distances within the current neighbourhood            q = Q(cind2D);  d = D(cind2D);                       % F = A(cindnD);
+            % F(cwin + wind2D) = ColCk(ll,:);            F = A(cind2D,:);            F(cwin,:) = ColCk(ll,:);            dI = distL2(F(ic,:),F(icd,:));  % distL2(F(icnD),F(icdnD));
+            % the cost of traveling from ic to icd is the distance between the            % spectral values taken by the image on those points: the closer            % their spectral values, the higher the probability they belong            % to the same amoeba
+                        % compute the cost induced by the gradient magnitude of the image            % (it may be null)            dgxy = (grd(ic) + grd(icd)) / 2;
+            % the cost of traveling from ic to icd is the average of their            % gradient values: the lower the gradient at those points, the            % higher the probability they belong to the same amoeba; high            % gradient pixels act like barriers in the amoeba propagation
+                        % method 1            % start = sub2ind([win,win], pad+1, pad+1);            W = dxy + alpha(1) * dI + alpha(2) * dgxy;
+            % construct a sparse adjacency matrix G            G = sparse(ic, icd, W, win^2, win^2);            % Ds = handle_dijkstra(G, cwin);            Ds = dijkstrapropagation_mex(G, cwin-1, -1, 1.2*numel(G));
+                        % % method 2            % W = reshape(dfeat(F, repmat(F(cwin+wind2D),[win^2 1])), [win win]);            % W = im2potential(W, 'pixinv', lambda);
+            % d = potential2front(W, [pad+1;pad+1]);                        % find closest            [d, r] = min(cat(2,d(:),Ds(:)), [], 2);
+            q(r==2) = ll;                        % update labels            Q(cind2D) = q; 
+                        % Qll = find(Q==ll);            % ck = floor(sum(ind2rc(M,Qll,'rc')) / length(Qll));            % c2D = ind2rc(M,c2D,'rc');  pos = pad+1 + ck - c2D;
+            % Ds = reshape(Ds,[win,win]);            % err(l) = Ds(pos(1), pos(2));                        % update distances
+            D(cind2D) = d;        end    end%   %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+    function [Ck, ColCk] = updatecentroids(ierr, Q)        labels = cellfun(@(k) find(Q==k), num2cell(ierr(:)), 'UniformOutput', false);        % note that we choose the color value of the (point closest to the)        % centroid point as a representative value
+        ColCk = cellfun(@(x) sum(I(x,:))/length(x), labels, 'UniformOutput', false);        % if we sum the Lab values over the component with same label        % ColCk = cellfun(@(x) sum(I([x x+X*Y x+2*X*Y]),1) / length(x), ...        %    labels, 'UniformOutput', false);
+        labels = cellfun(@(x) ind2rc(X,x,'rc'), labels, 'UniformOutput', false);        Ck = cellfun(@(x) floor(sum(x)/size(x,1)), labels, 'UniformOutput', false);        Ck = cell2mat(Ck);        ColCk = cell2mat(ColCk);
+    end%   %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH    function err = updaterror(ierr, D, Q, Ck, nCk, ColCk, nColCk)      %#ok        % % - error type 1:
+        % err = distL1(Ck(ierr,:), nCk);        % % - error type 2:        ddxy =  distL2(Ck(ierr,:), nCk);        ddrange = distL2(ColCk(ierr,:), nColCk);
+        err = ddxy + alpha(1) * ddrange; % + alpha(2) * ddgxy;        % - error type 3:        % find the centroids' neighbours within their own superpixel        % region (connected component with same label)
+        % [i,j] = ixneighbours(true(X,Y), sub2ind([X Y],nCk(ierr,1),nCk(ierr,2)), conn);        % ii = Q(j)~=ierr;  % Q(j)~=Q(i); the centroid may have a different label         % i(ii) = []; j(ii) = [];        % % spatial distance between a centroid and ist nearest neighbours
+        % ii = (ind2rc(X,i,'r')~=ind2rc(X,j,'r')) & ...        %     (ind2rc(X,i,'c')~=ind2rc(X,j,'c'));        % W = sqrt(2)*ii + ~ii;        % % add the spectral distance between a centroid and any of its nearest 
+        % % neighbours to the already computed distance between those neighbours        % % and the previous centroids        % W = W + (D(j) + lambda * distL2(nColCk(Q(i),:),I(j,:)));        % err = accumarray(i, W, [], @(x){x}, {NaN});
+        % err(cellfun(@(x)isnan(x(1)),err)) = [];        % err = cellfun(@min,err);    end%   %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+end % end of amoebasuperpix_base##### SOURCE END #####
+-->
+  </body>
+</html>
