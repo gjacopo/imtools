@@ -10,7 +10,7 @@
 % <GEOSUPERPIX_BASE.html |GEOSUPERPIX_BASE|>.
 % Called:
 % <matlab:web(whichpath('RGB2LAB')) |RGB2LAB|>,
-% <../../graph/html/DIJKADVANCED_BASE.html |DIJKADVANCED_BASE|>,
+% <../../graph/html/DIJKADVANCED.html |DIJKADVANCED|>,
 % DIJKSTRAPROPAGATION_MEX,
 % <../../propagation/html/IM2POTENTIAL.html |IM2POTENTIAL|>,
 % <../../propagation/html/POTENTIAL2FRONT.html |POTENTIAL2FRONT|>,
