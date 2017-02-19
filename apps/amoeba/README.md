@@ -27,7 +27,7 @@ This approach is based on the estimation of amoeba-like neighborhoods around sel
 
 <table>
 <tr>
-<td><kbd><img src=“img/excerpt1.png" alt=“input excerpt#1“ width=“250"> </kbd></td>
+<td><kbd><img src="img/excerpt1.png" alt="input excerpt#1" width=“250"> </kbd></td>
 <td><kbd><img src="img/exceprt1-amoeba-superpixels.png" alt="amoeba superpixels" width=“250"> </kbd></td>
 <td><kbd><img src="img/excerpt1-mean-amoeba-approximations.png" alt="mean amoeba approximations" width=“250"> </kbd></td>
 </tr>
@@ -50,7 +50,8 @@ The problem of segmenting an image into semantically meaningful units is a funda
 
 
 **Algorithm**
-<img src=“fig/algorithm-amoeba.png" alt=“algorithm amoeba superpix” width=“700">
+
+<img src="fig/algorithm-amoeba.png" alt="algorithm amoeba superpix” width=“700">
 
 **Usage** 
 
