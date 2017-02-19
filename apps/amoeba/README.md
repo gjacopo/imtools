@@ -1,7 +1,7 @@
 amoeba
 ======
 
-Amoeba-based superpixel partitioning of multispectral images intoelementary, uniform, connected units
+Amoeba-based superpixel partitioning of multispectral images into elementary, uniform, connected units
 ---
 
 **About**
@@ -27,9 +27,9 @@ This approach is based on the estimation of amoeba-like neighborhoods around sel
 
 <table>
 <tr>
-<td><kbd><img src="excerpt1.png" alt="doc SAS" width=“250"> </kbd></td>
-<td><kbd><img src="exceprt1-amoeba-superpixels.png" alt="doc SAS" width=“250"> </kbd></td>
-<td><kbd><img src="excerpt1-mean-amoeba-approximations.png" alt="doc R" width=“250"> </kbd></td>
+<td><kbd><img src=“img/excerpt1.png" alt="doc SAS" width=“250"> </kbd></td>
+<td><kbd><img src="img/exceprt1-amoeba-superpixels.png" alt="doc SAS" width=“250"> </kbd></td>
+<td><kbd><img src="img/excerpt1-mean-amoeba-approximations.png" alt="doc R" width=“250"> </kbd></td>
 </tr>
 <header>
 <td align="centre"><code>input excerpt</code></td>
@@ -47,12 +47,25 @@ The problem of segmenting an image into semantically meaningful units is a funda
 
 **Description**
 
+
+
+**Algorithm**
+<img src=“fig/algorithm-amoeba.png" alt="doc SAS" width=“700">
+
 **Usage** 
 
 Install Matlab package [`imtools`](https://gjacopo.github.io/imtools/) and run function  [`amoebasuperpix.m`](https://gjacopo.github.io/imtools/segmentation/amoebasuperpix.m).
 
 **<a name="References"></a>References** 
 
-# <a name=“ASSLFS10”></a>R. Achanta, A. Shaji, K. Smith, A. Lucchi, P. Fua and S. Susstrunk (2010): ”SLIC superpixels”, EPFL Technical Report no. 149300.# <a name=“FH04”></a>P. Felzenszwalb and D. Huttenlocher (2004): ”Efficient graph-based image segmentation”, _International Journal of Computer Vision_, 59(2):167-181, doi:[10.1023/B:VISI.0000022288.19776.77](http://dx.doi.org/10.1023/B:VISI.0000022288.19776.77).# <a name=“FVS09”></a>B. Fulkerson, A. Vedaldi and S. Soatto (2009): ”Class segmentation and object localization with superpixel neighborhoods”, in _Proc. IEEE ICCV_, pp. 670–677, doi:[10.1109/ICCV.2009.5459175](http://dx.doi.org/10.1109/ICCV.2009.5459175).# <a name=“GS09”></a>Grazzini J. and Soille P. (2009): [**Edge-preserving smoothing using a similarity measure in adaptive geodesic neighbourhoods**](http://www.sciencedirect.com/science/article/pii/S003132030800469X), _Pattern Recognition_, 42(10):2306-2316, doi:[10.1016/j.patcog.2008.11.004](http://dx.doi.org/10.1016/j.patcog.2008.11.004).
+# <a name=“ASSLFS10”></a>R. Achanta, A. Shaji, K. Smith, A. Lucchi, P. Fua and S. Susstrunk (2010): ”SLIC superpixels”, EPFL Technical Report no. 149300.
+Achanta, R., Shaji, A., Smith, K., Lucchi, A., Fua, P., Susstrunk, S., 2012. SLICsuperpixels compared to state-of-the-art superpixel methods. IEEE Transactionson Pattern Analysis and Machine Intelligence 34 (11), 2274–2282.
+Bagon, S., Boiman, O., Irani, M., 2008. What is a good image segment? A unifiedapproach to segment extraction. In: Proc. European Conference on ComputerVision. Vol. 5305 of Lecture Notes in Computer Science. Springer-Verlag, pp.30–44.Bertelli, L., Manjunath, B., 2006. Redundancy in all pairs fast marching method.In: Proc. IEEE International Conference on Image Processing. pp. 3033–3036.
+Coeurjolly, D., Miguet, D., Tougne, L., 2004. 2D and 3D visibility in discretegeometry: an application to discrete geodesic paths. Pattern Recognition Letters25 (5), 561–570.
+Debayle, J., Pinoli, J., 2006a. General adaptive neighborhood image processing.Part I: Introduction and theoretical aspects. Journal of Mathematical Imagingand Vision 25 (2), 245–266.Debayle, J., Pinoli, J., 2006b. General adaptive neighborhood image processing.Part II: practical application examples. Journal of Mathematical Imaging andVision 25 (2), 267–284.# <a name=“FVS09”></a>B. Fulkerson, A. Vedaldi and S. Soatto (2009): ”Class segmentation and object localization with superpixel neighborhoods”, in _Proc. IEEE ICCV_, pp. 670–677, doi:[10.1109/ICCV.2009.5459175](http://dx.doi.org/10.1109/ICCV.2009.5459175).# <a name=“GS09”></a>Grazzini J. and Soille P. (2009): [**Edge-preserving smoothing using a similarity measure in adaptive geodesic neighbourhoods**](http://www.sciencedirect.com/science/article/pii/S003132030800469X), _Pattern Recognition_, 42(10):2306-2316, doi:[10.1016/j.patcog.2008.11.004](http://dx.doi.org/10.1016/j.patcog.2008.11.004).
 # <a name=“GDS10”></a>Grazzini J., Dillard S., and Soille P. (2010): [**Multichannel image regularisation using anisotropic geodesic filtering**](http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=5596008), in _Proc. IEEE ICPR_, pp. 2664-2667, doi:[10.1109/ICPR.2010.653](http://dx.doi.org/10.1109/ICPR.2010.653).# <a name=“GS08”></a>Grazzini J.  and Soille P. (2008): [**Adaptive morphological filters using similarities based on geodesic time**](http://www.springerlink.com/content/f6v62233xqkklq72), in _Proc. DGCI_, Lecture Notes in Computer Science, vol. 4992, pp.519-528, doi:[10.1007/978-3-540-79126-3_46](http://dx.doi.org/10.1007/978-3-540-79126-3_46).
-# <a name=“LDM07”></a>R. Lerallut, E. Decenciere, and F. Meyer (2007): ”Image filtering using morphological amoebas”, _Image and Vision Computing_, 25(4):395–404, do:[10.1016/j.imavis.2006.04.018](http://dx.doi.org/10.1016/j.imavis.2006.04.018).# <a name=“MPWMJ08”></a>A.P. Moore, S. Prince, J. Warrell, U. Mohammed, and G. Jones (2008): ”Superpixel lattices”, in _Proc. IEEE CVPR_, pp. 1–8, doi:[10.1109/CVPR.2008.4587471](http://dx.doi.org/10.1109/CVPR.2008.4587471).
+Hanbury, A., 2008. How do superpixels affect image segmentation? In: Ruiz-Shulcloper, J., Kropatsch, W. (Eds.), Progress in Pattern Recognition, ImageAnalysis and Applications - Proc. Iberoamerican Congress on Pattern Recognition.No. 5197 in LNCS. Springer-Verlag, pp. 178–186.
+# <a name=“LDM07”></a>R. Lerallut, E. Decenciere, and F. Meyer (2007): ”Image filtering using morphological amoebas”, _Image and Vision Computing_, 25(4):395–404, do:[10.1016/j.imavis.2006.04.018](http://dx.doi.org/10.1016/j.imavis.2006.04.018).
+Levinshtein, A., Stere, A., Kutulakos, K., Fleet, D., Dickinson, S., Siddiqi, K.,2009. TurboPixels: fast superpixels using geometric flows. IEEE Transactionson Pattern Analysis and Machine Intelligence 31 (12), 2290–2297.# <a name=“MPWMJ08”></a>A.P. Moore, S. Prince, J. Warrell, U. Mohammed, and G. Jones (2008): ”Superpixel lattices”, in _Proc. IEEE CVPR_, pp. 1–8, doi:[10.1109/CVPR.2008.4587471](http://dx.doi.org/10.1109/CVPR.2008.4587471).
+# <a name=“FH04”></a>P. Felzenszwalb and D. Huttenlocher (2004): ”Efficient graph-based image segmentation”, _International Journal of Computer Vision_, 59(2):167-181, doi:[10.1023/B:VISI.0000022288.19776.77](http://dx.doi.org/10.1023/B:VISI.0000022288.19776.77).
+Shi, J., Malik, J., 2000. Normalized cuts and image segmentation. IEEE Transactionson Pattern Analysis and Machine Intelligence 22 (8), 888–905.Soille, P., 2008. Constrained connectivity for hierarchical image decompositionand simplification. IEEE Transactions on Pattern Analysis and Machine Intelligence30 (7), 1132–1145.
