@@ -1,6 +1,15 @@
 #!/bin/bash
 
 
+echo
+echo  REPLACE FILENAMES
+for f in */*.html;
+do
+    echo $f
+    replace $f "Called:" "Requires:"
+    replace $f "Related:" "Ressembles:"
+done
+
 # echo  REPLACE FOLDER PATHS
 # for d in *; 
 # do
@@ -14,16 +23,16 @@
 #     done
 # done
 
-echo
-echo  REPLACE FILENAMES
-for f in */*.html;
-do
-    echo replacements for file $f...
-    fname=`basename $f .html`
-    Ufname=`echo $fname | tr /a-z/ /A-Z/`
-    for file in */*html;
-    do
-	replace $file $Ufname.html $fname.html
-    done
-done
+# echo
+# echo  REPLACE FILENAMES
+# for f in */*.html;
+# do
+#     echo replacements for file $f...
+#     fname=`basename $f .html`
+#     Ufname=`echo $fname | tr /a-z/ /A-Z/`
+#     for file in */*.html;
+#     do
+# 	replace $file $Ufname.html $fname.html
+#     done
+# done
     

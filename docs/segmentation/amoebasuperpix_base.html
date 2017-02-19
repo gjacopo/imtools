@@ -75,9 +75,9 @@ span.syscmd { color:#B28C00 }
       <h2>Syntax<a name="1"></a></h2>
       <pre>  [Q, Ck, ColCk] = AMOEBASUPERPIX_BASE(I, K, isLab, alpha, T, n, k, maxiter);</pre>
       <h2>See also<a name="3"></a></h2>
-      <p>Related: <a href="amoebasuperpix.html"><tt>AMOEBASUPERPIX</tt></a>, <a
+      <p>Ressembles: <a href="amoebasuperpix.html"><tt>AMOEBASUPERPIX</tt></a>, <a
           href="slicsuperpix_base.html"><tt>SLICSUPERPIX_BASE</tt></a>,
-        <a href="geosuperpix_base.html"><tt>GEOSUPERPIX_BASE</tt></a>. Called: <a
+        <a href="geosuperpix_base.html"><tt>GEOSUPERPIX_BASE</tt></a>. Requires: <a
           href="matlab:web%28whichpath%28%27RGB2LAB%27%29%29"><tt>RGB2LAB</tt></a>,
         <a href="../graph/DIJKADVANCED_BASE.html"><tt>DIJKADVANCED_BASE</tt></a>,
         DIJKSTRAPROPAGATION_MEX, <a href="../propagation/im2potential.html"><tt>IM2POTENTIAL</tt></a>,
@@ -420,8 +420,8 @@ class="comment">%#ok</span>
     <!--
 ##### SOURCE BEGIN #####%% AMOEBASUPERPIX_BASE - Base function for AMOEBASUPERPIX.%%% Syntax
 %    [Q, Ck, ColCk] = AMOEBASUPERPIX_BASE(I, K, isLab, alpha, T, n, k, maxiter);%%% Credit% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)
-%%% See also% Related:% <amoebasuperpix.html |AMOEBASUPERPIX|>,
-% <slicsuperpix_base.html |SLICSUPERPIX_BASE|>,% <geosuperpix_base.html |GEOSUPERPIX_BASE|>.% Called:% <matlab:web(whichpath('RGB2LAB')) |RGB2LAB|>,
+%%% See also% Ressembles:% <amoebasuperpix.html |AMOEBASUPERPIX|>,
+% <slicsuperpix_base.html |SLICSUPERPIX_BASE|>,% <geosuperpix_base.html |GEOSUPERPIX_BASE|>.% Requires:% <matlab:web(whichpath('RGB2LAB')) |RGB2LAB|>,
 % <../graph/DIJKADVANCED_BASE.html |DIJKADVANCED_BASE|>,% DIJKSTRAPROPAGATION_MEX,% <../propagation/im2potential.html |IM2POTENTIAL|>,% <../propagation/potential2front.html |POTENTIAL2FRONT|>,
 % <../derive/gstdecomp.html |GSTDECOMP|>,% <../derive/grdmask_base.html |GRDMASK_BASE|>,% <../derive/gstfeature_base.html |GSTFEATURE_BASE|>,% <../kernel/neiposkernel.html |NEIPOSKERNEL|>.
 %% Function implementationfunction [Q, Ck, ColCk, D] = amoebasuperpix_base(I, K, isLab, alpha, T, n, k, maxiter)

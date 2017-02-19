@@ -148,8 +148,8 @@ span.syscmd { color:#B28C00 }
         fully automated approach to segmentation of irregularly shaped cellular
         structures in EM images", pp. 463-471, Proc. MICCAI, 2010. <a href="http://cvlab.epfl.ch/publications/publications/2010/LucchiSALF10.pdf">http://cvlab.epfl.ch/publications/publications/2010/LucchiSALF10.pdf</a></p>
       <h2>See also<a name="8"></a></h2>
-      <p>Related: <a href="slicsuperpix.html"><tt>SLICSUPERPIX</tt></a>, <a href="geosuperpix.html"><tt>GEOSUPERPIX</tt></a>,
-        <a href="../propagation/fmm.html"><tt>FMM</tt></a>. Called: <a
+      <p>Ressembles: <a href="slicsuperpix.html"><tt>SLICSUPERPIX</tt></a>, <a href="geosuperpix.html"><tt>GEOSUPERPIX</tt></a>,
+        <a href="../propagation/fmm.html"><tt>FMM</tt></a>. Requires: <a
           href="amoebasuperpix_base.html"><tt>AMOEBASUPERPIX_BASE</tt></a>.</p>
       <h2>Function implementation<a name="9"></a></h2>
       <pre class="codeinput"><span class="keyword">function</span> [Q, varargout] = amoebasuperpix(I, varargin )
@@ -272,8 +272,8 @@ class="string">off</span>;
 %      <http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=5596008>%% [ASSLFS10]  R. Achanta, A. Shaji, K. Smith, A. Lucchi, P. Fua and S. %      Susstrunk: "SLIC superpixels", EPFL Technical Report no. 149300, 2010.
 %      <http://infoscience.epfl.ch/record/149300/files/SLIC_Superpixels_TR_2.pdf>%% [LSALF10]  A. Lucchi, K. Smith, R. Achanta, V. Lepetit and P. Fua: "A %      fully automated approach to segmentation of irregularly shaped cellular
 %      structures in EM images", pp. 463-471, Proc. MICCAI, 2010. %      <http://cvlab.epfl.ch/publications/publications/2010/LucchiSALF10.pdf>%%% Credit
-% <mailto:jacopo.grazzini@jrc.ec.europa.eu J.Grazzini> (DERD/JRC)%%% See also% Related:
-% <slicsuperpix.html |SLICSUPERPIX|>,% <geosuperpix.html |GEOSUPERPIX|>,% <../propagation/fmm.html |FMM|>.% Called:
+% <mailto:jacopo.grazzini@jrc.ec.europa.eu J.Grazzini> (DERD/JRC)%%% See also% Ressembles:
+% <slicsuperpix.html |SLICSUPERPIX|>,% <geosuperpix.html |GEOSUPERPIX|>,% <../propagation/fmm.html |FMM|>.% Requires:
 % <amoebasuperpix_base.html |AMOEBASUPERPIX_BASE|>.%% Function implementationfunction [Q, varargout] = amoebasuperpix(I, varargin )
 %%% parsing parametersnarginchk(1, 23);
 nargoutchk(1, 3);% mandatory parameterif ~isnumeric(I)
