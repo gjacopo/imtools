@@ -75,16 +75,16 @@ span.syscmd { color:#B28C00 }
       <h2>Syntax<a name="1"></a></h2>
       <pre>  [Q, Ck, ColCk] = AMOEBASUPERPIX_BASE(I, K, isLab, alpha, T, n, k, maxiter);</pre>
       <h2>See also<a name="3"></a></h2>
-      <p>Related: <a href="AMOEBASUPERPIX.html"><tt>AMOEBASUPERPIX</tt></a>, <a
-          href="SLICSUPERPIX_BASE.html"><tt>SLICSUPERPIX_BASE</tt></a>,
-        <a href="GEOSUPERPIX_BASE.html"><tt>GEOSUPERPIX_BASE</tt></a>. Called: <a
+      <p>Related: <a href="amoebasuperpix.html"><tt>AMOEBASUPERPIX</tt></a>, <a
+          href="slicsuperpix_base.html"><tt>SLICSUPERPIX_BASE</tt></a>,
+        <a href="geosuperpix_base.html"><tt>GEOSUPERPIX_BASE</tt></a>. Called: <a
           href="matlab:web%28whichpath%28%27RGB2LAB%27%29%29"><tt>RGB2LAB</tt></a>,
         <a href="../graph/DIJKADVANCED_BASE.html"><tt>DIJKADVANCED_BASE</tt></a>,
-        DIJKSTRAPROPAGATION_MEX, <a href="../propagation/IM2POTENTIAL.html"><tt>IM2POTENTIAL</tt></a>,
-        <a href="../propagation/POTENTIAL2FRONT.html"><tt>POTENTIAL2FRONT</tt></a>,
-        <a href="../derive/GSTDECOMP.html"><tt>GSTDECOMP</tt></a>, <a href="../derive/GRDMASK_BASE.html"><tt>GRDMASK_BASE</tt></a>,
-        <a href="../derive/GSTFEATURE_BASE.html"><tt>GSTFEATURE_BASE</tt></a>,
-        <a href="../kernel/NEIPOSKERNEL.html"><tt>NEIPOSKERNEL</tt></a>.</p>
+        DIJKSTRAPROPAGATION_MEX, <a href="../propagation/im2potential.html"><tt>IM2POTENTIAL</tt></a>,
+        <a href="../propagation/potential2front.html"><tt>POTENTIAL2FRONT</tt></a>,
+        <a href="../derive/gstdecomp.html"><tt>GSTDECOMP</tt></a>, <a href="../derive/grdmask_base.html"><tt>GRDMASK_BASE</tt></a>,
+        <a href="../derive/gstfeature_base.html"><tt>GSTFEATURE_BASE</tt></a>,
+        <a href="../kernel/neiposkernel.html"><tt>NEIPOSKERNEL</tt></a>.</p>
       <h2>Function implementation<a name="4"></a></h2>
       <pre class="codeinput"><span class="keyword">function</span> [Q, Ck, ColCk, D] = amoebasuperpix_base(I, K, isLab, alpha, T, n, k, maxiter)
 </pre>
@@ -420,10 +420,10 @@ class="comment">%#ok</span>
     <!--
 ##### SOURCE BEGIN #####%% AMOEBASUPERPIX_BASE - Base function for AMOEBASUPERPIX.%%% Syntax
 %    [Q, Ck, ColCk] = AMOEBASUPERPIX_BASE(I, K, isLab, alpha, T, n, k, maxiter);%%% Credit% <mailto:grazzja@lanl.gov J.Grazzini> (ISR-2/LANL)
-%%% See also% Related:% <AMOEBASUPERPIX.html |AMOEBASUPERPIX|>,
-% <SLICSUPERPIX_BASE.html |SLICSUPERPIX_BASE|>,% <GEOSUPERPIX_BASE.html |GEOSUPERPIX_BASE|>.% Called:% <matlab:web(whichpath('RGB2LAB')) |RGB2LAB|>,
-% <../../graph/html/DIJKADVANCED_BASE.html |DIJKADVANCED_BASE|>,% DIJKSTRAPROPAGATION_MEX,% <../../propagation/html/IM2POTENTIAL.html |IM2POTENTIAL|>,% <../../propagation/html/POTENTIAL2FRONT.html |POTENTIAL2FRONT|>,
-% <../../derive/html/GSTDECOMP.html |GSTDECOMP|>,% <../../derive/html/GRDMASK_BASE.html |GRDMASK_BASE|>,% <../../derive/html/GSTFEATURE_BASE.html |GSTFEATURE_BASE|>,% <../../kernel/html/NEIPOSKERNEL.html |NEIPOSKERNEL|>.
+%%% See also% Related:% <amoebasuperpix.html |AMOEBASUPERPIX|>,
+% <slicsuperpix_base.html |SLICSUPERPIX_BASE|>,% <geosuperpix_base.html |GEOSUPERPIX_BASE|>.% Called:% <matlab:web(whichpath('RGB2LAB')) |RGB2LAB|>,
+% <../graph/DIJKADVANCED_BASE.html |DIJKADVANCED_BASE|>,% DIJKSTRAPROPAGATION_MEX,% <../propagation/im2potential.html |IM2POTENTIAL|>,% <../propagation/potential2front.html |POTENTIAL2FRONT|>,
+% <../derive/gstdecomp.html |GSTDECOMP|>,% <../derive/grdmask_base.html |GRDMASK_BASE|>,% <../derive/gstfeature_base.html |GSTFEATURE_BASE|>,% <../kernel/neiposkernel.html |NEIPOSKERNEL|>.
 %% Function implementationfunction [Q, Ck, ColCk, D] = amoebasuperpix_base(I, K, isLab, alpha, T, n, k, maxiter)
 %% % checking/setting parametersif nargin<8,  maxiter = Inf;
     if nargin<7,  k = 3;        if nargin<6,  n = 2;            if nargin<5,  T = eps;                if nargin<4,  alpha = 1;

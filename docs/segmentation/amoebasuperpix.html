@@ -148,9 +148,9 @@ span.syscmd { color:#B28C00 }
         fully automated approach to segmentation of irregularly shaped cellular
         structures in EM images", pp. 463-471, Proc. MICCAI, 2010. <a href="http://cvlab.epfl.ch/publications/publications/2010/LucchiSALF10.pdf">http://cvlab.epfl.ch/publications/publications/2010/LucchiSALF10.pdf</a></p>
       <h2>See also<a name="8"></a></h2>
-      <p>Related: <a href="SLICSUPERPIX.html"><tt>SLICSUPERPIX</tt></a>, <a href="GEOSUPERPIX.html"><tt>GEOSUPERPIX</tt></a>,
-        <a href="../propagation/FMM.html"><tt>FMM</tt></a>. Called: <a
-          href="AMOEBASUPERPIX_BASE.html"><tt>AMOEBASUPERPIX_BASE</tt></a>.</p>
+      <p>Related: <a href="slicsuperpix.html"><tt>SLICSUPERPIX</tt></a>, <a href="geosuperpix.html"><tt>GEOSUPERPIX</tt></a>,
+        <a href="../propagation/fmm.html"><tt>FMM</tt></a>. Called: <a
+          href="amoebasuperpix_base.html"><tt>AMOEBASUPERPIX_BASE</tt></a>.</p>
       <h2>Function implementation<a name="9"></a></h2>
       <pre class="codeinput"><span class="keyword">function</span> [Q, varargout] = amoebasuperpix(I, varargin )
 </pre>
@@ -273,8 +273,8 @@ class="string">off</span>;
 %      <http://infoscience.epfl.ch/record/149300/files/SLIC_Superpixels_TR_2.pdf>%% [LSALF10]  A. Lucchi, K. Smith, R. Achanta, V. Lepetit and P. Fua: "A %      fully automated approach to segmentation of irregularly shaped cellular
 %      structures in EM images", pp. 463-471, Proc. MICCAI, 2010. %      <http://cvlab.epfl.ch/publications/publications/2010/LucchiSALF10.pdf>%%% Credit
 % <mailto:jacopo.grazzini@jrc.ec.europa.eu J.Grazzini> (DERD/JRC)%%% See also% Related:
-% <SLICSUPERPIX.html |SLICSUPERPIX|>,% <GEOSUPERPIX.html |GEOSUPERPIX|>,% <../../propagation/html/FMM.html |FMM|>.% Called:
-% <AMOEBASUPERPIX_BASE.html |AMOEBASUPERPIX_BASE|>.%% Function implementationfunction [Q, varargout] = amoebasuperpix(I, varargin )
+% <slicsuperpix.html |SLICSUPERPIX|>,% <geosuperpix.html |GEOSUPERPIX|>,% <../propagation/fmm.html |FMM|>.% Called:
+% <amoebasuperpix_base.html |AMOEBASUPERPIX_BASE|>.%% Function implementationfunction [Q, varargout] = amoebasuperpix(I, varargin )
 %%% parsing parametersnarginchk(1, 23);
 nargoutchk(1, 3);% mandatory parameterif ~isnumeric(I)
     error('amoebasuperpix:inputerror','a matrix is required in input'); end% optional parameters
