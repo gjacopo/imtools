@@ -1,12 +1,11 @@
 amoeba
 ======
 
-Amoeba-based superpixel partitioning of multispectral images into elementary, uniform, connected units
----
+Amoeba-based superpixel partitioning of multispectral images---
 
 **About**
 
-Various basic low-level image processing tools used in the experiments/analyses reported in the references listed [below](References).
+Amoeba-based superpixel partitioning of multispectral images into elementary, uniform, connected units.
 
 <table align="center">
     <tr> <td align="left"><i>documentation</i></td> <td align="left">available at: https://gjacopo.github.io/imtools/segmentation/amoebasuperpix.html</td> </tr> 
