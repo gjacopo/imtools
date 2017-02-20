@@ -28,6 +28,9 @@ This approach is based on the estimation of amoeba-like neighborhoods around sel
 
 **Description**
 
+The problem of segmenting an image into semantically meaningful units is a fundamental one in image processing. Indeed, visual information extraction is usually regarded as a segmentation issue. Besides practical issues (running time, user interaction, etc...), the key issue is what objects, if any, correspond to the segmented regions. It is well known that segmentation is an ill-posed problem whose ’correct’ solution is largely dependent on the application, if not completely subjective. Scene segmentation captures the local redundancy in the data, by reducing noise and variability, but aggregating pixels into segments often entails a decision that is unrelated to the final task. The goal is to perform this decision in a conservative way to minimize the risk of merging unrelated pixels from different objects. Over-segmentation is a pragmatic
+alternative that forms a one-to-many partitioning of scene features into smaller segments of distinct spectra. Instead of the pixel grid, it provides a representation of the image into perceptually meaningful entities, the so-called superpixels, that can be used as elementary units of any detection, categorization or localization scheme.
+
 **Usage** 
 
 Install Matlab package [`imtools`](https://gjacopo.github.io/imtools/) and run function  [`amoebasuperpix.m`](https://gjacopo.github.io/imtools/segmentation/amoebasuperpix.m).
