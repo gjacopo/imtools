@@ -37,7 +37,7 @@ See [`Contents.m`](Contents.m) for the whole list of functions. See file [`Conte
 
 **Applications** 
 
-Some potential applications are described on the following pages:
+Some examples of applications are described on the following pages:
 * [amoeba superpixels](apps/amoeba/README.md) for superpixel partitioning of multispectral images into elementary, connected, nearly uniform units.
 * [pseudo DEM](apps/pdem/README.md) for line networks extraction in digital images using geodesic propagation and flow simulation.
 
