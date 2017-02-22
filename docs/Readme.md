@@ -14,7 +14,7 @@ Matlab tools for low-level image processing:
 * [`feature`](feature/index.md):  Feature extraction
 * [`filter`](filter/index.md):  Filtering functions
 * [`graph`](graph/index.md):  Graph and network analysis and representation
-* [`pdem`](pdem/index.md):  Pseudo-DEM generation functions
+* [`surface`](surface/index.md):  Surface analysis functions
 * [`pyramid`](pyramid/index.md):  Hierarchical pyramid analysis and decomposition	
 * [`sharpen`](sharpen/index.md):  Sharpening and enhancing functions
 * [`geometry`](geometry/index.md):  Basic geometrical tools
