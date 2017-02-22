@@ -15,9 +15,14 @@ so that it can efficiently generate compact, connected, nearly uniform and perce
 
 **Usage** 
 
-Install Matlab package [`imtools`](https://gjacopo.github.io/imtools/) and run function  [`amoebasuperpix.m`](https://gjacopo.github.io/imtools/segmentation/amoebasuperpix.m) with desired arguments.
+The documentation of the algorithm, including a full description of the required/optional input/output parameters, is available at: [**amoebasuperpix.html**](../../segmentation/amoebasuperpix.html). The stepwise implementation of the algorithm is further described at: [**amoebasuperpix_base.html**](../../segmentation/amoebasuperpix_base.html).
 
-A detailed documentation (description of input/output data as well as parameters) is available at: https://gjacopo.github.io/imtools/segmentation/amoebasuperpix.html. The stepwise implementation of the algorithm is available at: https://gjacopo.github.io/imtools/segmentation/amoebasuperpix_base.html.
+To reproduce the experiments, you will need to:
+* install Matlab ad-hoc package [**`imtools`**](https://gjacopo.github.io/imtools/); _e.g._, add the paths of the install to your `pathdef.m` setup file;
+* run the function [**`amoebasuperpix.m`**](../../segmentation/amoebasuperpix.m) with desired arguments.
+* run [`slicsuperpix`](../../segmentation/slicsuperpix.html) or [`geosuperpix`](../../segmentation/geosuperpix.html). [](../../graph/dijkadvanced.html) for comparison with similar approaches.
+
+Details about the actual implementation of the gradient tensor decomposition are given in the documentation of functions [`gstdecomp`](../../derive/gstdecomp.html) [`gstfeature`](../../derive/gstfeature.html). The technique used for fast implementation of Dijkstra's algorithm is described in the source code [`dijkstrapropagation_mex.cpp`](../../propagation/src/dijkstrapropagation_mex.cpp). Note that it refers to Kirk's implementation of [Dijkstra's Minimum Cost Path package](http://nl.mathworks.com/matlabcentral/fileexchange/20025-dijkstra-s-minimum-cost-path-algorithm) as well as Peyre's [Toolbox Graph](https://nl.mathworks.com/matlabcentral/fileexchange/5355-toolbox-graph/). Altogether, all mentioned dependencies are solved when loading the `imtools` package.   
 
 **Description**
 
