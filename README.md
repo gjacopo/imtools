@@ -35,6 +35,12 @@ Matlab tools for low-level image processing:
 
 See [`Contents.m`](Contents.m) for the whole list of functions. See file [`Contents.html`](https://gjacopo.github.io/imtools/Contents.html) for browsable version.
 
+**Applications** 
+
+Some potential applications are described on the following pages:
+* [amoeba superpixels](apps/amoeba/README.md) for superpixel partitioning of multispectral images into elementary, connected, nearly uniform units.
+* [pseudo DEM](apps/pdem/README.md) for line networks extraction in digital images using geodesic propagation and flow simulation.
+
 **<a name="References"></a>References** 
 
 * Soille P. and Grazzini J. (2011): [**IMAGE-2006 Mosaic: Geometric and radiometric consistency of input imagery**](http://publications.jrc.ec.europa.eu/repository/bitstream/JRC49168/lbne23636enn.pdf), _Publications Office of the European Union_, doi:[10.2788/50967](http://dx.doi.org/10.2788/50967).
