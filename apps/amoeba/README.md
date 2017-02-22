@@ -4,13 +4,7 @@ amoeba
 Amoeba-based superpixel partitioning of multispectral images
 ---
 
-
-**Material**
-
-* detailed description: [**paper.ipynb**](paper.ipynb).
-* implementation: [**`amoebasuperpix.m`**](https://gjacopo.github.io/imtools/segmentation/amoebasuperpix.m).
-
-**Summary**
+**About**
 
 We implement an algorithm for scene segmentation that:
 * forms a one-to-many partitioning (_"over-segmentation"_) of features in the scene into smaller segments of distinct spectra,
@@ -21,17 +15,16 @@ so that it can efficiently generate compact, connected, nearly uniform and perce
 
 **Usage** 
 
-Check the documentation available at: https://gjacopo.github.io/imtools/segmentation/amoebasuperpix.html.
+Install Matlab package [`imtools`](https://gjacopo.github.io/imtools/) and run function  [`amoebasuperpix.m`](https://gjacopo.github.io/imtools/segmentation/amoebasuperpix.m) with desired arguments.
 
-Install Matlab package [`imtools`](https://gjacopo.github.io/imtools/) and run function  [`amoebasuperpix.m`](https://gjacopo.github.io/imtools/segmentation/amoebasuperpix.m).
+A detailed documentation (description of input/output data as well as parameters) is available at: https://gjacopo.github.io/imtools/segmentation/amoebasuperpix.html. The stepwise implementation of the algorithm is available at: https://gjacopo.github.io/imtools/segmentation/amoebasuperpix_base.html.
 
 **Description**
 
 In practice, the approach is based on the estimation of amoeba-like neighborhoods [[LDM07]](#LDM07) around selected cluster centers [[ASSLFS12]](#ASSLFS12) that exploit the connections between successive image pixels along geodesic paths in the image [[GS09]](#GS09). The resulting superpixels capture the spatial/spectral redundancy and greatly reduce the complexity of subsequent image processing tasks [[RM03]](#RM03). They provide convenient primitives from which to compute local image features when objects present in the scene have diverse scales or when they are not known in advance [[MPWMJ08]](#MPWMJ08). 
 
-A detailed description of the approach is available on this [**notebook**](paper.ipynb).
+A detailed description of the approach is available on this [**notebook**](paper.ipynb). The algorihtm is schematically described below:
 
-The algorihtm is schematically described below:
 <img src="algorithm.png" alt="algorithm amoeba superpix" width="700">.
 
 **<a name="References"></a>References** 
