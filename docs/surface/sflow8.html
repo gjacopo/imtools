@@ -1,0 +1,808 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!--
+This HTML was auto-generated from MATLAB code.To make changes, update the MATLAB code and republish this document.
+      -->
+    <title>sflow8</title>
+    <meta name="generator" content="MATLAB 7.14">
+    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+    <meta name="DC.date" content="2012-05-29">
+    <meta name="DC.source" content="sflow8.m">
+    <style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+
+  </style>
+  </head>
+  <body>
+    <div class="content">
+      <h2>Contents</h2>
+      <div>
+        <ul>
+          <li><a href="#3">Parsing and checking parameters</a></li>
+          <li><a href="#4">Checking variables and setting internal parameters</a></li>
+          <li><a href="#5">Computing the slopes</a></li>
+          <li><a href="#6">Setting the (non unique) flow direction over the
+              neighbours</a></li>
+          <li><a href="#7">Routing through flats</a></li>
+          <li><a href="#8">Randomization of amount transferred to another cell</a></li>
+          <li><a href="#9">Estimation of the flow direction given by direction
+              of the maximal</a></li>
+          <li><a href="#10">'gd8','ed83' or 'ed82': nondispersive single flow
+              direction</a></li>
+          <li><a href="#11">Sparse flow direction representation</a></li>
+          <li><a href="#12">Upslope area</a></li>
+        </ul>
+      </div>
+      <pre class="codeinput"><span class="keyword">function</span> [M,varargout] = sflow8(dem,varargin)
+</pre>
+      <pre class="codeinput"><span class="comment">% SFLOW8 - Upslope area algorithm for Digital Elevation Models using</span>
+<span class="comment">% single flow direction d8 and gd8</span>
+<span class="comment">%</span>
+<span class="comment">%     dir = sflow8(dem);</span>
+<span class="comment">%     [dir,slope,upslope] = sflow8(dem, flow, ...</span>
+<span class="comment">%                                  propertyname',propertyvalue,...);</span>
+<span class="comment">%</span>
+<span class="comment">% Single flow direction algorithm (flow occurs only along the steepest</span>
+<span class="comment">% descent) that routes through flat terrain (not sinks).</span>
+<span class="comment">% Remove sinks with the function imfill that requires the image processing</span>
+<span class="comment">% toolbox.</span>
+<span class="comment">%</span>
+<span class="comment">% Input:</span>
+<span class="comment">%   dem : digital elevation model same size as X and Y</span>
+<span class="comment">%   flow : optional string setting the nature of the estimated flow, it</span>
+<span class="comment">%       can'be:</span>
+<span class="comment">%         - 'd8' for the estimation of  the discrete flow directions given</span>
+<span class="comment">%           by 8-connectivity,</span>
+<span class="comment">%         - 'gd8' for the estimation of the discrete global non-dispersive</span>
+<span class="comment">%           flow directions proposed in [Paik08],</span>
+<span class="comment">%         - 'ed82' and 'ed83' for the estimation of the discrete non-</span>
+<span class="comment">%           dispersive flow directions of 2nd and 3rd orders also proposed</span>
+<span class="comment">%           in [Paik08];</span>
+<span class="comment">%       default: flow='d8'.</span>
+<span class="comment">%</span>
+<span class="comment">% Property [propertyname  propertyvalues]</span>
+<span class="comment">%   'dx', 'dy': optional horizontal and vertical pixel center spacing; if</span>
+<span class="comment">%       omitted, a value of 1.0 is assumed.</span>
+<span class="comment">%   'mode' : see wflowacc.</span>
+<span class="comment">%   'rflat' : see wflowacc.</span>
+<span class="comment">%</span>
+<span class="comment">% Outputs:</span>
+<span class="comment">%   dir :  flow direction indices (sparse matrix).</span>
+<span class="comment">%   slope : slope values (sparse matrix).</span>
+<span class="comment">%   upslope : upslope area.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Example from Paik:</span>
+<span class="comment">%   dem = [ 93  99  96  95  94; ...</span>
+<span class="comment">%           94  95  97  96  93 ; ...</span>
+<span class="comment">%           91  98  100 97  95; ...</span>
+<span class="comment">%           92  94  96  98  94; ...</span>
+<span class="comment">%           89  91  90  92  93]</span>
+<span class="comment">%</span>
+<span class="comment">% References:</span>
+<span class="comment">%   [Paik08]  K. Paik: "Global search algorithm for nondispersive flow path</span>
+<span class="comment">%      extraction", Journal of Geophysical Research, 113:F04001, 2008.</span>
+<span class="comment">%   [Tarb97]  D.G. Tarboton: "A new method for the determination of flow</span>
+<span class="comment">%      directions and upslope areas in grid digital elevation models",</span>
+<span class="comment">%      Water Resources Research, 33(2):309-319, 1997.</span>
+<span class="comment">%   [WLD07]  J.P. Wilson, C.S. Lam and Y. Deng: "Comparison of the performance</span>
+<span class="comment">%      of flow-routing algorithms used in GIS-based hydrologic analysis",</span>
+<span class="comment">%      Hydrological Processes, 21:1026-1044, 2007.</span>
+</pre>
+      <h2>Parsing and checking parameters<a name="3"></a></h2>
+      <pre class="codeinput">error(nargchk(1, 14, nargin, <span class="string">'struct'</span>));
+error(nargoutchk(1, 3, nargout, <span class="string">'struct'</span>));
+
+<span class="comment">% mandatory parameter</span>
+<span class="keyword">if</span> ~isnumeric(dem)
+    error(<span class="string">'grdsmooth:inputerror'</span>,<span class="string">'a matrix is required in input'</span>);
+<span class="keyword">end</span>
+
+p = createParser(<span class="string">'SFLOW8'</span>);   <span class="comment">% create an instance of the inputParser class.</span>
+<span class="comment">% optional parameters</span>
+p.addOptional(<span class="string">'flow'</span>, <span class="string">'d8'</span>, @(x)ischar(x) &amp;&amp; <span
+class="keyword">...</span>
+    any(strcmpi(x,{<span class="string">'d8'</span>,<span class="string">'gd8'</span>,<span
+class="string">'ed82'</span>,<span
+class="string">'ed83'</span>})));
+p.addParamValue(<span class="string">'mode'</span>,<span class="string">'default'</span>, @(x)ischar(x) &amp;&amp; <span
+class="keyword">...</span>
+    any(strcmpi(x,{<span class="string">'default'</span>,<span class="string">'randomized'</span>,<span
+class="string">'random'</span>})));
+p.addParamValue(<span class="string">'rflat'</span>, false, @(x)islogical(x));
+p.addParamValue(<span class="string">'dx'</span>,1,@(x)isscalar(x) &amp;&amp; round(x)==x &amp;&amp; x&gt;=1);
+p.addParamValue(<span class="string">'dy'</span>,1,@(x)isscalar(x) &amp;&amp; round(x)==x &amp;&amp; x&gt;=1);
+p.addParamValue(<span class="string">'disp'</span>,false,@(x)islogical(x));
+
+<span class="comment">% parse and validate all input arguments</span>
+p.parse(varargin{:});
+p = getvarParser(p);
+</pre>
+      <h2>Checking variables and setting internal parameters<a name="4"></a></h2>
+      <pre class="codeinput"><span class="comment">% general values</span>
+[NX,NY] = size(dem);
+nrc = numel(dem);
+<span class="comment">% nans = isnan(dem);</span>
+
+[Y,X] = meshgrid(1:NY,1:NX);
+<span class="comment">% if any(size(X) ~= size(Y)) || any((size(X) ~= size(dem)));</span>
+<span class="comment">%     error('X, Y and dem must have same size and same size as the dem')</span>
+<span class="comment">% end</span>
+</pre>
+      <h2>Computing the slopes<a name="5"></a></h2>
+      <pre class="codeinput"><span class="comment">% find neighbours of cells: for each pixel in the dem, give the index list</span>
+<span class="comment">% of its 8 neighbours in the graph (unless the pixel is on any border of</span>
+<span class="comment">% the image)</span>
+[ic1,icd1] = ixneighbours(dem);
+<span class="comment">% create the adjacency matrix</span>
+AD = sparse(ic1,icd1,1,nrc,nrc);
+
+<span class="comment">% calculate the local slope direction and maximum slope: for each pixel in the</span>
+<span class="comment">% dem, give the slope between this pixel and its 8 neighbours (unless the pixel</span>
+<span class="comment">% is on any border of the image)</span>
+E = (dem(ic1)-dem(icd1)) ./ <span class="keyword">...</span>
+    hypot((X(ic1)-X(icd1))/p.dx,(Y(ic1)-Y(icd1))/p.dy);
+<span class="keyword">if</span> nargout &gt;= 2    <span class="comment">% slope matrix</span>
+    varargout{1} = sparse(ic1,icd1,E,nrc,nrc);
+<span class="keyword">end</span>
+</pre>
+      <h2>Setting the (non unique) flow direction over the neighbours<a name="6"></a></h2>
+      <pre class="codeinput"><span class="comment">% reset the null slopes</span>
+E(E&lt;0) = 0;
+<span class="comment">% initialize the flow direction matrix with all slopes</span>
+M = sparse(ic1,icd1,E,nrc,nrc);
+</pre>
+      <h2>Routing through flats<a name="7"></a></h2>
+      <pre class="codeinput"><span class="comment">% A flat or plateau exists when two or more adjacent cells have the same</span>
+<span class="comment">% elevation. Up to now flow direction indicates for these cells no exchange</span>
+<span class="comment">% of water. The subsequent code first identifies flats and then iteratively</span>
+<span class="comment">% removes them.</span>
+
+<span class="keyword">while</span> p.rflat
+    <span class="comment">% in a digital elevation model only those cells flats can be assigned as</span>
+    <span class="comment">% flats that "do not give" and are -not- located on the edge of the dem.</span>
+    [r,ic,icd] = routeflat(dem,M,AD);
+
+    <span class="keyword">if</span> any(r)
+        <span class="comment">% icd are the indices of the sills and ic are the indices of the</span>
+        <span class="comment">% cells that contribute to the sills: water exchange from ic to icd</span>
+        ic  = ic(r);
+        icd = icd(r);
+
+        <span class="comment">%  a new connects matrix is built for sills</span>
+        M = M+sparse(ic,icd,0.01,nrc,nrc);
+        p.rflat = true;
+    <span class="keyword">else</span>
+        p.rflat = false;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre>
+      <h2>Randomization of amount transferred to another cell<a name="8"></a></h2>
+      <pre class="codeinput"><span class="keyword">switch</span> p.mode;
+    <span class="keyword">case</span> <span class="string">'random'</span>
+        M = abs(sprandn(M));
+    <span class="keyword">case</span> <span class="string">'randomized'</span>
+        <span class="comment">% randomize coefficient. The higher, the more random</span>
+        rc = 0.01;
+        M = M + (rc * abs(sprandn(M)));
+    <span class="keyword">otherwise</span>
+<span class="keyword">end</span>
+</pre>
+      <h2>Estimation of the flow direction given by direction of the maximal<a name="9"></a></h2>
+      <p>slope: LSD - local steepest slope</p>
+      <pre class="codeinput">Ix = (1:nrc)';
+<span class="comment">% retrieve the maxima values of the slopes and their position (index)</span>
+[maxS,Idx] = max(M,[],2);
+<span class="comment">% get rid of the null values (if commented, set the variables i below when</span>
+<span class="comment">% defining Md and M2d)</span>
+ii = (maxS==0);
+Ix(ii) = [];
+Idx(ii) = [];
+<span class="comment">% M = sparse(Ix,Idx,1,nrc,nrc);</span>
+
+<span class="comment">% dummy variables for checking that all pixels in the DEM have been visited</span>
+visited = zeros(size(Ix));
+</pre>
+      <h2>'gd8','ed83' or 'ed82': nondispersive single flow direction<a name="10"></a></h2>
+      <pre class="codeinput"><span class="keyword">if</span> any(strcmp(p.flow,{<span
+class="string">'gd8'</span>,<span
+class="string">'ed82'</span>,<span
+class="string">'ed83'</span>}))
+
+    <span class="keyword">while</span> ~all(visited(:))
+
+        <span class="comment">% local direction of the 1st LSD</span>
+        [Md,ix,iy,idx,idy] = localdownslope(Ix,Idx,NX,NY);
+        <span class="comment">% define the potential second direction pixels</span>
+        <span class="comment">% possible choice for the 2nd direction: "the secondary direction is</span>
+        <span class="comment">% defined as the steeper direction between clockwise and counterclockwise</span>
+        <span class="comment">% directions adjacent to the LSD"</span>
+        A = localsecdir(ix,iy,idx,idy,NX,NY);
+        [m, Idx2 ] = min( dem(A),[], 2 );
+        <span class="comment">% final list of the 2nd LSD indices giving for each pixel (indexed</span>
+        <span class="comment">% by Ix) the index of its secondary downslope direction</span>
+        Idx2 = diag(A(:,Idx2));
+        <span class="comment">% Idx2 : 2nd LSD indices giving for each pixel (indexed by Ix) the</span>
+        <span class="comment">% index of its secondary downslope direction</span>
+
+        <span class="comment">% extract all potential corridors (independently of the start cell):</span>
+        <span class="comment">% "situation in which the flow passes through a</span>
+        <span class="comment">% clearly defined corridor with steep lateral slopes: both cells in</span>
+        <span class="comment">% clockwise and anticlockwise direciton adjacent to the LSD have</span>
+        <span class="comment">% elevation higher than the LSD" (dem value on the 2nd downslope</span>
+        <span class="comment">% direction &gt; dem value on the LSD)"</span>
+        c = dem(Idx2) &gt; dem(Ix);
+        <span class="comment">% get rid of those pixels as potential steepest slope and let the</span>
+        <span class="comment">% flow pass in the corridor anyway (there wont be change for those</span>
+        <span class="comment">% pixels)</span>
+        Idx2(c) = Idx(c);
+
+       <span class="comment">% select the start cell as the max of the dem</span>
+        [m,start] = max(dem(Ix).*(~visited));
+        <span class="comment">% and take the first maximal value in the dem we encounter</span>
+        start = start(1); <span class="comment">% first found maximum</span>
+        <span class="comment">% start : index position of the start cell in the vector Ix storing</span>
+        <span class="comment">%   the position of the pixels with non null slope</span>
+        <span class="comment">% define the seed pixel as the upstream cell 'directing' the flow</span>
+        upstream = start;
+
+        <span class="comment">% update the list of visited pixels</span>
+        visited(start) = 1;
+
+        <span class="keyword">while</span> ~isempty(start) &amp;&amp; ~isempty(upstream)
+
+            visited(upstream) = 1;
+
+            <span class="comment">% look at the LSD: if a flat area is to be reached soon, then</span>
+            <span class="comment">% stop propagating the flow for this start cell</span>
+            lsdupstream = find(Ix==Idx(upstream),1,<span class="string">'first'</span>);
+            <span class="comment">% lsdupstream : index position of the LSD of the upstream cell</span>
+            <span class="comment">% in the vector Ix</span>
+            <span class="keyword">if</span> isempty(lsdupstream) <span class="comment">% we will reach a flat area</span>
+                upstream = [];                                         <span class="comment">%#ok</span>
+                <span class="keyword">break</span>; <span class="comment">% we leave the LSD as it is</span>
+            <span class="keyword">end</span>
+
+            visited(lsdupstream) = 1;
+
+            <span class="keyword">if</span> c(upstream) <span class="comment">% then we are here in the presence of a corridor</span>
+                <span class="comment">% these pixels will be used as new start cells for the</span>
+                <span class="comment">% global search: "the LSD is chosen as the flow direction</span>
+                <span class="comment">% and its downstream cell becomes a new start cell"</span>
+                start = lsdupstream;
+                upstream = start;                                      <span class="comment">%#ok</span>
+                <span class="comment">% nothing else is changed, move downwards and go to the next</span>
+                <span class="comment">% instance of the loop</span>
+                <span class="keyword">break</span>;
+           <span class="keyword">end</span> <span class="comment">% end of 'if c(upstream)...'</span>
+           <span class="comment">% else proceed...</span>
+
+            <span class="comment">% local direction of the 2nd LSD</span>
+            M2d = localdownslope(Ix,Idx2,NX,NY);
+
+            <span class="comment">% calculate the 'global' slope wrt the considered start cell</span>
+            <span class="comment">% over the whole image</span>
+            <span class="comment">% sstart = repmat(Ix(start),nrc,1);</span>
+            a = Ix(start);
+            b = [Idx(lsdupstream) ;Idx2(lsdupstream)];
+            SS = (dem(a)-dem(b)) ./ <span class="keyword">...</span>
+                hypot((X(a)-X(b))/p.dx, (Y(a)-Y(b)/p.dy));
+
+            <span class="comment">% find where:</span>
+            <span class="comment">%  - "the direction exists": Md(upstream)~=0 (always true),</span>
+            <span class="comment">%  - "the flow is the same as the determined flow of the upstream</span>
+            <span class="comment">%    cell": Md(lsdupstream)==Md(upstream),</span>
+            <span class="comment">%  - "the secondary direction is the same as that of the upstream</span>
+            <span class="comment">%    cell": M2d(lsdupstream)==M2d(upstream).</span>
+            <span class="comment">% it gives the position of the set of pixels whose downslope</span>
+            <span class="comment">% direction could possibly be changed</span>
+            <span class="comment">% refine by looking for the pixels where "the gradient between</span>
+            <span class="comment">% the downstream cell of the secondary direction and the start</span>
+            <span class="comment">% cell is steeper than the gradient between the downstream cell</span>
+            <span class="comment">% of the primary direction and the start cell": SS(1)&lt;SS(2)</span>
+            <span class="keyword">if</span> Md(upstream) ~= 0 &amp;&amp; <span class="keyword">...</span><span
+class="comment">               % existence</span>
+                    Md(lsdupstream) == Md(upstream) &amp;&amp; <span class="keyword">...</span><span
+class="comment">  % unidirectionality</span>
+                    M2d(lsdupstream) == M2d(upstream) &amp;&amp; <span class="keyword">...</span><span
+class="comment">% accrued deviation</span>
+                    SS(1) &lt; SS(2) <span class="comment">% gradient condition</span>
+
+                <span class="comment">% update by replacing the final downstream direction by the</span>
+                <span class="comment">% secondary direction</span>
+                Md(lsdupstream) = M2d(lsdupstream);
+                Idx(lsdupstream) = Idx2(lsdupstream);
+                <span class="comment">% Idx2(ilsdupstream) = Idx2(Idx2(ilsdupstream));</span>
+
+            <span class="keyword">end</span> <span class="comment">% end of 'if Md(iupstream)...'</span>
+
+            <span class="comment">% possibly update both the upstream and start cells by moving</span>
+            <span class="comment">% them downwards, depending on the rule chosen for estimating</span>
+            <span class="comment">% the flow</span>
+            <span class="keyword">switch</span> p.flow
+                <span class="keyword">case</span> <span class="string">'ed82'</span>
+                    <span class="comment">% move the start cell downwards, 1 order apart from the</span>
+                    <span class="comment">% cell of consideration</span>
+                    start = lsdupstream; <span class="comment">% find(Ix==Idx(upstream),1,'first')</span>
+                    <span class="comment">% consequently move the upstream cell</span>
+                    upstream = find(Ix==Idx(lsdupstream),1,<span class="string">'first'</span>); <span
+class="comment">% one</span>
+                    <span class="comment">% position below because it has been already processed</span>
+                <span class="keyword">case</span>  <span class="string">'ed83'</span>
+                    <span class="comment">% move the start cell downwards, 2 orders apart from the</span>
+                    <span class="comment">% cell of consideration</span>
+                    start = find(Ix==Idx(lsdupstream),1,<span class="string">'first'</span>);
+                    upstream = start; <span class="comment">% at that position, it has not been</span>
+                    <span class="comment">% processed</span>
+                <span class="keyword">otherwise</span> <span class="comment">% 'gd8'</span>
+                    <span class="comment">% the start cell is left unchanged, the upstream cell</span>
+                    <span class="comment">% is moved downwards</span>
+                    upstream = lsdupstream;
+            <span class="keyword">end</span>
+
+        <span class="keyword">end</span> <span class="comment">% end of 'while ~isemtpy(iupstream)...'</span>
+    <span class="keyword">end</span> <span class="comment">% end of 'while sum(Ix)~=0...'</span>
+
+<span class="keyword">end</span>
+</pre>
+      <h2>Sparse flow direction representation<a name="11"></a></h2>
+      <p>final sparse matrix giving, for each pixel, the index of the downslope
+        pixel in the matrix</p>
+      <pre class="codeinput">M = sparse(Ix,Idx,1,nrc,nrc);
+
+<span class="keyword">if</span> p.disp
+    displayflow(M,NX,NY);
+<span class="keyword">end</span>
+</pre>
+      <h2>Upslope area<a name="12"></a></h2>
+      <pre class="codeinput"><span class="keyword">if</span> nargout ==3
+    varargout{2} = upslopearea(dem,M);
+<span class="keyword">end</span>
+</pre>
+      <pre class="codeinput"><span class="keyword">end</span>
+</pre>
+      <h2><a name="14"></a></h2>
+      <pre class="codeinput"><span class="keyword">function</span> [r,ic,icd] = routeflat(dem,M,AD)
+
+<span class="comment">% check whether one of the surrounding cells is a giver. This is</span>
+<span class="comment">% done by querying the neighbours of the flats.</span>
+ing = find(sum(M,2)==0);
+ing(nans(ing)) = [];
+a = full(sum(sparse(ing,ing,1,numel(dem),numel(dem))*AD,2)==8);
+b = full(AD*a);
+
+inb_flats = reshape(b&lt;8 &amp; a, size(dem));
+IX_outb_flats = find(b &amp; ~a);
+
+<span class="comment">% not too many of IX_outb_flats should be sills. To check whether a</span>
+<span class="comment">% cell is a sill it</span>
+<span class="comment">% 1. should be a giver and</span>
+<span class="comment">% 2. have the same elevation as its neighbour in IX_inb_flats</span>
+
+[ic,icd] = ixneighbours(dem,inb_flats);
+r   = (dem(ic)==dem(icd));
+ic  = ic(r);
+icd = icd(r);
+
+r = ismembc(icd,IX_outb_flats);
+<span class="keyword">end</span>
+</pre>
+      <h2><a name="15"></a></h2>
+      <pre class="codeinput"><span class="keyword">function</span> [Md,ix,iy,idx,idy] = localdownslope(Ix,Idx,NX,NY)
+
+<span class="comment">% column vector giving for each pixel the downslope direction in [1,9]</span>
+<span class="comment">%  - for the pixel grid:</span>
+[ix,iy] = ind2sub([NX,NY],Ix);
+<span class="comment">%  - for the LSD directions:</span>
+[idx,idy] = ind2sub([NX,NY],Idx);
+
+<span class="comment">% find the local direction: the following mapping is used:</span>
+<span class="comment">%          ---------------         -------------</span>
+<span class="comment">%          | NW | N | NE |         | 1 | 4 | 7 |</span>
+<span class="comment">%          ---------------         -------------</span>
+<span class="comment">%          | W  |   | E  |    =&gt;   | 2 |   | 8 |</span>
+<span class="comment">%          ---------------         -------------</span>
+<span class="comment">%          | SW | S | SE |         | 3 | 6 | 9 |</span>
+<span class="comment">%          ---------------         -------------</span>
+<span class="comment">% matrix giving for each pixel the downslope direction in [1,9]</span>
+Md = sub2ind([3,3],idx-ix+2,idy-iy+2);
+<span class="comment">% central pixel (5), no direction:   Md(Md==0)=5;</span>
+<span class="comment">%  Md = zeros(nrc,1); % zeros(NX,NY);</span>
+<span class="comment">%  %%in the case the variable ii above has not been set:</span>
+<span class="comment">%  %%i = idx-ix+2&gt;0 &amp; idy-iy+2&gt;0;</span>
+<span class="comment">%  %%Md(Ix(i)) = sub2ind([3,3],idx(i)-ix(i)+2,idy(i)-iy(i)+2);</span>
+<span class="comment">%  % Md = sub2ind([3,3],idx-ix+2,idy-iy+2);</span>
+<span class="comment">%  Md(Ix) = sub2ind([3,3],idx-ix+2,idy-iy+2);</span>
+<span class="keyword">end</span>
+</pre>
+      <h2><a name="16"></a></h2>
+      <pre class="codeinput"><span class="keyword">function</span> neidir = localsecdir(ix,iy,idx,idy,NX,NY)
+<span class="comment">% coordinates of the clockwise neighbours of the LSD directions:</span>
+idx2 = idx + (idx&lt;NX).*(ix&gt;=idx).*(iy&gt;idy) - <span class="keyword">...</span>
+    (idx&gt;1).*(ix&lt;=idx).*(iy&lt;idy);
+idy2 = idy + (idy&lt;NY).*(iy&gt;=idy).*(ix&lt;idx) - <span class="keyword">...</span>
+    (idy&gt;1).*(iy&lt;=idy).*(ix&gt;idx);
+<span class="comment">% column vector of corresponding indices:</span>
+neidir = sub2ind([NX,NY], idx2, idy2);
+<span class="comment">% note that Mclock is indexed by Ix</span>
+
+<span class="comment">% coordinates of the counterclockwise neighbours of the LSD directions</span>
+idx2 = idx + (idx&lt;NX).*(ix&gt;=idx).*(iy&lt;idy) - <span class="keyword">...</span>
+    (idx&gt;1).*(ix&lt;=idx).*(iy&gt;idy);
+idy2 = idy + (idy&lt;NY).*(iy&gt;=idy).*(ix&gt;idx) - <span class="keyword">...</span>
+    (idy&gt;1).*(iy&lt;=idy).*(ix&lt;idx);
+
+<span class="comment">% define the potential second direction pixels</span>
+neidir = cat(2, <span class="keyword">...</span>
+    neidir, <span class="keyword">...</span>
+    sub2ind([NX NY], idx2, idy2));
+
+<span class="keyword">end</span>
+</pre>
+      <h2><a name="17"></a></h2>
+      <pre class="codeinput"><span class="keyword">function</span> Mflow = displayflow (M,x,y)
+Mflow = zeros(x,y);
+[uppix,downpix] = find(M);
+[ix,iy] = ind2sub([x,y],uppix);
+[idx,idy] = ind2sub([x,y],downpix);
+Mflow(uppix) = sub2ind([3,3],idx-ix+2,idy-iy+2);
+
+disp(<span class="string">'flow coding:'</span>);
+disp(reshape([1:4,0,6:9],3,3));
+
+<span class="comment">%disp('flow directions:');</span>
+<span class="comment">%disp(Mflow);</span>
+figure, imagesc(Mflow), axis <span class="string">image</span>, colormap <span class="string">jet</span>
+
+<span class="keyword">end</span>
+</pre>
+      <h2><a name="18"></a></h2>
+      <pre class="codeinput"><span class="keyword">function</span> mask = bordernans(dem)
+<span class="comment">% BORDERNANS - Find all connected NaNs connected to the DEM border.</span>
+<span class="comment">%</span>
+<span class="comment">%        mask = bordernans(dem);</span>
+<span class="comment">%</span>
+<span class="comment">% Input:</span>
+<span class="comment">%    dem : input DEM image.</span>
+<span class="comment">%</span>
+<span class="comment">% Output:</span>
+<span class="comment">%    mask : logical matrix the same size as dem; true values in mask</span>
+<span class="comment">%      correspond to border NaN locations.</span>
+<span class="comment">%</span>
+<span class="comment">% Example:</span>
+<span class="comment">%      E = magic(5);</span>
+<span class="comment">%      E(2:5,1:2) = NaN;</span>
+<span class="comment">%      E(3:4,4) = NaN</span>
+<span class="comment">%      border_nans(E)</span>
+
+nan_mask = isnan(dem);
+mask = nan_mask &amp; ~imclearborder(nan_mask);
+<span class="keyword">end</span>
+</pre>
+      <h2><a name="19"></a></h2>
+      <pre class="codeinput"><span class="keyword">function</span> A = upslopearea(dem,M)
+<span class="comment">% UPSLOPEAREA -  Compute the upslope area for each pixel of an input DEM</span>
+<span class="comment">% given the flow matrix</span>
+<span class="comment">%</span>
+<span class="comment">%         A = upslopearea(dem,M);</span>
+<span class="comment">%</span>
+<span class="comment">% Inputs:</span>
+<span class="comment">%    dem : input DEM image.</span>
+<span class="comment">%    M : (sparse) matrix representing the distribution of flow from pixel</span>
+<span class="comment">%       to pixel.</span>
+<span class="comment">%</span>
+<span class="comment">% Output:</span>
+<span class="comment">%    A : upslope area for each corresponding pixel of dem.</span>
+<span class="comment">%</span>
+<span class="comment">% Note:</span>
+<span class="comment">%  Connected groups of NaN pixels touching the border are treated as</span>
+<span class="comment">%  having no contribution to flow.</span>
+
+<span class="comment">% Right-side vector is normally all ones, reflecting an equal contribution</span>
+<span class="comment">% to water flow originating in each pixel.</span>
+rhs = ones(numel(dem), 1);
+
+<span class="comment">% Connected groups of NaN pixels that touch the border do not contribute</span>
+<span class="comment">% to water volume.</span>
+mask = bordernans(dem);
+rhs(mask(:)) = 0;
+
+A = M \ rhs;
+A = reshape(A, size(dem));
+<span class="keyword">end</span>
+</pre></div>
+    <!--
+##### SOURCE BEGIN #####function [M,varargout] = sflow8(dem,varargin)
+% SFLOW8 - Upslope area algorithm for Digital Elevation Models using% single flow direction d8 and gd8
+%%     dir = sflow8(dem);
+%     [dir,slope,upslope] = sflow8(dem, flow, ...%                                  propertyname',propertyvalue,...);
+% % Single flow direction algorithm (flow occurs only along the steepest
+% descent) that routes through flat terrain (not sinks). % Remove sinks with the function imfill that requires the image processing 
+% toolbox.%
+% Input: %   dem : digital elevation model same size as X and Y
+%   flow : optional string setting the nature of the estimated flow, it%       can'be:
+%         - 'd8' for the estimation of  the discrete flow directions given%           by 8-connectivity, 
+%         - 'gd8' for the estimation of the discrete global non-dispersive%           flow directions proposed in [Paik08],
+%         - 'ed82' and 'ed83' for the estimation of the discrete non-%           dispersive flow directions of 2nd and 3rd orders also proposed 
+%           in [Paik08];%       default: flow='d8'.
+%% Property [propertyname  propertyvalues]
+%   'dx', 'dy': optional horizontal and vertical pixel center spacing; if %       omitted, a value of 1.0 is assumed.
+%   'mode' : see wflowacc.%   'rflat' : see wflowacc.
+%% Outputs:
+%   dir :  flow direction indices (sparse matrix).%   slope : slope values (sparse matrix).
+%   upslope : upslope area.%
+%% Example from Paik:
+%   dem = [ 93  99  96  95  94; ...%           94  95  97  96  93 ; ...
+%           91  98  100 97  95; ...%           92  94  96  98  94; ...
+%           89  91  90  92  93]%
+% References:%   [Paik08]  K. Paik: "Global search algorithm for nondispersive flow path
+%      extraction", Journal of Geophysical Research, 113:F04001, 2008.%   [Tarb97]  D.G. Tarboton: "A new method for the determination of flow
+%      directions and upslope areas in grid digital elevation models",%      Water Resources Research, 33(2):309-319, 1997.
+%   [WLD07]  J.P. Wilson, C.S. Lam and Y. Deng: "Comparison of the performance %      of flow-routing algorithms used in GIS-based hydrologic analysis",
+%      Hydrological Processes, 21:1026-1044, 2007.
+%% Parsing and checking parameters
+error(nargchk(1, 14, nargin, 'struct'));error(nargoutchk(1, 3, nargout, 'struct'));
+% mandatory parameter
+if ~isnumeric(dem)    error('grdsmooth:inputerror','a matrix is required in input'); 
+end
+p = createParser('SFLOW8');   % create an instance of the inputParser class.% optional parameters
+p.addOptional('flow', 'd8', @(x)ischar(x) && ...    any(strcmpi(x,{'d8','gd8','ed82','ed83'})));
+p.addParamValue('mode','default', @(x)ischar(x) && ...    any(strcmpi(x,{'default','randomized','random'})));
+p.addParamValue('rflat', false, @(x)islogical(x));p.addParamValue('dx',1,@(x)isscalar(x) && round(x)==x && x>=1);
+p.addParamValue('dy',1,@(x)isscalar(x) && round(x)==x && x>=1);p.addParamValue('disp',false,@(x)islogical(x));
+% parse and validate all input arguments
+p.parse(varargin{:}); p = getvarParser(p);                                                            
+
+%% Checking variables and setting internal parameters
+% general values[NX,NY] = size(dem);
+nrc = numel(dem);% nans = isnan(dem);
+[Y,X] = meshgrid(1:NY,1:NX);
+% if any(size(X) ~= size(Y)) || any((size(X) ~= size(dem)));%     error('X, Y and dem must have same size and same size as the dem')
+% end
+%% Computing the slopes
+% find neighbours of cells: for each pixel in the dem, give the index list  
+% of its 8 neighbours in the graph (unless the pixel is on any border of % the image)  
+[ic1,icd1] = ixneighbours(dem);% create the adjacency matrix 
+AD = sparse(ic1,icd1,1,nrc,nrc);    
+% calculate the local slope direction and maximum slope: for each pixel in the% dem, give the slope between this pixel and its 8 neighbours (unless the pixel
+% is on any border of the image)  E = (dem(ic1)-dem(icd1)) ./ ...
+    hypot((X(ic1)-X(icd1))/p.dx,(Y(ic1)-Y(icd1))/p.dy);if nargout >= 2    % slope matrix
+    varargout{1} = sparse(ic1,icd1,E,nrc,nrc);                     end
+
+%% Setting the (non unique) flow direction over the neighbours
+% reset the null slopesE(E<0) = 0;
+% initialize the flow direction matrix with all slopesM = sparse(ic1,icd1,E,nrc,nrc);
+%% Routing through flats
+% A flat or plateau exists when two or more adjacent cells have the same 
+% elevation. Up to now flow direction indicates for these cells no exchange% of water. The subsequent code first identifies flats and then iteratively
+% removes them.
+while p.rflat       % in a digital elevation model only those cells flats can be assigned as
+    % flats that "do not give" and are -not- located on the edge of the dem.    [r,ic,icd] = routeflat(dem,M,AD);
+      if any(r)    
+        % icd are the indices of the sills and ic are the indices of the        % cells that contribute to the sills: water exchange from ic to icd
+        ic  = ic(r);        icd = icd(r);
+            %  a new connects matrix is built for sills
+        M = M+sparse(ic,icd,0.01,nrc,nrc);        p.rflat = true;
+    else        p.rflat = false;
+    endend
+
+%% Randomization of amount transferred to another cell
+switch p.mode;    case 'random'
+        M = abs(sprandn(M));    case 'randomized'
+        % randomize coefficient. The higher, the more random        rc = 0.01;
+        M = M + (rc * abs(sprandn(M)));    otherwise
+end
+%% Estimation of the flow direction given by direction of the maximal
+% slope: LSD - local steepest slope
+Ix = (1:nrc)';      % retrieve the maxima values of the slopes and their position (index)
+[maxS,Idx] = max(M,[],2); % get rid of the null values (if commented, set the variables i below when 
+% defining Md and M2d)ii = (maxS==0);
+Ix(ii) = [];Idx(ii) = [];
+% M = sparse(Ix,Idx,1,nrc,nrc);
+% dummy variables for checking that all pixels in the DEM have been visitedvisited = zeros(size(Ix));
+%% 'gd8','ed83' or 'ed82':  nondispersive single flow direction
+if any(strcmp(p.flow,{'gd8','ed82','ed83'}))
+    while ~all(visited(:))
+        % local direction of the 1st LSD        [Md,ix,iy,idx,idy] = localdownslope(Ix,Idx,NX,NY);
+        % define the potential second direction pixels        % possible choice for the 2nd direction: "the secondary direction is
+        % defined as the steeper direction between clockwise and counterclockwise        % directions adjacent to the LSD"
+        A = localsecdir(ix,iy,idx,idy,NX,NY);        [m, Idx2 ] = min( dem(A),[], 2 );        
+        % final list of the 2nd LSD indices giving for each pixel (indexed        % by Ix) the index of its secondary downslope direction
+        Idx2 = diag(A(:,Idx2));        % Idx2 : 2nd LSD indices giving for each pixel (indexed by Ix) the
+        % index of its secondary downslope direction        
+        % extract all potential corridors (independently of the start cell):        % "situation in which the flow passes through a
+        % clearly defined corridor with steep lateral slopes: both cells in        % clockwise and anticlockwise direciton adjacent to the LSD have
+        % elevation higher than the LSD" (dem value on the 2nd downslope        % direction > dem value on the LSD)"
+        c = dem(Idx2) > dem(Ix);        % get rid of those pixels as potential steepest slope and let the
+        % flow pass in the corridor anyway (there wont be change for those        % pixels)
+        Idx2(c) = Idx(c);        
+       % select the start cell as the max of the dem        [m,start] = max(dem(Ix).*(~visited));                        
+        % and take the first maximal value in the dem we encounter        start = start(1); % first found maximum
+        % start : index position of the start cell in the vector Ix storing        %   the position of the pixels with non null slope
+        % define the seed pixel as the upstream cell 'directing' the flow        upstream = start;
+         % update the list of visited pixels
+        visited(start) = 1;
+        while ~isempty(start) && ~isempty(upstream)
+            visited(upstream) = 1;              
+            % look at the LSD: if a flat area is to be reached soon, then            % stop propagating the flow for this start cell
+            lsdupstream = find(Ix==Idx(upstream),1,'first');            % lsdupstream : index position of the LSD of the upstream cell  
+            % in the vector Ix             if isempty(lsdupstream) % we will reach a flat area
+                upstream = [];                                         %#ok                break; % we leave the LSD as it is
+            end            
+            visited(lsdupstream) = 1;               
+            if c(upstream) % then we are here in the presence of a corridor                % these pixels will be used as new start cells for the
+                % global search: "the LSD is chosen as the flow direction                % and its downstream cell becomes a new start cell"
+                start = lsdupstream;                upstream = start;                                      %#ok
+                % nothing else is changed, move downwards and go to the next                % instance of the loop
+                break;           end % end of 'if c(upstream)...'
+           % else proceed...            
+            % local direction of the 2nd LSD            M2d = localdownslope(Ix,Idx2,NX,NY);
+                        % calculate the 'global' slope wrt the considered start cell
+            % over the whole image            % sstart = repmat(Ix(start),nrc,1);
+            a = Ix(start);            b = [Idx(lsdupstream) ;Idx2(lsdupstream)];
+            SS = (dem(a)-dem(b)) ./ ...                hypot((X(a)-X(b))/p.dx, (Y(a)-Y(b)/p.dy));
+                        % find where:
+            %  - "the direction exists": Md(upstream)~=0 (always true),            %  - "the flow is the same as the determined flow of the upstream
+            %    cell": Md(lsdupstream)==Md(upstream),            %  - "the secondary direction is the same as that of the upstream
+            %    cell": M2d(lsdupstream)==M2d(upstream).            % it gives the position of the set of pixels whose downslope 
+            % direction could possibly be changed            % refine by looking for the pixels where "the gradient between
+            % the downstream cell of the secondary direction and the start            % cell is steeper than the gradient between the downstream cell
+            % of the primary direction and the start cell": SS(1)<SS(2)            if Md(upstream) ~= 0 && ...               % existence
+                    Md(lsdupstream) == Md(upstream) && ...  % unidirectionality                    M2d(lsdupstream) == M2d(upstream) && ...% accrued deviation
+                    SS(1) < SS(2) % gradient condition               
+                % update by replacing the final downstream direction by the                % secondary direction
+                Md(lsdupstream) = M2d(lsdupstream);                Idx(lsdupstream) = Idx2(lsdupstream);
+                % Idx2(ilsdupstream) = Idx2(Idx2(ilsdupstream));                
+            end % end of 'if Md(iupstream)...'            
+            % possibly update both the upstream and start cells by moving            % them downwards, depending on the rule chosen for estimating
+            % the flow            switch p.flow
+                case 'ed82'                    % move the start cell downwards, 1 order apart from the
+                    % cell of consideration                    start = lsdupstream; % find(Ix==Idx(upstream),1,'first')
+                    % consequently move the upstream cell                    upstream = find(Ix==Idx(lsdupstream),1,'first'); % one
+                    % position below because it has been already processed                case  'ed83'
+                    % move the start cell downwards, 2 orders apart from the                    % cell of consideration
+                    start = find(Ix==Idx(lsdupstream),1,'first');                    upstream = start; % at that position, it has not been 
+                    % processed                otherwise % 'gd8'
+                    % the start cell is left unchanged, the upstream cell                    % is moved downwards
+                    upstream = lsdupstream;            end
+                    end % end of 'while ~isemtpy(iupstream)...'                      
+    end % end of 'while sum(Ix)~=0...'
+end
+%% Sparse flow direction representation% final sparse matrix giving, for each pixel, the index of the downslope 
+% pixel in the matrixM = sparse(Ix,Idx,1,nrc,nrc);
+if p.disp
+    displayflow(M,NX,NY);end
+    
+%% Upslope areaif nargout ==3
+    varargout{2} = upslopearea(dem,M);end
+end
+
+%% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function [r,ic,icd] = routeflat(dem,M,AD)
+% check whether one of the surrounding cells is a giver. This is% done by querying the neighbours of the flats.
+ing = find(sum(M,2)==0);ing(nans(ing)) = [];
+a = full(sum(sparse(ing,ing,1,numel(dem),numel(dem))*AD,2)==8);b = full(AD*a);
+inb_flats = reshape(b<8 & a, size(dem));
+IX_outb_flats = find(b & ~a);
+% not too many of IX_outb_flats should be sills. To check whether a% cell is a sill it
+% 1. should be a giver and% 2. have the same elevation as its neighbour in IX_inb_flats
+[ic,icd] = ixneighbours(dem,inb_flats);
+r   = (dem(ic)==dem(icd));ic  = ic(r);
+icd = icd(r);
+r = ismembc(icd,IX_outb_flats);end
+
+%% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHfunction [Md,ix,iy,idx,idy] = localdownslope(Ix,Idx,NX,NY)
+% column vector giving for each pixel the downslope direction in [1,9]
+%  - for the pixel grid:[ix,iy] = ind2sub([NX,NY],Ix);
+%  - for the LSD directions:[idx,idy] = ind2sub([NX,NY],Idx);
+% find the local direction: the following mapping is used:
+%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-%          | NW | N | NE |         | 1 | 4 | 7 |
+%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-%          | W  |   | E  |    =>   | 2 |   | 8 |
+%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-%          | SW | S | SE |         | 3 | 6 | 9 |
+%          REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-         REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-% matrix giving for each pixel the downslope direction in [1,9]
+Md = sub2ind([3,3],idx-ix+2,idy-iy+2);% central pixel (5), no direction:   Md(Md==0)=5;
+%  Md = zeros(nrc,1); % zeros(NX,NY);%  %%in the case the variable ii above has not been set:
+%  %%i = idx-ix+2>0 & idy-iy+2>0;%  %%Md(Ix(i)) = sub2ind([3,3],idx(i)-ix(i)+2,idy(i)-iy(i)+2);
+%  % Md = sub2ind([3,3],idx-ix+2,idy-iy+2);%  Md(Ix) = sub2ind([3,3],idx-ix+2,idy-iy+2);
+end
+%% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHfunction neidir = localsecdir(ix,iy,idx,idy,NX,NY)
+% coordinates of the clockwise neighbours of the LSD directions:idx2 = idx + (idx<NX).*(ix>=idx).*(iy>idy) - ...
+    (idx>1).*(ix<=idx).*(iy<idy);idy2 = idy + (idy<NY).*(iy>=idy).*(ix<idx) - ...
+    (idy>1).*(iy<=idy).*(ix>idx);% column vector of corresponding indices:
+neidir = sub2ind([NX,NY], idx2, idy2);% note that Mclock is indexed by Ix
+% coordinates of the counterclockwise neighbours of the LSD directions
+idx2 = idx + (idx<NX).*(ix>=idx).*(iy<idy) - ...    (idx>1).*(ix<=idx).*(iy>idy);
+idy2 = idy + (idy<NY).*(iy>=idy).*(ix>idx) - ...    (idy>1).*(iy<=idy).*(ix<idx);
+% define the potential second direction pixels
+neidir = cat(2, ...    neidir, ...
+    sub2ind([NX NY], idx2, idy2));
+end
+%% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function Mflow = displayflow (M,x,y)Mflow = zeros(x,y);
+[uppix,downpix] = find(M);[ix,iy] = ind2sub([x,y],uppix);
+[idx,idy] = ind2sub([x,y],downpix);Mflow(uppix) = sub2ind([3,3],idx-ix+2,idy-iy+2);
+disp('flow coding:');
+disp(reshape([1:4,0,6:9],3,3));
+%disp('flow directions:');%disp(Mflow);
+figure, imagesc(Mflow), axis image, colormap jet
+end
+%% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function mask = bordernans(dem)% BORDERNANS - Find all connected NaNs connected to the DEM border.
+%%        mask = bordernans(dem);
+%        % Input: 
+%    dem : input DEM image.%
+% Output:%    mask : logical matrix the same size as dem; true values in mask 
+%      correspond to border NaN locations. %
+% Example:%      E = magic(5);
+%      E(2:5,1:2) = NaN;%      E(3:4,4) = NaN
+%      border_nans(E)
+nan_mask = isnan(dem);mask = nan_mask & ~imclearborder(nan_mask);
+end
+%% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function A = upslopearea(dem,M)% UPSLOPEAREA -  Compute the upslope area for each pixel of an input DEM
+% given the flow matrix%
+%         A = upslopearea(dem,M);%
+% Inputs: %    dem : input DEM image.
+%    M : (sparse) matrix representing the distribution of flow from pixel%       to pixel.
+%% Output:
+%    A : upslope area for each corresponding pixel of dem.%
+% Note: %  Connected groups of NaN pixels touching the border are treated as
+%  having no contribution to flow.
+% Right-side vector is normally all ones, reflecting an equal contribution% to water flow originating in each pixel.
+rhs = ones(numel(dem), 1);
+% Connected groups of NaN pixels that touch the border do not contribute% to water volume.
+mask = bordernans(dem);rhs(mask(:)) = 0;
+A = M \ rhs;
+A = reshape(A, size(dem));end
+
+##### SOURCE END #####-->
+  </body>
+</html>

@@ -16,13 +16,12 @@ Various basic low-level image processing tools used in the experiments/analyses 
 </table>
 
 **Description**
-
-* `algebra`:  Matrix manipulation
+Matlab tools for low-level image processing:
 * `derive`:  Differentiation functions
 * `feature`:  Feature extraction
 * `filter`:  Filtering functions
 * `graph`:  Graph and network analysis and representation
-* `pdem`:  Pseudo-DEM generation functions
+* `surface`:  Surface analysis functions
 * `pyramid`:  Hierarchical pyramid analysis and decomposition		
 * `sharpen`:  Sharpening and enhancing functions		 
 * `geometry`:  Basic geometrical tools 	
@@ -32,12 +31,9 @@ Various basic low-level image processing tools used in the experiments/analyses 
 * `segmentation`:  Segmentation functions	
 * `statistics`:  Basic statistical tools and operators
 * `texture`:  Texture analysis and representations		
-* `misc`:  Miscellaneous functions		
+* `misc`:  Miscellaneous functions	
 
-See [`Contents.m`](Contents.m) for the whole list of functions. See [`Contents.html`](https://gjacopo.github.io/imtools/Contents.html) for a quick overview, 
-
-**Note** 
-Run [`webpub`](https://gjacopo.github.io/imtools/misc/webpub.html) function to generate html documentation. Check script use.
+See [`Contents.m`](Contents.m) for the whole list of functions. See file [`Contents.html`](https://gjacopo.github.io/imtools/Contents.html) for browsable version.
 
 **<a name="References"></a>References** 
 
