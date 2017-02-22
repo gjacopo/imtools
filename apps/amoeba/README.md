@@ -20,7 +20,7 @@ The documentation of the algorithm, including a full description of the required
 To reproduce the experiments, you will need to:
 * install Matlab ad-hoc package [**`imtools`**](https://gjacopo.github.io/imtools/); _e.g._, add the paths of the install to your `pathdef.m` setup file;
 * run the function **`amoebasuperpix.m`** ([source](../../segmentation/amoebasuperpix.m)) with desired arguments.
-* run functions [`slicsuperpix.m`](https://gjacopo.github.io/segmentation/slicsuperpix.html) or [`geosuperpix.m`](https://gjacopo.github.io/segmentation/geosuperpix.html) for comparison with similar approaches.
+* run functions [`slicsuperpix.m`](https://gjacopo.github.io/imtools/segmentation/slicsuperpix.html) or [`geosuperpix.m`](https://gjacopo.github.io/imtools/segmentation/geosuperpix.html) for comparison with similar approaches.
 
 See some examples of generated outputs [here](paper.ipynb).
 
