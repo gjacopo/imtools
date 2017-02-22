@@ -15,16 +15,16 @@ so that it can efficiently generate compact, connected, nearly uniform and perce
 
 **Usage** 
 
-The documentation of the algorithm, including a full description of the required/optional input/output parameters, is available through function [**amoebasuperpix.m**](../../segmentation/amoebasuperpix.html). The stepwise implementation of the algorithm is further described through function [**amoebasuperpix_base.m**](../../segmentation/amoebasuperpix_base.html).
+The documentation of the algorithm, including a full description of the required/optional input/output parameters, is available through function [**amoebasuperpix.m**](../../docs/segmentation/amoebasuperpix.html). The stepwise implementation of the algorithm is further described through function [**amoebasuperpix_base.m**](../../docs/segmentation/amoebasuperpix_base.html).
 
 To reproduce the experiments, you will need to:
 * install Matlab ad-hoc package [**`imtools`**](https://gjacopo.github.io/imtools/); _e.g._, add the paths of the install to your `pathdef.m` setup file;
 * run the function [**`amoebasuperpix.m`**](../../segmentation/amoebasuperpix.m) with desired arguments.
-* run functions [`slicsuperpix.m`](../../segmentation/slicsuperpix.html) or [`geosuperpix.m`](../../segmentation/geosuperpix.html) for comparison with similar approaches.
+* run functions [`slicsuperpix.m`](../../docs/segmentation/slicsuperpix.html) or [`geosuperpix.m`](../../docs/segmentation/geosuperpix.html) for comparison with similar approaches.
 
 See some examples of generated outputs [here](paper.ipynb).
 
-Details about the actual implementation of the gradient tensor decomposition are given in the documentation of functions [`gstdecomp.m`](../../derive/gstdecomp.html) and [`gstfeature.m`](../../derive/gstfeature.html). The technique used for fast implementation of Dijkstra's algorithm is described in the source code [`dijkstrapropagation_mex.cpp`](../../propagation/src/dijkstrapropagation_mex.cpp). Note that it refers to Kirk's implementation of [Dijkstra's Minimum Cost Path package](http://nl.mathworks.com/matlabcentral/fileexchange/20025-dijkstra-s-minimum-cost-path-algorithm) as well as Peyre's [Toolbox Graph](https://nl.mathworks.com/matlabcentral/fileexchange/5355-toolbox-graph/). See also [`dijkadvanced.m`](../../graph/dijkadvanced.html). Altogether, all mentioned dependencies are solved when loading and installing the `imtools` package.   
+Details about the actual implementation of the gradient tensor decomposition are given in the documentation of functions [`gstdecomp.m`](../../docs/derive/gstdecomp.html) and [`gstfeature.m`](../../docs/derive/gstfeature.html). The technique used for fast implementation of Dijkstra's algorithm is described in the source code [`dijkstrapropagation_mex.cpp`](../../propagation/src/dijkstrapropagation_mex.cpp). Note that it refers to Kirk's implementation of [Dijkstra's Minimum Cost Path package](http://nl.mathworks.com/matlabcentral/fileexchange/20025-dijkstra-s-minimum-cost-path-algorithm) as well as Peyre's [Toolbox Graph](https://nl.mathworks.com/matlabcentral/fileexchange/5355-toolbox-graph/). See also [`dijkadvanced.m`](../../docs/graph/dijkadvanced.html). Altogether, all mentioned dependencies are solved when loading and installing the `imtools` package.   
 
 **Description**
 
