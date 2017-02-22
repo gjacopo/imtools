@@ -24,7 +24,7 @@ Install the package `imtools` on a local drive and the paths of the different mo
 * [`segmentation`](segmentation/index.md):  Segmentation functions
 * [`statistics`](statistics/index.md):  Basic statistical tools and operators
 * [`texture`](texture/index.md):  Texture analysis and representations
-* [`misc`](misc/index.md):  Miscellaneous functions* `algebra`:  Matrix manipulation
+* [`misc`](misc/index.md):  Miscellaneous functions
 
 See [`Contents.html`](https://gjacopo.github.io/imtools/Contents.html) for a quick overview.
 
