@@ -2,7 +2,7 @@
 
 Various basic low-level image processing tools used in the experiments/analyses reported in the references listed [below](References).
 
-*since*:        2007
+*version*:        1.0
 
 *license*:      [EUPL](https://joinup.ec.europa.eu/sites/default/files/eupl1.1.-licence-en_0.pdf)
 
