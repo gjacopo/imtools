@@ -33,7 +33,7 @@ Matlab tools for low-level image processing:
 * `texture`:  Texture analysis and representations		
 * `misc`:  Miscellaneous functions	
 
-See file [`Contents.html`](Contents.html) for complete list.
+See file [`Contents.html`](docs/Contents.html) for complete list.
 
 **<a name="References"></a>References** 
 
