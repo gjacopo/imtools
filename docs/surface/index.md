@@ -1,4 +1,4 @@
-### `pdem` - Pseudo-DEM generation functions
+### `surface` - Surface analysis functions
 
 * [pdem](pdem.html)           - Pseudo DEM generation from a singular optical image.
 * [pdem_base](pdem_base.html). 
