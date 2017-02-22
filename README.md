@@ -15,8 +15,9 @@ Various basic low-level image processing tools used in the experiments/analyses 
     <tr> <td align="left"><i>license</i></td> <td align="left"><a href="https://joinup.ec.europa.eu/sites/default/files/eupl1.1.-licence-en_0.pdfEUPL">EUPL</a>  <i>(cite the source code or any of the references below!)</i> </td> </tr> 
 </table>
 
-**Description**
+**Installation and usage**
 
+Install the package `imtools` on a local drive and the paths of the different modules below to your `pathdef.m` setup file:
 * `algebra`:  Matrix manipulation
 * `derive`:  Differentiation functions
 * `feature`:  Feature extraction
@@ -32,9 +33,12 @@ Various basic low-level image processing tools used in the experiments/analyses 
 * `segmentation`:  Segmentation functions	
 * `statistics`:  Basic statistical tools and operators
 * `texture`:  Texture analysis and representations		
-* `misc`:  Miscellaneous functions		
+* `misc`:  Miscellaneous functions	
+
 
 See [`Contents.m`](Contents.m) for the whole list of functions. See [`Contents.html`](https://gjacopo.github.io/imtools/Contents.html) for a quick overview, 
+
+That's it... Or almost: you may also want to install some useful `mex` built-in functions: run [`compile_feature.m`](feature/src/compile_feature.m),  [`compile_filter.m`](filter/src/compile_filter.m),  [`compile_propagation.m`](propagation/src/compile_propagation.m),  [`compile_pyramid.m`](pyramid/src/compile_pyramid.m) so as to compile some C/C++ source code. 
 
 **Note** 
 Run [`webpub`](https://gjacopo.github.io/imtools/misc/webpub.html) function to generate html documentation. Check script use.
