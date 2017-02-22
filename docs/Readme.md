@@ -28,7 +28,7 @@ Install the package `imtools` on a local drive and the paths of the different mo
 
 See [`Contents.html`](https://gjacopo.github.io/imtools/Contents.html) for a quick overview.
 
-That's it... Or almost: you may also want to install some useful `mex` built-in functions: run [`compile_feature.m`](feature/src/compile_feature.m),  [`compile_filter.m`](filter/src/compile_filter.m),  [`compile_propagation.m`](propagation/src/compile_propagation.m),  [`compile_pyramid.m`](pyramid/src/compile_pyramid.m) so as to compile some C/C++ source code. 
+That's it... Or almost: you may also want to install some useful `mex` built-in functions: run `compile_feature.m`,  `compile_filter.m`,  `compile_propagation.m`,  `compile_pyramid.m` (sources available: [here](../feature/src/compile_feature.m), [here](../filter/src/compile_filter.m), [here](../propagation/src/compile_propagation.m) and [here](../pyramid/src/compile_pyramid.m) _resp._) so as to compile some C/C++ source code. 
 
 **Note** 
 Run [`webpub`](https://gjacopo.github.io/imtools/misc/webpub.html) function to generate html documentation. Check script use.
