@@ -32,7 +32,7 @@ In practice, the approach is based on the estimation of amoeba-like neighborhood
 
 A detailed description of the approach is available on this [**notebook**](paper.ipynb). The algorihtm is schematically described below:
 
-<img src="algorithm.png" alt="algorithm amoeba superpix" width="700">.
+<img src="algorithm.png" alt="algorithm amoeba superpix" width="700">
 
 **<a name="References"></a>References** 
 
