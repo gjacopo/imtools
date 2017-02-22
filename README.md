@@ -23,7 +23,7 @@ Install the package `imtools` on a local drive and the paths of the different mo
 * `feature`:  Feature extraction
 * `filter`:  Filtering functions
 * `graph`:  Graph and network analysis and representation
-* `pdem`:  Pseudo-DEM generation functions
+* `surface`:  Surface analysis functions
 * `pyramid`:  Hierarchical pyramid analysis and decomposition		
 * `sharpen`:  Sharpening and enhancing functions		 
 * `geometry`:  Basic geometrical tools 	
