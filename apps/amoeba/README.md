@@ -6,32 +6,28 @@ Amoeba-based superpixel partitioning of multispectral images
 
 **About**
 
-Amoeba-based superpixel partitioning of multispectral images into elementary, uniform, connected units.
-
-<table align="center">
-    <tr> <td align="left"><i>documentation</i></td> <td align="left">available at: https://gjacopo.github.io/imtools/segmentation/amoebasuperpix.html</td> </tr> 
-    <tr> <td align="left"><i>version</i></td> <td align="left">1.0 <i>(non-active development)</i> </td> </tr> 
-    <tr> <td align="left"><i>since</i></td> <td align="left">2007</td> </tr> 
-    <tr> <td align="left"><i>license</i></td> <td align="left"><a href="https://joinup.ec.europa.eu/sites/default/files/eupl1.1.-licence-en_0.pdfEUPL">EUPL</a>  <i>(cite the source code or any of the references below!)</i> </td> </tr> 
-</table>
+Amoeba-based superpixel partitioning of multispectral images into elementary, uniform, connected segments.
 
 **Summary**
 
-Segmentation is a difficult task because of the high complexity of images, where complexity refers to the large variety of pictorial representations of objects with the same semantic meaning and also to the extensive amount of available details.
-It seems therefore natural, and presumably more efficient, to work with perceptually meaningful entities obtained from low-level grouping processes instead of the pixel representation. In that context, superpixels obtained from conservative over-segmentation are a common pre-processing step for recovering image features. 
+We implement an algorithm for scene segmentation that:
+* forms a one-to-many partitioning (_"over-segmentation"_) of features in the scene into smaller segments of distinct spectra,
+* works essentially like a _kmeans_ based local clustering and aggregating of pixels, and 
+* local redundancy in the data, by reducing noise and variability while enforcing connectivity,
 
-We implement a new algorithm that:
-* works essentially like a k-means based local clustering of pixels, but 
-* enforces connectivity, so that it can efficiently generate compact, connected, and nearly uniform superpixels. 
+so that it can efficiently generate compact, connected, and nearly uniform segments (_"superpixels"_). 
 
-This approach is based on the estimation of amoeba-like neighborhoods around selected cluster centers that exploit the connections between successive image pixels along geodesic paths in the image. The resulting superpixels capture the spatial/spectral redundancy in images and greatly reduce the complexity of subsequent image processing tasks. They provide convenient primitives from which to compute local image features when objects present in the scene have diverse scales or when they are not known in advance. 
+In practice, the approach implemented is based on the estimation of amoeba-like neighborhoods around selected cluster centers that exploit the connections between successive image pixels along geodesic paths in the image. Instead of the pixel grid, it provides a representation of the image into perceptually meaningful entities that can be used as elementary units of any detection, categorization or localization scheme. Indeed, the superpixels capture the spatial/spectral redundancy in images and greatly reduce the complexity of subsequent image processing tasks. They provide convenient primitives from which to compute local image features when objects present in the scene have diverse scales or when they are not known in advance. 
 
 **Description**
 
-The problem of segmenting an image into semantically meaningful units is a fundamental one in image processing. Indeed, visual information extraction is usually regarded as a segmentation issue. Besides practical issues (running time, user interaction, etc...), the key issue is what objects, if any, correspond to the segmented regions. It is well known that segmentation is an ill-posed problem whose ’correct’ solution is largely dependent on the application, if not completely subjective. Scene segmentation captures the local redundancy in the data, by reducing noise and variability, but aggregating pixels into segments often entails a decision that is unrelated to the final task. The goal is to perform this decision in a conservative way to minimize the risk of merging unrelated pixels from different objects. Over-segmentation is a pragmatic
-alternative that forms a one-to-many partitioning of scene features into smaller segments of distinct spectra. Instead of the pixel grid, it provides a representation of the image into perceptually meaningful entities, the so-called superpixels, that can be used as elementary units of any detection, categorization or localization scheme.
+Scene segmentation captures the .
+
+
 
 **Usage** 
+
+Check the documentation available at: https://gjacopo.github.io/imtools/segmentation/amoebasuperpix.html.
 
 Install Matlab package [`imtools`](https://gjacopo.github.io/imtools/) and run function  [`amoebasuperpix.m`](https://gjacopo.github.io/imtools/segmentation/amoebasuperpix.m).
 
