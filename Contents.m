@@ -132,7 +132,7 @@
 %                    and extracts valid paths.
 %   triadjacency   - Construct the adjacency matrix associated to an order-3 graph.
 %
-% pdem/  Pseudo-DEM generation functions:		
+% surface/  Surface analysis functions:		
 %   pdem           - Pseudo DEM generation from a singular optical image.
 %   wflowacc       - Upslope area (flow accumulation) algorithm for Digital 
 %                    Elevation Models.
