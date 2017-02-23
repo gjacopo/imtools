@@ -6,7 +6,7 @@ Amoeba-based superpixel partitioning of multispectral images
 
 **About**
 
-We implement an algorithm for scene segmentation (full detail [here](paper.ipynb)) that:
+We implement an original algorithm for scene segmentation (full detail [here](paper.ipynb)) that:
 * forms a one-to-many partitioning (_"over-segmentation"_) of features in the scene into smaller segments of distinct spectra,
 * works essentially like a _kmeans_ based local clustering and aggregating of pixels, and 
 * local redundancy in the data, by reducing noise and variability while enforcing connectivity,
