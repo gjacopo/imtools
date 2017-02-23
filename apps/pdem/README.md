@@ -15,7 +15,7 @@ For that purpose, an appropriate anisotropic metric is derived from both the cha
 
 **Usage** 
 
-The documentation of the algorithm, including a full description of the required/optional input/output parameters, is available through function [**pdem**](https://gjacopo.github.io/imtools/surface/pdem.html). The stepwise implementation of the algorithm is further described through function [**pdem_base.m**](https://gjacopo.github.io/imtools/docs/surface/pdem_base.html).
+The documentation of the algorithm, including a full description of the required/optional input/output parameters, is available through function [**pdem.m**](https://gjacopo.github.io/imtools/surface/pdem.html). The stepwise implementation of the algorithm is further described through function [**pdem_base.m**](https://gjacopo.github.io/imtools/docs/surface/pdem_base.html).
 
 To reproduce the experiments, you will need to:
 * install Matlab ad-hoc package [**`imtools`**](https://gjacopo.github.io/imtools/); _e.g._, add the paths of the install to your `pathdef.m` setup file;
