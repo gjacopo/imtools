@@ -27,7 +27,7 @@ Details about the actual implementation of the gradient tensor decomposition are
 
 **Description**
 
-The developed technique combines, likewise watershed based segmentation, concepts arising from mathematical morphology and hydrology [Soille94](#Soille94) and extends the approach presented in [[SG07]](#SG07). It performs the robust extraction of line networks by applying minimum cost path techniques [[PPKC10](#PPKC10), [IT07](#IT07)] and using directional information about the local structures in the image [[Kothe03]](#Kothe03) so as to look for the path which contains most line evidence. In addition, it fully exploits the fact that the hydrographic network has a tree-like structure (with a root) and the knowledge of arborescent networks [[SG07]](#SG07).
+The developed technique combines, likewise watershed based segmentation, concepts arising from mathematical morphology and hydrology [[Soille94]](#Soille94) and extends the approach presented in [[SG07]](#SG07). It performs the robust extraction of line networks by applying minimum cost path techniques [[PPKC10](#PPKC10), [IT07](#IT07)] and using directional information about the local structures in the image [[Kothe03]](#Kothe03) so as to look for the path which contains most line evidence. In addition, it fully exploits the fact that the hydrographic network has a tree-like structure (with a root) and the knowledge of arborescent networks [[SG07]](#SG07).
 
 A detailed description of the approach is available on this [**notebook**](paper.ipynb). The generic algorihtm for extracting line networks from a single image can be summarised as follows:
 
