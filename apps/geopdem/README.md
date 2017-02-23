@@ -1,5 +1,5 @@
-pdem
-====
+geopdem
+=======
 
 Line networks extraction in digital images
 ---

@@ -1,5 +1,5 @@
-amoeba
-======
+amoebapix
+========
 
 Amoeba-based superpixel partitioning of multispectral images
 ---
