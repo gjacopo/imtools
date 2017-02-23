@@ -15,7 +15,7 @@ so that it can efficiently generate compact, connected, nearly uniform and perce
 
 **Usage** 
 
-The documentation of the algorithm, including a full description of the required/optional input/output parameters, is available through function [**amoebasuperpix.m**](https://gjacopo.github.io/imtools/segmentation/amoebasuperpix.html). The stepwise implementation of the algorithm is further described through function [**amoebasuperpix_base.m**](https://gjacopo.github.io/imtools/docs/segmentation/amoebasuperpix_base.html).
+The documentation of the algorithm, including a full description of the required/optional input/output parameters, is available through function [**amoebasuperpix.m**](https://gjacopo.github.io/imtools/segmentation/amoebasuperpix.html). The stepwise implementation of the algorithm is further described through function [**amoebasuperpix_base.m**](https://gjacopo.github.io/imtools/segmentation/amoebasuperpix_base.html).
 
 To reproduce the experiments, you will need to:
 * install Matlab ad-hoc package [**`imtools`**](https://gjacopo.github.io/imtools/); _e.g._, add the paths of the install to your `pathdef.m` setup file;
