@@ -44,7 +44,7 @@ A detailed description of the approach is available on this [**notebook**](paper
 gray-level surfaces**, _Pattern Recognition Letters_, 28 (5):604-612, doi:[10.1016/j.patrec.2006.10.010](http://dx.doi.org/10.1016/j.patrec.2006.10.010).
 * <a name="Kothe03"></a>Kothe U. (2003): **Integrated edge and junction detection with the boundary
 tensor**, in _Proc. ICCV_, pp. 424-431, doi:[10.1109/ICCV.2003.1238377](http://dx.doi.org/10.1109/ICCV.2003.1238377).
-* <a name="PPKC10"></a>Peyre G., Pechaud M., Keriven R., and Cohen L. (2010): [**Geodesic methods in computer vision and graphics**](https://hal.archives-ouvertes.fr/hal-00528999/document), _Foundations and Trends in Computer Graphics and Vision_, 5(3/4):197-397, doi:[10.1561/0600000029](http://dx.doi.org/10.1561/0600000029).
+* <a name="PPKC10"></a>Peyré G., Péchaud M., Keriven R., and Cohen L. (2010): [**Geodesic methods in computer vision and graphics**](https://hal.archives-ouvertes.fr/hal-00528999/document), _Foundations and Trends in Computer Graphics and Vision_, 5(3/4):197-397, doi:[10.1561/0600000029](http://dx.doi.org/10.1561/0600000029).
 * <a name="Soille94"></a>Soille, P. (1994): **Generalized geodesy via geodesic time**, _Pattern Recognition Letters_, 15(12):1235-1240, doi:[10.1016/0167-8655(94)90113-9](http://dx.doi.org/10.1016/0167-8655(94)90113-9).
 * <a name="SG07"></a>Soille P. and Grazzini J. (2007): **Extraction of river networks from satellite images by combining mathematical morphology and hydrology**, in _Proc. CAIP_, Lecture Notes in Computer Science, vol. 4673, pp. 636-644, doi:[10.1007/978-3-540-74272-2_79](http://dx.doi.org/10.1007/978-3-540-74272-2_79).
 
