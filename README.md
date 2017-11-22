@@ -2,7 +2,7 @@
 imtools
 =======
 
-Tools (Matlab/C) for low-level image processing
+Tools and techniques for low-level image processing
 ---
 
 **About**
