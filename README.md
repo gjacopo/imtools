@@ -19,7 +19,7 @@ Various basic low-level image processing tools used in the experiments/analyses 
 **Description**
 
 Matlab tools for low-level image processing:
-* `derive`:  Differentiation functions
+* [`derive`](derive/):  Differentiation functions
 * `feature`:  Feature extraction
 * `filter`:  Filtering functions
 * `graph`:  Graph and network analysis and representation
