@@ -20,20 +20,20 @@ Various basic low-level image processing tools used in the experiments/analyses 
 
 Matlab tools for low-level image processing:
 * [`derive`](derive/):  Differentiation functions
-* `feature`:  Feature extraction
-* `filter`:  Filtering functions
-* `graph`:  Graph and network analysis and representation
-* `surface`:  Surface analysis functions
-* `pyramid`:  Hierarchical pyramid analysis and decomposition		
-* `sharpen`:  Sharpening and enhancing functions		 
-* `geometry`:  Basic geometrical tools 	
-* `kernel`:  Kernel operators
-* `morphology`:  Mathematical morphology
-* `propagation`:  Propagation and Fast Marching methods
-* `segmentation`:  Segmentation functions	
-* `statistics`:  Basic statistical tools and operators
-* `texture`:  Texture analysis and representations		
-* `misc`:  Miscellaneous functions	
+* [`feature`](feature/):  Feature extraction
+* [`filter`](filter/):  Filtering functions
+* [`graph`](graph/):  Graph and network analysis and representation
+* [`surface`](surface/):  Surface analysis functions
+* [`pyramid`](pyramid/):  Hierarchical pyramid analysis and decomposition		
+* [`sharpen`](sharpen/):  Sharpening and enhancing functions		 
+* [`geometry`](geometry/):  Basic geometrical tools 	
+* [`kernel`](kernel/):  Kernel operators
+* [`morphology`](morphology/):  Mathematical morphology
+* [`propagation`](propagation/):  Propagation and Fast Marching methods
+* [`segmentation`](segmentation/):  Segmentation functions	
+* [`statistics`](statistics/):  Basic statistical tools and operators
+* [`texture`](texture/):  Texture analysis and representations		
+* [`misc`](misc/):  Miscellaneous functions	
 
 See [`Contents.m`](Contents.m) for the whole list of functions. See file [`Contents.html`](https://gjacopo.github.io/imtools/Contents.html) for browsable version.
 
