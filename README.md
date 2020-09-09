@@ -2,19 +2,10 @@
 imtools
 =======
 
-Tools and techniques for low-level image processing
+Tools and techniques for low-level image processing.
 ---
 
-**About**
-
-Various basic low-level image processing tools used in the experiments/analyses reported in the references listed [below](#References).
-
-<table align="center">
-    <tr> <td align="left"><i>documentation</i></td> <td align="left">available at: https://gjacopo.github.io/imtools/</td> </tr> 
-    <tr> <td align="left"><i>version</i></td> <td align="left">1.0 <i>(non-active development)</i> </td> </tr> 
-    <tr> <td align="left"><i>since</i></td> <td align="left">2007</td> </tr> 
-    <tr> <td align="left"><i>license</i></td> <td align="left"><a href="https://joinup.ec.europa.eu/sites/default/files/eupl1.1.-licence-en_0.pdfEUPL">EUPL</a>  <i>(cite the source code or any of the references below!)</i> </td> </tr> 
-</table>
+The source code provided herein implements various basic low-level image processing tools used in the experiments/analyses reported in the references listed [below](#References).
 
 **Description**
 
@@ -42,6 +33,15 @@ See [`Contents.m`](Contents.m) for the whole list of functions. See file [`Conte
 Some examples of (replicable) applications are described on the following pages:
 * [amoeba superpixels](apps/amoebapix/) for superpixel partitioning of multispectral images into elementary, connected, nearly uniform units.
 * [pseudo DEM](apps/geopdem/) for line networks extraction in digital images using geodesic propagation and flow simulation.
+
+**About**
+
+<table align="center">
+    <tr> <td align="left"><i>documentation</i></td> <td align="left">available at: https://gjacopo.github.io/imtools/</td> </tr> 
+    <tr> <td align="left"><i>version</i></td> <td align="left">1.0 <i>(non-active development)</i> </td> </tr> 
+    <tr> <td align="left"><i>since</i></td> <td align="left">2007</td> </tr> 
+    <tr> <td align="left"><i>license</i></td> <td align="left"><a href="https://joinup.ec.europa.eu/sites/default/files/eupl1.1.-licence-en_0.pdfEUPL">EUPL</a>  <i>(cite the source code or any of the references below!)</i> </td> </tr> 
+</table>
 
 **<a name="References"></a>References** 
 
